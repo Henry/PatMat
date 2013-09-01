@@ -1,13 +1,36 @@
-# Compiled Object files
-*.slo
-*.lo
+# Ignore editor and misc backup files - anywhere
+*~
+.*~
+*.bak
+\#*\#
+.directory
+
+# Ignore platforms directories
+platforms
+
+# Ignore all object files
 *.o
 
-# Compiled Dynamic libraries
+# Ignore library files
 *.so
-*.dylib
 
-# Compiled Static libraries
-*.lai
-*.la
-*.a
+# Ignore generated doc files
+*.pdf
+*.tex
+*.html
+
+# Ignore all c-files generated during compilation
+*.c
+
+# Ignore all run logs
+*.log
+*.out
+
+# Ignore corefiles
+core
+vgcore*
+
+# Ignore the Ada sources
+Ada
+
+# end-of-file
