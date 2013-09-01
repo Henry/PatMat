@@ -537,3 +537,5 @@
 
 * Pattern Functions and Operators
 #+INCLUDE: "PatternOperations.H" src c++
+* Documentation
+  + [[http://henry.github.com/PatMat/index.html][Web-pages]]
