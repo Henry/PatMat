@@ -7,7 +7,7 @@
 <meta http-equiv="Content-Type" content="text/html;charset=iso-8859-1"/>
 <meta name="title" content="<b>PatMat: SPITBOL-like pattern construction and matching in C++</b>"/>
 <meta name="generator" content="Org-mode"/>
-<meta name="generated" content="2013-09-01 17:53:45 BST"/>
+<meta name="generated" content="2013-09-01 18:14:32 BST"/>
 <meta name="author" content="nil"/>
 <meta name="description" content=""/>
 <meta name="keywords" content=""/>
@@ -98,15 +98,17 @@
 <h2>Table of Contents</h2>
 <div id="text-table-of-contents">
 <ul>
-<li><a href="#sec-1">1 Origin</a></li>
-<li><a href="#sec-2">2 Pattern Matching Tutorial</a></li>
-<li><a href="#sec-3">3 Pattern Functions and Operators</a></li>
+<li><a href="#sec-1">1 Copyright</a></li>
+<li><a href="#sec-2">2 Original Sources</a></li>
+<li><a href="#sec-3">3 To Do</a></li>
+<li><a href="#sec-4">4 Pattern Matching Tutorial</a></li>
+<li><a href="#sec-5">5 Pattern Functions and Operators</a></li>
 </ul>
 </div>
 </div>
 
 <div id="outline-container-1" class="outline-2">
-<h2 id="sec-1"><span class="section-number-2">1</span> Origin</h2>
+<h2 id="sec-1"><span class="section-number-2">1</span> <a href="COPYING">Copyright</a></h2>
 <div class="outline-text-2" id="text-1">
 
 <ul>
@@ -119,8 +121,15 @@
 </ul>
 
 
-<p>
-  This documentation (and the underlying software) developed from the
+</div>
+
+</div>
+
+<div id="outline-container-2" class="outline-2">
+<h2 id="sec-2"><span class="section-number-2">2</span> Original Sources</h2>
+<div class="outline-text-2" id="text-2">
+
+<p>  This documentation (and the underlying software) developed from the
   GNAT.SPITBOL.PATTERNS package of GNU Ada.  GNAT was originally developed by
   the GNAT team at New York University.  Extensive contributions were provided
   by Ada Core Technologies Inc.
@@ -143,9 +152,18 @@
 
 </div>
 
-<div id="outline-container-2" class="outline-2">
-<h2 id="sec-2"><span class="section-number-2">2</span> Pattern Matching Tutorial</h2>
-<div class="outline-text-2" id="text-2">
+<div id="outline-container-3" class="outline-2">
+<h2 id="sec-3"><span class="section-number-2">3</span> <a href="TODO.html">To Do</a></h2>
+<div class="outline-text-2" id="text-3">
+
+
+</div>
+
+</div>
+
+<div id="outline-container-4" class="outline-2">
+<h2 id="sec-4"><span class="section-number-2">4</span> Pattern Matching Tutorial</h2>
+<div class="outline-text-2" id="text-4">
 
 <p>  A pattern matching operation (a call to one of the Match subprograms) takes a
   subject string and a pattern, and optionally a replacement string. The
@@ -158,7 +176,7 @@
   sub-string with the given replacement.
 </p>
 <ul>
-<li id="sec-2-1">Concatenation and Alternation<br/>
+<li id="sec-4-1">Concatenation and Alternation<br/>
     A pattern consists of a series of pattern elements. The pattern is built up
     using either the concatenation operator:
 
@@ -227,7 +245,7 @@ AB . CDE . IJ
 </li>
 </ul>
 <ul>
-<li id="sec-2-2">Moving the Start Point<br/>
+<li id="sec-4-2">Moving the Start Point<br/>
     A pattern is not required to match starting at the first character of the
     string, and is not required to match to the end of the string.  The first
     attempt does indeed attempt to match starting at the first character of the
@@ -277,18 +295,18 @@ AB . CDE . IJ
 </li>
 </ul>
 <ul>
-<li id="sec-2-3">Other Pattern Elements<br/>
+<li id="sec-4-3">Other Pattern Elements<br/>
     In addition to strings (or single characters), there are many special
     pattern elements that correspond to special predefined alternations:
 <ul>
-<li id="sec-2-3-1">Arb<br/>
+<li id="sec-4-3-1">Arb<br/>
       Matches any string. First it matches the null string, and then on a
       subsequent failure, matches one character, and then two characters, and so
       on. It only fails if the entire remaining string is matched.
 </li>
 </ul>
 <ul>
-<li id="sec-2-3-2">Bal<br/>
+<li id="sec-4-3-2">Bal<br/>
       Matches a non-empty string that is parentheses balanced with respect to
       ordinary <code>()</code> characters. Examples of balanced strings are ="ABC"=,
       ="A((B)C)"=, and ="A(B)C(D)E"=.  Bal matches the shortest possible
@@ -297,14 +315,14 @@ AB . CDE . IJ
 </li>
 </ul>
 <ul>
-<li id="sec-2-3-3">Abort<br/>
+<li id="sec-4-3-3">Abort<br/>
       Immediately aborts the entire pattern match, signalling failure. This is a
       specialized pattern element, which is useful in conjunction with some of
       the special pattern elements that have side effects.
 </li>
 </ul>
 <ul>
-<li id="sec-2-3-4">Fail<br/>
+<li id="sec-4-3-4">Fail<br/>
       The null alternation. Matches no possible strings, so it always signals
       failure. This is a specialized pattern element, which is useful in
       conjunction with some of the special pattern elements that have side
@@ -312,7 +330,7 @@ AB . CDE . IJ
 </li>
 </ul>
 <ul>
-<li id="sec-2-3-5">Fence<br/>
+<li id="sec-4-3-5">Fence<br/>
       Matches the null string at first, and then if a failure causes
       alternatives to be sought, aborts the match (like a Cancel). Note that
       using <code>Fence</code> at the start of a pattern has the same effect as matching in
@@ -320,14 +338,14 @@ AB . CDE . IJ
 </li>
 </ul>
 <ul>
-<li id="sec-2-3-6">Rem<br/>
+<li id="sec-4-3-6">Rem<br/>
       Matches from the current point to the last character in the string. This
       is a specialized pattern element, which is useful in conjunction with some
       of the special pattern elements that have side effects.
 </li>
 </ul>
 <ul>
-<li id="sec-2-3-7">Succeed<br/>
+<li id="sec-4-3-7">Succeed<br/>
       Repeatedly matches the null string (it is equivalent to the alternation
 
 
@@ -345,17 +363,17 @@ AB . CDE . IJ
 </li>
 </ul>
 <ul>
-<li id="sec-2-4">Pattern Construction Functions<br/>
+<li id="sec-4-4">Pattern Construction Functions<br/>
     The following functions construct additional pattern elements
 <ul>
-<li id="sec-2-4-1">Any(S)<br/>
+<li id="sec-4-4-1">Any(S)<br/>
       Where <code>S</code> is a string, matches a single character that is any one of the
       characters in <code>S</code>. Fails if the current character is not one of the given
       set of characters.
 </li>
 </ul>
 <ul>
-<li id="sec-2-4-2">Arbno(P)<br/>
+<li id="sec-4-4-2">Arbno(P)<br/>
       Where <code>P</code> is any pattern, matches any number of instances of the pattern,
       starting with zero occurrences. It is thus equivalent to
 
@@ -370,7 +388,7 @@ AB . CDE . IJ
 </p></li>
 </ul>
 <ul>
-<li id="sec-2-4-3">Break(S)<br/>
+<li id="sec-4-4-3">Break(S)<br/>
       Where <code>S</code> is a string, matches a string of zero or more characters up to
       but not including a break character that is one of the characters given in
       the string <code>S</code>.  Can match the null string, but cannot match the last
@@ -379,14 +397,14 @@ AB . CDE . IJ
 </li>
 </ul>
 <ul>
-<li id="sec-2-4-4">BreakX(S)<br/>
+<li id="sec-4-4-4">BreakX(S)<br/>
       Where <code>S</code> is a string, behaves exactly like <code>Break(S)</code> when it first
       matches, but if a string is successfully matched, then a susequent failure
       causes an attempt to extend the matched string.
 </li>
 </ul>
 <ul>
-<li id="sec-2-4-5">Fence(P)<br/>
+<li id="sec-4-4-5">Fence(P)<br/>
       Where <code>P</code> is a pattern, attempts to match the pattern <code>P</code> including trying
       all possible alternatives of <code>P</code>. If none of these alternatives succeeds,
       then the <code>Fence</code> pattern fails. If one alternative succeeds, then the
@@ -397,20 +415,20 @@ AB . CDE . IJ
 </li>
 </ul>
 <ul>
-<li id="sec-2-4-6">Len(N)<br/>
+<li id="sec-4-4-6">Len(N)<br/>
       Where <code>N</code> is a natural number, matches the given number of characters. For
       example, <code>Len(10)</code> matches any string that is exactly ten characters long.
 </li>
 </ul>
 <ul>
-<li id="sec-2-4-7">NotAny(S)<br/>
+<li id="sec-4-4-7">NotAny(S)<br/>
       Where <code>S</code> is a string, matches a single character that is not one of the
       characters of <code>S</code>. Fails if the current characer is one of the given set
       of characters.
 </li>
 </ul>
 <ul>
-<li id="sec-2-4-8">NSpan(S)<br/>
+<li id="sec-4-4-8">NSpan(S)<br/>
       Where <code>S</code> is a string, matches a string of zero or more characters that is
       among the characters given in the string. Always matches the longest
       possible such string.  Always succeeds, since it can match the null
@@ -418,33 +436,33 @@ AB . CDE . IJ
 </li>
 </ul>
 <ul>
-<li id="sec-2-4-9">Pos(N)<br/>
+<li id="sec-4-4-9">Pos(N)<br/>
       Where <code>N</code> is a natural number, matches the null string if exactly <code>N</code>
       characters have been matched so far, and otherwise fails.
 </li>
 </ul>
 <ul>
-<li id="sec-2-4-10">Rpos(N)<br/>
+<li id="sec-4-4-10">Rpos(N)<br/>
       Where <code>N</code> is a natural number, matches the null string if exactly <code>N</code>
       characters remain to be matched, and otherwise fails.
 </li>
 </ul>
 <ul>
-<li id="sec-2-4-11">Rtab(N)<br/>
+<li id="sec-4-4-11">Rtab(N)<br/>
       Where <code>N</code> is a natural number, matches characters from the current
       position until exactly <code>N</code> characters remain to be matched in the
       string. Fails if fewer than <code>N</code> unmatched characters remain in the string.
 </li>
 </ul>
 <ul>
-<li id="sec-2-4-12">Tab(N)<br/>
+<li id="sec-4-4-12">Tab(N)<br/>
       Where <code>N</code> is a natural number, matches characters from the current
       position until exactly <code>N</code> characters have been matched in all. Fails if
       more than <code>N</code> characters have already been matched.
 </li>
 </ul>
 <ul>
-<li id="sec-2-4-13">Span(S)<br/>
+<li id="sec-4-4-13">Span(S)<br/>
       Where <code>S</code> is a string, matches a string of one or more characters that is
       among the characters given in the string. Always matches the longest
       possible such string.  Fails if the current character is not one of the
@@ -455,7 +473,7 @@ AB . CDE . IJ
 </li>
 </ul>
 <ul>
-<li id="sec-2-5">Recursive Pattern Matching<br/>
+<li id="sec-4-5">Recursive Pattern Matching<br/>
     The plus operator <code>(+P)</code> where <code>P</code> is a pattern variable, creates a
     recursive pattern that will, at pattern matching time, follow the pointer to
     obtain the referenced pattern, and then match this pattern. This may be used
@@ -481,7 +499,7 @@ AB . CDE . IJ
 </li>
 </ul>
 <ul>
-<li id="sec-2-6">Pattern Assignment Operations<br/>
+<li id="sec-4-6">Pattern Assignment Operations<br/>
     In addition to the overall result of a pattern match, which indicates
     success or failure, it is often useful to be able to keep track of the
     pieces of the subject string that are matched by individual pattern
@@ -537,7 +555,7 @@ AB . CDE . IJ
 </li>
 </ul>
 <ul>
-<li id="sec-2-7">Deferred Matching<br/>
+<li id="sec-4-7">Deferred Matching<br/>
     The pattern construction functions (such as <code>Len</code> and <code>Any</code>) all permit the
     use of pointers to natural or string values, or functions that return
     natural or string values. These forms cause the actual value to be obtained
@@ -559,7 +577,7 @@ AB . CDE . IJ
 </li>
 </ul>
 <ul>
-<li id="sec-2-8">Deferred Replacement<br/>
+<li id="sec-4-8">Deferred Replacement<br/>
     The simple model given for pattern replacement (where the matched sub-string
     is replaced by the string given as the third argument to Match) works fine
     in simple cases, but this approach does not work in the case where the
@@ -609,7 +627,7 @@ M = <span style="color: #00ff00;">'['</span> + Char + <span style="color: #00ff0
 </li>
 </ul>
 <ul>
-<li id="sec-2-9">Examples of Pattern Matching<br/>
+<li id="sec-4-9">Examples of Pattern Matching<br/>
     First a simple example of the use of pattern replacement to remove a line
     number from the start of a string. We assume that the line number has the
     form of a string of decimal digits followed by a period, followed by one or
@@ -844,7 +862,7 @@ c
 </li>
 </ul>
 <ul>
-<li id="sec-2-10">Correspondence with Pattern Matching in SPITBOL<br/>
+<li id="sec-4-10">Correspondence with Pattern Matching in SPITBOL<br/>
     Generally the C++ syntax and names correspond closely to SPITBOL syntax for
     pattern matching construction.
 
@@ -889,9 +907,9 @@ X Y          Match(X, Y);
 
 </div>
 
-<div id="outline-container-3" class="outline-2">
-<h2 id="sec-3"><span class="section-number-2">3</span> Pattern Functions and Operators</h2>
-<div class="outline-text-2" id="text-3">
+<div id="outline-container-5" class="outline-2">
+<h2 id="sec-5"><span class="section-number-2">5</span> Pattern Functions and Operators</h2>
+<div class="outline-text-2" id="text-5">
 
 
 
@@ -1381,7 +1399,7 @@ X Y          Match(X, Y);
 </div>
 
 <div id="postamble">
-<p class="date">Date: 2013-09-01 17:53:45 BST</p>
+<p class="date">Date: 2013-09-01 18:14:32 BST</p>
 <p class="creator">Org version 7.8.11 with Emacs version 24</p>
 <a href="http://validator.w3.org/check?uri=referer">Validate XHTML 1.0</a>
 
