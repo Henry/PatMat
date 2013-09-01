@@ -1,0 +1,53 @@
+#                            -*- mode: org; -*-
+#
+#+TITLE:                         *TODO*
+#+AUTHOR: nil
+#+OPTIONS: author:nil email:nil ^:{}
+* PatMat Status
+*** DONE Regression test for deferred pattern pointers
+    CLOSED: [2013-08-27 Tue 15:33]
+*** DONE Image issues
+    CLOSED: [2013-08-12 Mon 22:03]
+    "crashes or behaves strangely when pattern contains immediate/onmatch calls"
+*** DONE Improve Makefiles
+    CLOSED: [2013-08-12 Mon 21:12]
+*** DONE Update documentation for C++ function names and operators
+    CLOSED: [2013-08-12 Mon 22:03]
+*** DONE Complete implementation of CharacterSet
+    CLOSED: [2013-08-26 Mon 22:08]
+*** DONE Clean up signed/unsigned
+    CLOSED: [2013-08-26 Mon 22:39]
+*** DONE Watch for stack overflows
+    CLOSED: [2013-08-12 Mon 15:15]
+    only in debug version?
+*** DONE PatMatException
+    CLOSED: [2013-09-01 Sun 16:46]
+    Removed PatMatException from XMatch and return MATCH_EXCEPTION instead
+*** TODO Add rpat_func
+*** TODO Add setcur_fnc?
+*** DONE Assignment operators for patterns
+    CLOSED: [2013-08-26 Mon 22:37]
+    + &=
+    + |=
+*** TODO [1/2] Any, Break, BreakX, NotAny, NSpan, Span
+    + [ ] std::string functions () (void*)
+    + [X] handle charset arguments
+*** TODO MatchRes
+    MatchRes.string() // return string matched?
+    MatchRes keeping string pointer is dangerous!
+    return zero-based start()?
+    add len()?
+*** TODO Template everything on Character and containers
+    Support
+    + Character
+    + Character*/[] (What is the general equivalent of strlen?)
+    + String<Character>
+    + Set<Character>
+*** DONE Make the stack a class
+    CLOSED: [2013-08-08 Thu 23:44]
+    Convert the push and pop macros into member functions
+*** DONE Hold more state information in the stack class
+    CLOSED: [2013-08-12 Mon 15:17]
+    + Stack_Base
+    + Stack_Ptr
+    + RL
