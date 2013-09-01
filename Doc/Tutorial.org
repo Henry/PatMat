@@ -511,4 +511,4 @@
     and pattern failure is indicated by returning a =bool= result from the
     =Match= function (=true= for success, =false= for failure).
 * Pattern Functions and Operators
-#+INCLUDE: "PatternOperations.H" src c++
+#+INCLUDE: "../PatternOperations.H" src c++
