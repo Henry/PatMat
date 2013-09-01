@@ -12,19 +12,17 @@
   + Copyright (C) 1998-2005, AdaCore
 
 * Original Sources
-  This documentation (and the underlying software) developed from the
-  GNAT.SPITBOL.PATTERNS package of GNU Ada.  GNAT was originally developed by
-  the GNAT team at New York University.  Extensive contributions were provided
-  by Ada Core Technologies Inc.
-
-  SPITBOL-like pattern construction and matching
-
-  This child package of GNAT.SPITBOL provides a complete implementation of the
-  SPITBOL-like pattern construction and matching operations. This package is
-  based on Macro-SPITBOL created by Robert Dewar.
+  + [[http://www.snobol4.org/spipat/][SPIPAT]]
+  + [[http://www2.adacore.com/gap-static/GNAT_Book/html/rts/g-spipat__adb.htm][GNAT.SPITBOL.PATTERNS]]
+  + [[https://github.com/hardbol/spitbol][SPITBOL]]
+  This software and documentation is developed from both the =SPIPAT= C/C++
+  package of Philip L. Budne and the original =GNAT.SPITBOL.PATTERNS= package of
+  GNU Ada based on =Macro-SPITBOL= created by Robert Dewar.  GNAT was originally
+  developed by the GNAT team at New York University with extensive contributions
+  provided by Ada Core Technologies Inc.
 
   This is a completely general patterm matching package based on the pattern
-  language of SNOBOL4, as implemented in SPITBOL. The pattern language is
+  language of =SNOBOL4=, as implemented in =SPITBOL=. The pattern language is
   modeled on context free grammars, with context sensitive extensions that
   provide full (type 0) computational capabilities.
 
