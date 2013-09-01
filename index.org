@@ -5,11 +5,13 @@
 #+OPTIONS: author:nil email:nil ^:{}
 #+LaTeX_HEADER: \usepackage[parfill]{parskip}
 #+STARTUP: hidestars odd
-* Origin
+
+* [[file:COPYING][Copyright]]
   + Copyright (C) 2013 Henry G. Weller
   + Copyright (C) 2007,2008, Philip L. Budne
   + Copyright (C) 1998-2005, AdaCore
 
+* Original Sources
   This documentation (and the underlying software) developed from the
   GNAT.SPITBOL.PATTERNS package of GNU Ada.  GNAT was originally developed by
   the GNAT team at New York University.  Extensive contributions were provided
@@ -25,6 +27,8 @@
   language of SNOBOL4, as implemented in SPITBOL. The pattern language is
   modeled on context free grammars, with context sensitive extensions that
   provide full (type 0) computational capabilities.
+
+* [[file:TODO.org][To Do]]
 
 * Pattern Matching Tutorial
   A pattern matching operation (a call to one of the Match subprograms) takes a
