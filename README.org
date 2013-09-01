@@ -4,6 +4,7 @@
 #+AUTHOR: nil
 #+OPTIONS: author:nil email:nil ^:{}
 #+LaTeX_HEADER: \usepackage[parfill]{parskip}
+#+STARTUP: hidestars odd
 * Origin
   + Copyright (C) 2013 Henry G. Weller
   + Copyright (C) 2007,2008, Philip L. Budne

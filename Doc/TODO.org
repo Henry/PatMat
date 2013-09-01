@@ -3,6 +3,7 @@
 #+TITLE:                         *TODO*
 #+AUTHOR: nil
 #+OPTIONS: author:nil email:nil ^:{}
+#+STARTUP: hidestars odd
 * PatMat Status
 *** DONE Regression test for deferred pattern pointers
     CLOSED: [2013-08-27 Tue 15:33]
