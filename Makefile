@@ -69,7 +69,8 @@ README.org: index.org
 	@sed 's%file:%http://henry.github.com/PatMat/%' $< > $@
 
 .PHONY: doc
-doc: index.html TODO.html README.org
+doc: index.html README.org
+	@$(MAKE) -C Doc
 
 .PHONY: clean distclean
 clean distclean:
