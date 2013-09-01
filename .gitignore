@@ -17,7 +17,6 @@ platforms
 # Ignore generated doc files
 *.pdf
 *.tex
-*.html
 
 # Ignore all c-files generated during compilation
 *.c

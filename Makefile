@@ -65,9 +65,11 @@ valgrind: $(LIBSO)
 $(LIBDIR):
 	$R mkdir -p $(LIBDIR)
 
+README.org: index.org
+	@sed 's%file:%http://henry.github.com/PatMat/%' $< > $@
+
 .PHONY: doc
-doc: README.html README.pdf
-	@$(MAKE) -C Doc
+doc: index.html TODO.html README.org
 
 .PHONY: clean distclean
 clean distclean:
