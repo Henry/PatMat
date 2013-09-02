@@ -317,12 +317,12 @@ Pattern Any(const Character c)
 
 Pattern Any(const CharacterSet& set)
 {
-    return Pattern(0, new PatElmt_(PC_Any_CS, 1, EOP, set));
+    return Pattern(0, new PatElmt_(PC_Any_Set, 1, EOP, set));
 }
 
 Pattern Any(const std::string& str)
 {
-    return Pattern(0, new PatElmt_(PC_Any_CS, 1, EOP, str));
+    return Pattern(0, new PatElmt_(PC_Any_Set, 1, EOP, str));
 }
 
 Pattern Any(std::string* str)
@@ -649,12 +649,12 @@ Pattern Break(const Character c)
 
 Pattern Break(const CharacterSet& set)
 {
-    return Pattern(0, new PatElmt_(PC_Break_CS, 1, EOP, set));
+    return Pattern(0, new PatElmt_(PC_Break_Set, 1, EOP, set));
 }
 
 Pattern Break(const std::string& str)
 {
-    return Pattern(0, new PatElmt_(PC_Break_CS, 1, EOP, str));
+    return Pattern(0, new PatElmt_(PC_Break_Set, 1, EOP, str));
 }
 
 Pattern Break(std::string *str)
@@ -706,12 +706,12 @@ Pattern BreakX(const Character c)
 
 Pattern BreakX(const CharacterSet& set)
 {
-    return BreakXMake(new PatElmt_(PC_BreakX_CS, 3, NULL, set));
+    return BreakXMake(new PatElmt_(PC_BreakX_Set, 3, NULL, set));
 }
 
 Pattern BreakX(const std::string& str)
 {
-    return BreakXMake(new PatElmt_(PC_BreakX_CS, 3, NULL, str));
+    return BreakXMake(new PatElmt_(PC_BreakX_Set, 3, NULL, str));
 }
 
 Pattern BreakX(std::string *str)
@@ -862,12 +862,12 @@ Pattern NotAny(const Character c)
 
 Pattern NotAny(const CharacterSet& set)
 {
-    return Pattern(0, new PatElmt_(PC_NotAny_CS, 1, EOP, set));
+    return Pattern(0, new PatElmt_(PC_NotAny_Set, 1, EOP, set));
 }
 
 Pattern NotAny(const std::string& str)
 {
-    return Pattern(0, new PatElmt_(PC_NotAny_CS, 1, EOP, str));
+    return Pattern(0, new PatElmt_(PC_NotAny_Set, 1, EOP, str));
 }
 
 Pattern NotAny(std::string* str)
@@ -900,12 +900,12 @@ Pattern NSpan(const Character c)
 
 Pattern NSpan(const CharacterSet& set)
 {
-    return Pattern(0, new PatElmt_(PC_NSpan_CS, 1, EOP, set));
+    return Pattern(0, new PatElmt_(PC_NSpan_Set, 1, EOP, set));
 }
 
 Pattern NSpan(const std::string& str)
 {
-    return Pattern(0, new PatElmt_(PC_NSpan_CS, 1, EOP, str));
+    return Pattern(0, new PatElmt_(PC_NSpan_Set, 1, EOP, str));
 }
 
 Pattern NSpan(std::string *str)
@@ -1031,12 +1031,12 @@ Pattern Span(const Character c)
 
 Pattern Span(const CharacterSet& set)
 {
-    return Pattern(0, new PatElmt_(PC_Span_CS, 1, EOP, set));
+    return Pattern(0, new PatElmt_(PC_Span_Set, 1, EOP, set));
 }
 
 Pattern Span(const std::string& str)
 {
-    return Pattern(0, new PatElmt_(PC_Span_CS, 1, EOP, str));
+    return Pattern(0, new PatElmt_(PC_Span_Set, 1, EOP, str));
 }
 
 Pattern Span(std::string *str)

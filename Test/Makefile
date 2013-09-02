@@ -36,7 +36,7 @@ include $(PM_DIR)/Make/Makefile.config
 ###-----------------------------------------------------------------------------
 ### Source files
 ###-----------------------------------------------------------------------------
-TESTS=	Any Any2 Any3 AnyCS Arb Arbno Arbno2 Arbno3 Assgn \
+TESTS=	Any Any2 Any3 AnySet Arb Arbno Arbno2 Arbno3 Assgn \
 	Bal Break Break2 BreakX BreakX2 \
 	Defer Fence Len NotAny NSpan \
 	Pos Rem Rpos Rtab Span Tab

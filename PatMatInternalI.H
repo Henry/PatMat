@@ -146,14 +146,14 @@ inline PatElmt_::PatElmt_
     const PatternCode pc,
     const IndexT index,
     const PatElmt_ *pNext,
-    const CharacterSet& CS
+    const CharacterSet& set
 )
 :
     pCode_(pc),
     index_(index),
     pNext_(pNext)
 {
-    val.CS = new CharacterSet(CS);
+    val.set = new CharacterSet(set);
 }
 
 inline PatElmt_::PatElmt_
@@ -168,7 +168,7 @@ inline PatElmt_::PatElmt_
     index_(index),
     pNext_(pNext)
 {
-    val.CS = new CharacterSet(s);
+    val.set = new CharacterSet(s);
 }
 
 inline PatElmt_::PatElmt_

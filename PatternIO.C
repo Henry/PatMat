@@ -231,13 +231,13 @@ void PatMat::Pattern::dump(std::ostream& os) const
                 os  << '\'' << e.val.Char << '\'';
                 break;
 
-            case PC_Any_CS:
-            case PC_Break_CS:
-            case PC_BreakX_CS:
-            case PC_NotAny_CS:
-            case PC_NSpan_CS:
-            case PC_Span_CS:
-                os  << "\"" << e.val.CS << "\"";
+            case PC_Any_Set:
+            case PC_Break_Set:
+            case PC_BreakX_Set:
+            case PC_NotAny_Set:
+            case PC_NSpan_Set:
+            case PC_Span_Set:
+                os  << "\"" << e.val.set << "\"";
                 break;
 
             case PC_Arbno_Y:
@@ -344,14 +344,14 @@ static const PatElmt_ *writePattern
             os  << patternCodeNames[e.pCode_] << "()";
             break;
 
-        case PC_Any_CS:
-        case PC_Break_CS:
-        case PC_BreakX_CS:
-        case PC_NotAny_CS:
-        case PC_NSpan_CS:
-        case PC_Span_CS:
+        case PC_Any_Set:
+        case PC_Break_Set:
+        case PC_BreakX_Set:
+        case PC_NotAny_Set:
+        case PC_NSpan_Set:
+        case PC_Span_Set:
             os  << patternCodeNames[e.pCode_]
-                << "(\"" << *e.val.CS << "\")";
+                << "(\"" << *e.val.set << "\")";
             break;
 
         case PC_Any_VF:

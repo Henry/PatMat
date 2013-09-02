@@ -171,12 +171,12 @@ public:
     PATTERN_CODE(NSpan_CH, "NSpan", 0),                                        \
     PATTERN_CODE(Span_CH, "Span", 1),                                          \
                                                                                \
-    PATTERN_CODE(Any_CS, "Any", 1),                                            \
-    PATTERN_CODE(Break_CS, "Break", 0),                                        \
-    PATTERN_CODE(BreakX_CS, "BreakX", 0),                                      \
-    PATTERN_CODE(NotAny_CS, "NotAny", 1),                                      \
-    PATTERN_CODE(NSpan_CS, "NSpan", 0),                                        \
-    PATTERN_CODE(Span_CS, "Span", 1),                                          \
+    PATTERN_CODE(Any_Set, "Any", 1),                                            \
+    PATTERN_CODE(Break_Set, "Break", 0),                                        \
+    PATTERN_CODE(BreakX_Set, "BreakX", 0),                                      \
+    PATTERN_CODE(NotAny_Set, "NotAny", 1),                                      \
+    PATTERN_CODE(NSpan_Set, "NSpan", 0),                                        \
+    PATTERN_CODE(Span_Set, "Span", 1),                                          \
                                                                                \
     PATTERN_CODE(Arbno_Y, "Arbno", 0),                                         \
     PATTERN_CODE(Len_Nat, "Len", 1),                                           \
@@ -292,9 +292,9 @@ class PatElmt_
         // PC_NSpan_CH | PC_Span_CH
         Character Char;
 
-        // PC_Any_CS | PC_Break_CS | PC_BreakX_CS | PC_NotAny_CS | PC_NSpan_CS
-        // | PC_Span_CS
-        CharacterSet *CS;
+        // PC_Any_Set | PC_Break_Set | PC_BreakX_set | PC_NotAny_Set | PC_NSpan_Set
+        // | PC_Span_Set
+        CharacterSet *set;
 
         // PC_Arbno_Y | PC_Len_Nat | PC_Pos_Nat | PC_RPos_Nat | PC_RTab_Nat |
         // PC_Tab_Nat
@@ -417,7 +417,7 @@ class PatElmt_
             const PatternCode pc,
             const IndexT index,
             const PatElmt_ *pNext,
-            const CharacterSet& CS
+            const CharacterSet& set
         );
 
         inline PatElmt_

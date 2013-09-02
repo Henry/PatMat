@@ -1451,14 +1451,14 @@ Match:
             }
             goto Fail;
 
-        case PC_Any_CS:
+        case PC_Any_Set:
             // Any (character set case)
             if (Debug)
             {
                 cout<< indent(regionLevel) << node
-                    << " matching Any '" << *(node->val.CS) << "'\n";
+                    << " matching Any '" << *(node->val.set) << "'\n";
             }
-            if (cursor < len && isIn(subject[cursor], *(node->val.CS)))
+            if (cursor < len && isIn(subject[cursor], *(node->val.set)))
             {
                 cursor++;
                 goto Succeed;
@@ -1681,16 +1681,16 @@ Match:
             }
             goto Fail;
 
-        case PC_Break_CS:
+        case PC_Break_Set:
             // Break (character set case)
             if (Debug)
             {
                 cout<< indent(regionLevel) << node << " matching Break '"
-                    << node->val.CS << "'\n";
+                    << node->val.set << "'\n";
             }
             while (cursor < len)
             {
-                if (isIn(subject[cursor], *(node->val.CS)))
+                if (isIn(subject[cursor], *(node->val.set)))
                 {
                     goto Succeed;
                 }
@@ -1758,16 +1758,16 @@ Match:
             }
             goto Fail;
 
-        case PC_BreakX_CS:
+        case PC_BreakX_Set:
             // BreakX (character set case)
             if (Debug)
             {
                 cout<< indent(regionLevel) << node << " matching BreakX '"
-                    << *(node->val.CS) << "'\n";
+                    << *(node->val.set) << "'\n";
             }
             while (cursor < len)
             {
-                if (isIn(subject[cursor], *(node->val.CS)))
+                if (isIn(subject[cursor], *(node->val.set)))
                 {
                     goto Succeed;
                 }
@@ -1974,14 +1974,14 @@ Match:
             }
             goto Fail;
 
-        case PC_NotAny_CS:
+        case PC_NotAny_Set:
             // NotAny (character set case)
             if (Debug)
             {
                 cout<< indent(regionLevel) << node
-                    << " matching NotAny " << *(node->val.CS) << endl;
+                    << " matching NotAny " << *(node->val.set) << endl;
             }
-            if (cursor < len && !isIn(subject[cursor], *(node->val.CS)))
+            if (cursor < len && !isIn(subject[cursor], *(node->val.set)))
             {
                 cursor++;
                 goto Succeed;
@@ -2038,14 +2038,14 @@ Match:
             }
             goto Succeed;
 
-        case PC_NSpan_CS:
+        case PC_NSpan_Set:
             // NSpan (character set case)
             if (Debug)
             {
                 cout<< indent(regionLevel) << node
-                    << " matching NSpan " << *(node->val.CS) << endl;
+                    << " matching NSpan " << *(node->val.set) << endl;
             }
-            while (cursor < len && isIn(subject[cursor], *(node->val.CS)))
+            while (cursor < len && isIn(subject[cursor], *(node->val.set)))
             {
                 cursor++;
             }
@@ -2388,16 +2388,16 @@ Match:
                 }
             }
 
-        case PC_Span_CS:
+        case PC_Span_Set:
             // Span (character set case)
             {
                 if (Debug)
                 {
                     cout<< indent(regionLevel) << node
-                        << " matching Span " << *(node->val.CS) << endl;
+                        << " matching Span " << *(node->val.set) << endl;
                 }
                 unsigned cur = cursor;
-                while (cur < len && isIn(subject[cur], *(node->val.CS)))
+                while (cur < len && isIn(subject[cur], *(node->val.set)))
                 {
                     cur++;
                 }

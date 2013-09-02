@@ -219,13 +219,13 @@ PatElmt_ *copy(const PatElmt_ *P)
                 case PC_String:
                     E->val.Str = new PMString(*(E->val.Str));
                     break;
-                case PC_Any_CS:
-                case PC_Break_CS:
-                case PC_BreakX_CS:
-                case PC_NotAny_CS:
-                case PC_NSpan_CS:
-                case PC_Span_CS:
-                    E->val.CS = new CharacterSet(*(E->val.CS));
+                case PC_Any_Set:
+                case PC_Break_Set:
+                case PC_BreakX_Set:
+                case PC_NotAny_Set:
+                case PC_NSpan_Set:
+                case PC_Span_Set:
+                    E->val.set = new CharacterSet(*(E->val.set));
                     break;
                 default:
                     break;

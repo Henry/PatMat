@@ -83,13 +83,13 @@ Pattern_::~Pattern_()
             case PC_String:
                 delete refs[j]->val.Str;
                 break;
-            case PC_Any_CS:
-            case PC_Break_CS:
-            case PC_BreakX_CS:
-            case PC_NotAny_CS:
-            case PC_NSpan_CS:
-            case PC_Span_CS:
-                delete refs[j]->val.CS;
+            case PC_Any_Set:
+            case PC_Break_Set:
+            case PC_BreakX_Set:
+            case PC_NotAny_Set:
+            case PC_NSpan_Set:
+            case PC_Span_Set:
+                delete refs[j]->val.set;
                 break;
             case PC_Pred_Func:
                 (void)refs[j]->val.BF.cookie;
