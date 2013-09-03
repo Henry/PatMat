@@ -322,10 +322,10 @@
     which replaces the line number by the null string. Note that it is also
     possible to use an =CharacterSet= value as an argument to =Span= and similar
     functions, and in particular all the useful constants 'in
-    =CharacterSet::Constants= are available. This means that we could define
+    =CharacterSet::CharacterSets= are available. This means that we could define
     =Digs= as:
     #+begin_src c++
-      const Pattern Digs = Span(Decimal_Digit_Set);
+      const Pattern Digs = Span(CharacterSets::digit);
     #+end_src
     The style we use here, of defining constant patterns and then using them is
     typical.  It is possible to build up patterns dynamically, but it is usually
@@ -352,10 +352,10 @@
     primitive elements. The following pattern matches strings that have the
     syntax of Ada 95 based literals:
     #+begin_src c++
-      const Pattern Digs  = Span(Decimal_Digit_Set);
+      const Pattern Digs  = Span(CharacterSets::digit);
       const Pattern UDigs = Digs & Arbno('_' & Digs);
 
-      const Pattern Edig  = Span(Hexadecimal_Digit_Set);
+      const Pattern Edig  = Span(CharacterSets::xdigit);
       const Pattern UEdig = Edig & Arbno('_' & Edig);
 
       const Pattern Bnum  = Udigs & '#' & UEdig & '#';
@@ -449,7 +449,7 @@
          return Length(Cur) > Length(Max);
       }
 
-      const CharacterSet Digit = Decimal_Digit_Set;
+      const CharacterSet& Digit = CharacterSets::digit;
       const Pattern Digs = Span(Digit);
 
       const Pattern Find =

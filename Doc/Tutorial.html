@@ -7,7 +7,7 @@
 <meta http-equiv="Content-Type" content="text/html;charset=iso-8859-1"/>
 <meta name="title" content="<b>PatMat: SPITBOL-like pattern construction and matching in C++</b>"/>
 <meta name="generator" content="Org-mode"/>
-<meta name="generated" content="2013-09-01 21:54:41 BST"/>
+<meta name="generated" content="2013-09-03 08:31:16 BST"/>
 <meta name="author" content="nil"/>
 <meta name="description" content=""/>
 <meta name="keywords" content=""/>
@@ -594,12 +594,12 @@ M = <span style="color: #00ff00;">'['</span> + Char + <span style="color: #00ff0
     which replaces the line number by the null string. Note that it is also
     possible to use an <code>CharacterSet</code> value as an argument to <code>Span</code> and similar
     functions, and in particular all the useful constants 'in
-    <code>CharacterSet::Constants</code> are available. This means that we could define
+    <code>CharacterSet::CharacterSets</code> are available. This means that we could define
     <code>Digs</code> as:
 </p>
 
 
-<pre class="src src-c++"><span style="color: #0000ff; font-weight: bold;">const</span> <span style="color: #0000ff;">Pattern</span> <span style="color: #000000;">Digs</span> = Span(Decimal_Digit_Set);
+<pre class="src src-c++"><span style="color: #0000ff; font-weight: bold;">const</span> <span style="color: #0000ff;">Pattern</span> <span style="color: #000000;">Digs</span> = Span(<span style="font-weight: bold; text-decoration: underline;">CharacterSets</span>::digit);
 </pre>
 
 <p>
@@ -636,10 +636,10 @@ M = <span style="color: #00ff00;">'['</span> + Char + <span style="color: #00ff0
 </p>
 
 
-<pre class="src src-c++"><span style="color: #0000ff; font-weight: bold;">const</span> <span style="color: #0000ff;">Pattern</span> <span style="color: #000000;">Digs</span>  = Span(Decimal_Digit_Set);
+<pre class="src src-c++"><span style="color: #0000ff; font-weight: bold;">const</span> <span style="color: #0000ff;">Pattern</span> <span style="color: #000000;">Digs</span>  = Span(<span style="font-weight: bold; text-decoration: underline;">CharacterSets</span>::digit);
 <span style="color: #0000ff; font-weight: bold;">const</span> <span style="color: #0000ff;">Pattern</span> <span style="color: #000000;">UDigs</span> = Digs &amp; Arbno(<span style="color: #00ff00;">'_'</span> &amp; Digs);
 
-<span style="color: #0000ff; font-weight: bold;">const</span> <span style="color: #0000ff;">Pattern</span> <span style="color: #000000;">Edig</span>  = Span(Hexadecimal_Digit_Set);
+<span style="color: #0000ff; font-weight: bold;">const</span> <span style="color: #0000ff;">Pattern</span> <span style="color: #000000;">Edig</span>  = Span(<span style="font-weight: bold; text-decoration: underline;">CharacterSets</span>::xdigit);
 <span style="color: #0000ff; font-weight: bold;">const</span> <span style="color: #0000ff;">Pattern</span> <span style="color: #000000;">UEdig</span> = Edig &amp; Arbno(<span style="color: #00ff00;">'_'</span> &amp; Edig);
 
 <span style="color: #0000ff; font-weight: bold;">const</span> <span style="color: #0000ff;">Pattern</span> <span style="color: #000000;">Bnum</span>  = Udigs &amp; <span style="color: #00ff00;">'#'</span> &amp; UEdig &amp; <span style="color: #00ff00;">'#'</span>;
@@ -765,7 +765,7 @@ c
    <span style="color: #0000ff; font-weight: bold;">return</span> Length(Cur) &gt; Length(Max);
 }
 
-<span style="color: #0000ff; font-weight: bold;">const</span> <span style="color: #0000ff;">CharacterSet</span> <span style="color: #000000;">Digit</span> = Decimal_Digit_Set;
+<span style="color: #0000ff; font-weight: bold;">const</span> <span style="color: #0000ff;">CharacterSet</span>&amp; <span style="color: #000000;">Digit</span> = <span style="font-weight: bold; text-decoration: underline;">CharacterSets</span>::digit;
 <span style="color: #0000ff; font-weight: bold;">const</span> <span style="color: #0000ff;">Pattern</span> <span style="color: #000000;">Digs</span> = Span(Digit);
 
 <span style="color: #0000ff; font-weight: bold;">const</span> <span style="color: #0000ff;">Pattern</span> <span style="color: #000000;">Find</span> =
@@ -1341,7 +1341,7 @@ X Y          Match(X, Y);
 </div>
 
 <div id="postamble">
-<p class="date">Date: 2013-09-01 21:54:41 BST</p>
+<p class="date">Date: 2013-09-03 08:31:16 BST</p>
 <p class="creator">Org version 7.8.11 with Emacs version 24</p>
 <a href="http://validator.w3.org/check?uri=referer">Validate XHTML 1.0</a>
 
