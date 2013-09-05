@@ -24,8 +24,6 @@
 *** DONE PatMatException
     CLOSED: [2013-09-01 Sun 16:46]
     Removed PatMatException from XMatch and return MATCH_EXCEPTION instead
-*** TODO Add rpat_func
-*** TODO Add setcur_fnc?
 *** DONE Assignment operators for patterns
     CLOSED: [2013-08-26 Mon 22:37]
     + &=
