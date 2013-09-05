@@ -550,9 +550,9 @@ inline Pattern Pattern::callOnmatch
     return Pattern(p.pat_->stackIndex_ + 3, bracket(e, pe, c));
 }
 
-Pattern operator*(const Pattern& p, std::string& var)
+Pattern operator*(const Pattern& p, std::string& str)
 {
-    return Pattern::callOnmatch(p, put_string_pointer, &var);
+    return Pattern::callOnmatch(p, put_string_pointer, &str);
 }
 
 Pattern operator*(const Pattern& p, StringInterface * obj)

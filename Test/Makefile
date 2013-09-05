@@ -41,7 +41,7 @@ TESTS=	Any Any2 Any3 AnySet Arb Arbno Arbno2 Arbno3 Assgn \
 	Defer Fence Len NotAny NSpan \
 	Pos Rem Rpos Rtab Span Tab
 
-OTHERS= test1
+OTHERS= test1 tutorial
 
 ###-----------------------------------------------------------------------------
 ### Build and run

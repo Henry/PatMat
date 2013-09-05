@@ -228,7 +228,7 @@
       P % S
     #+end_src
     Here =P= is an arbitrary pattern, and =S= is a variable of type
-    =std::string= that will be set to the sub-string matched by P. This
+    =string= that will be set to the sub-string matched by P. This
     assignment happens during pattern matching, so if =P= matches more than
     once, then the assignment happens more than once.
 
@@ -281,26 +281,27 @@
     character, and replace the parentheses with square brackets. At first glance
     it would seem that:
     #+begin_src c++
-      Match(Subject, '(' & Len (1) * Char & ')', '[' & Char & ']');
+      Match(Subject, '(' & Len(1) * c & ')', '[' & c & ']');
     #+end_src
     would do the trick, but that does not work, because the third argument to
     Match gets evaluated too early, before the call to Match, and before the
-    pattern match has had a chance to set =Char=.
+    pattern match has had a chance to set =c=.
 
     To solve this problem we provide the deferred replacement capability.  With
     this approach, which of course is only needed if the pattern involved has
     side effects, is to do the match in two stages. The call to =Match= sets a
-    pattern result in a variable of type =Matchres=, and then a subsequent
-    assignment operation uses this =Matchres= object to perform the required
+    pattern result in a variable of type =MatchRes=, and then a subsequent
+    assignment operation uses this =MatchRes= object to perform the required
     replacement.
 
     Using this approach, we can now write the above operation properly in a
     manner that will work:
     #+begin_src c++
-      Matchres M;
+      MatchRes m;
+      string c;
       ...
-      Match(Subject, '(' & Len(1) * Char & ')', M);
-      M = '[' + Char + ']';
+      Match(subject, '(' & Len(1) * c & ')', m);
+      M = '[' + c + ']';
     #+end_src
     As with other =Match= cases, there is a function and procedure form of this
     match call. An assignment after a failed match has no effect. Note that
@@ -312,12 +313,12 @@
     form of a string of decimal digits followed by a period, followed by one or
     more spaces.
     #+begin_src c++
-      const Pattern = Span("0123456789");
-      const Pattern = Pos(0) & Digs & '.' & Span(' ');
+      const Pattern digs = Span("0123456789");
+      const Pattern lNum = Pos(0U) & digs & '.' & Span(' ');
     #+end_src
     Now to use this pattern we simply do a match with a replacement:
     #+begin_src c++
-      Match(Line, Lnum, "");
+      Match(line, lNum, "");
     #+end_src
     which replaces the line number by the null string. Note that it is also
     possible to use an =CharacterSet= value as an argument to =Span= and similar
@@ -325,7 +326,7 @@
     =CharacterSet::CharacterSets= are available. This means that we could define
     =Digs= as:
     #+begin_src c++
-      const Pattern Digs = Span(CharacterSets::digit);
+      const Pattern digs = Span(CharacterSets::digit);
     #+end_src
     The style we use here, of defining constant patterns and then using them is
     typical.  It is possible to build up patterns dynamically, but it is usually
@@ -339,18 +340,18 @@
     separated by spaces or a comma, with spaces allowed anywhere. Then we can
     isolate the two numbers with the following pattern:
     #+begin_src c++
-      std::string Num1, Num2;
-
-      const Pattern B = NSpan(' ');
-      const Pattern N = Span("0123456789");
-      const Pattern T = NSpan(' ') & N * Num1 & Span(" ,") & N * Num2;
+      string num1, num2;
+      const Pattern blank = NSpan(' ');
+      const Pattern num = Span("0123456789");
+      const Pattern nums = blank & num * num1 & Span(" ,") & num * num2;
+      Match(" 124, 257 ", nums);
     #+end_src
-    The match operation =Match(" 124, 257 ", T)= would assign the string =124=
-    to =Num1= and the string =257= to =Num2=.
+    The match operation =Match(" 124, 257 ", nums)= would assign the string
+    =124= to =num1= and the string =257= to =num2=.
 
     Now let's see how more complex elements can be built from the set of
     primitive elements. The following pattern matches strings that have the
-    syntax of Ada 95 based literals:
+    syntax of Ada 95 literals:
     #+begin_src c++
       const Pattern Digs  = Span(CharacterSets::digit);
       const Pattern UDigs = Digs & Arbno('_' & Digs);
@@ -372,7 +373,7 @@
     and they are supposed to be used consistently.  We solve this by using a
     deferred match.
     #+begin_src c++
-      std::string Temp;
+      string Temp;
       const Pattern Bnum = Udigs & Bchar * Temp & UEdig & (+Temp)
     #+end_src
     Here the first instance of the base character is stored in =Temp=, and
@@ -441,7 +442,7 @@
     The following declarations build up a pattern which will find the longest
     string of decimal digits in the subject string.
     #+begin_src c++
-      std::string Max, Cur;
+      string Max, Cur;
       unsigned Loc;
 
       bool GtS()
