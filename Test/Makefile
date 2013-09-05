@@ -64,6 +64,7 @@ $(OBJDIR)/valid.o: valid.C valid.H ../Pattern.H $(OBJDIR)/dummy
 $(OBJDIR)/%: %.C $(OBJDIR)/valid.o valid.H $(LIBSO) $(OBJDIR)/dummy
 	@$(CXX) $(CXXFLAGS) $(DFLAGS_$(TARGET)) $(OBJDIR)/valid.o -o $@ $< $(LDFLAGS)
 
+.DEFAULT:
 %: $(OBJDIR)/%
 	@echo -n "$@:    	TARGET=$(TARGET) " && $(MEMTEST) $< || exit 1;
 

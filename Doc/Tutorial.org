@@ -249,7 +249,7 @@
     position is defined as the count of characters that have been matched so far
     (including any start point moves).
 
-    Finally the operations =*= and =%= may be used with values of type
+    Finally the operations =%= and =*= may be used with values of type
     =ostream=. The effect is to do a =<<= operation of the matched
     sub-string. These are particularly useful in debugging pattern matches.
 
@@ -281,7 +281,7 @@
     character, and replace the parentheses with square brackets. At first glance
     it would seem that:
     #+begin_src c++
-      Match(Subject, '(' & Len(1) * c & ')', '[' & c & ']');
+      Match(Subject, '(' & Len(1) % c & ')', '[' & c & ']');
     #+end_src
     would do the trick, but that does not work, because the third argument to
     Match gets evaluated too early, before the call to Match, and before the
@@ -300,7 +300,7 @@
       MatchRes m;
       string c;
       ...
-      Match(subject, '(' & Len(1) * c & ')', m);
+      Match(subject, '(' & Len(1) % c & ')', m);
       M = '[' + c + ']';
     #+end_src
     As with other =Match= cases, there is a function and procedure form of this
@@ -343,7 +343,7 @@
       string num1, num2;
       const Pattern blank = NSpan(' ');
       const Pattern num = Span("0123456789");
-      const Pattern nums = blank & num * num1 & Span(" ,") & num * num2;
+      const Pattern nums = blank & num % num1 & Span(" ,") & num % num2;
       Match(" 124, 257 ", nums);
     #+end_src
     The match operation =Match(" 124, 257 ", nums)= would assign the string
@@ -353,30 +353,30 @@
     primitive elements. The following pattern matches strings that have the
     syntax of Ada 95 literals:
     #+begin_src c++
-      const Pattern Digs  = Span(CharacterSets::digit);
-      const Pattern UDigs = Digs & Arbno('_' & Digs);
+      const Pattern digs  = Span(CharacterSets::digit);
+      const Pattern uDigs = digs & Arbno('_' & digs);
 
-      const Pattern Edig  = Span(CharacterSets::xdigit);
-      const Pattern UEdig = Edig & Arbno('_' & Edig);
+      const Pattern eDig  = Span(CharacterSets::xdigit);
+      const Pattern ueDdig = eDig & Arbno('_' & eDig);
 
-      const Pattern Bnum  = Udigs & '#' & UEdig & '#';
+      const Pattern bNum  = uDigs & '#' & ueDig & '#';
     #+end_src
-    A match against =Bnum= will now match the desired strings, /e.g./ it will
+    A match against =bNum= will now match the desired strings, /e.g./ it will
     match =16#123_abc#=, but not =a#b#=. However, this pattern is not quite
     complete, since it does not allow colons to replace the pound signs. The
     following is more complete:
     #+begin_src c++
-      const Pattern Bchar = Any("#:");
-      const Pattern Bnum  = Udigs & Bchar & UEdig & Bchar;
+      const Pattern bChar = Any("#:");
+      const Pattern bNum  = uDigs & bChar & ueDig & bChar;
     #+end_src
     but that is still not quite right, since it allows =#= and =:= to be mixed,
     and they are supposed to be used consistently.  We solve this by using a
     deferred match.
     #+begin_src c++
-      string Temp;
-      const Pattern Bnum = Udigs & Bchar * Temp & UEdig & (+Temp)
+      string temp;
+      const Pattern bNum = uDigs & bChar % temp & ueDdig & (+temp)
     #+end_src
-    Here the first instance of the base character is stored in =Temp=, and
+    Here the first instance of the base character is stored in =temp=, and
     then later in the pattern we rematch the value that was assigned.
 
     For an example of a recursive pattern, let's define a pattern that is like
@@ -395,17 +395,14 @@
     common practice in extended BNF. Now we can translate the above BNF into
     recursive patterns as follows:
     #+begin_src c++
-      Element, Balanced_String : aliased Pattern;
-      .
-      .
-      .
-      Element = NotAny ("[]{}")
-                  |
-                ('[' & (+Balanced_String) & ']')
-                  |
-                ('{' & (+Balanced_String) & '}');
+      Pattern balancedString;
 
-      Balanced_String = Element & Arbno (Element);
+      Pattern element =
+          NotAny("[]{}")
+        | ('[' & (+balancedString) & ']')
+        | ('{' & (+balancedString) & '}');
+
+      balancedString = element & Arbno(element);
     #+end_src
     Note the important use of =+= here to refer to a pattern not yet defined.
     Note also that we use assignments precisely because we cannot refer to as
@@ -414,7 +411,7 @@
     Now that this pattern is constructed, we can use it as though it were a new
     primitive pattern element, and for example, the match:
     #+begin_src c++
-      Match("xy[ab{cd}]", Balanced_String * Current_Output & Fail);
+      Match("xy[ab{cd}]", balancedString % cout & Fail());
     #+end_src
     will generate the output:
     #+begin_src c++
@@ -442,46 +439,68 @@
     The following declarations build up a pattern which will find the longest
     string of decimal digits in the subject string.
     #+begin_src c++
-      string Max, Cur;
-      unsigned Loc;
-
-      bool GtS()
+      class MaxLen
+      :
+          public BoolInterface
       {
-         return Length(Cur) > Length(Max);
-      }
+          const string& cur_;
+          const string& max_;
 
-      const CharacterSet& Digit = CharacterSets::digit;
-      const Pattern Digs = Span(Digit);
+          public:
 
-      const Pattern Find =
-        "" * Max & Fence            & // initialize Max to null
-        BreakX(Digit)               & // scan looking for digits
-        ((Digs * Cur                & // assign next string to Cur
-         (+GtS)                     & // check size(Cur) > Size(Max)
-         Setcur(Loc))                 // if so, save location
-                  * Max)            & // and assign to Max
-        Fail;                         // seek all alternatives
+              MaxLen(const string& cur, const string& max)
+              :
+                  cur_(cur),
+                  max_(max)
+              {}
+
+              bool getBool()
+              {
+                  return cur_.size() > max_.size();
+              }
+      };
+
+      .
+      .
+      .
+
+      string cur, max;
+      unsigned loc;
+
+      MaxLen GtS(cur, max);
+
+      const CharacterSet& digit = CharacterSets::digit;
+      const Pattern digits = Span(digit);
+
+      const Pattern find =
+          "" % max & Fence()         & // initialize max to null
+          BreakX(digit)              & // scan looking for digits
+          ((digits % cur             & // assign next string to cur
+           (+GtS)                    & // check cur.size() > max.size()
+           Setcur(loc))                // if so, save location
+                   % max)            & // and assign to max
+          Fail();                      // seek all alternatives
     #+end_src
     As we see from the comments here, complex patterns like this take on aspects
     of sequential programs. In fact they are sequential programs with general
     backtracking. In this pattern, we first use a pattern assignment that
-    matches null and assigns it to =Max=, so that it is initialized for the new
+    matches null and assigns it to =max=, so that it is initialized for the new
     match. Now =BreakX= scans to the next digit. =Arb= would do here, but
     =BreakX= will be more efficient.  Once we have found a digit, we scan out
-    the longest string of digits with =Span=, and assign it to =Cur=. The
-    deferred call to =GtS= tests if the string we assigned to =Cur= is the
-    longest so far. If not, then failure is signalled, and we seek alternatives
-    (this means that =BreakX= will extend and look for the next digit string).
-    If the call to =GtS= succeeds then the matched string is assigned as the
-    largest string so far into Max and its location is saved in =Loc=. Finally
-    Fail forces the match to fail and seek alternatives, so that the entire
-    string is searched.
+    the longest string of digits with =Span=, and assign it to =cur=. The
+    deferred call to =GtS.getBool()= tests if the string we assigned to =cur= is
+    the longest so far. If not, then failure is signalled, and we seek
+    alternatives (this means that =BreakX= will extend and look for the next
+    digit string).  If the call to =GtS.getBool()= succeeds then the matched
+    string is assigned as the largest string so far into =max= and its location
+    is saved in =loc=. Finally =Fail= forces the match to fail and seek
+    alternatives, so that the entire string is searched.
 
-    If the pattern =Find= is matched against a string, the variable =Max= at the
-    end of the pattern will have the longest string of digits, and =Loc= will be
+    If the pattern =find= is matched against a string, the variable =max= at the
+    end of the pattern will have the longest string of digits, and =loc= will be
     the starting character location of the string. For example,
-    =Match("ab123cd4657ef23", Find)= will assign ="4657"= to =Max= and =11= to
-    =Loc= (indicating that the string ends with the eleventh character of the
+    =Match("ab123cd4657ef23", find)= will assign ="4657"= to =max= and =11= to
+    =loc= (indicating that the string ends with the eleventh character of the
     string).
 
 *** Correspondence with Pattern Matching in SPITBOL
@@ -492,7 +511,7 @@
     #+begin_src c++
       SPITBOL     C++
       (space)      &
-         |         | (Or for char)
+         |         | (Or for Character)
          $         %
          .         *
          *         +
@@ -506,10 +525,12 @@
     The actual pattern matching syntax is modified in C++ as follows:
     #+begin_src c++
       SPITBOL      C++
-      X Y          Match(X, Y);
-      X Y = Z      Match(X, Y, Z);
+      x y          Match(x, y);
+      x y = repl   Match(x, y, repl);
     #+end_src
     and pattern failure is indicated by returning a =bool= result from the
     =Match= function (=true= for success, =false= for failure).
+* Example Code
+#+INCLUDE: "../Test/tutorial.C" src c++
 * Pattern Functions and Operators
 #+INCLUDE: "../PatternOperations.H" src c++

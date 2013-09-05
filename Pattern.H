@@ -183,6 +183,7 @@ public:
 
     // Constructors
 
+        Pattern();
         Pattern(const Pattern&);
         Pattern(const Character);
         Pattern(const std::string&);

@@ -47,6 +47,11 @@ namespace PatMat
 ///  Constructors
 // ----------------------------------------------------------------------------
 
+Pattern::Pattern()
+:
+    pat_(NULL)
+{}
+
 Pattern::Pattern(unsigned stackIndex, const PatElmt_ *p)
 :
     pat_(new Pattern_(stackIndex, p))

@@ -7,7 +7,7 @@
 <meta http-equiv="Content-Type" content="text/html;charset=iso-8859-1"/>
 <meta name="title" content="<b>PatMat: SPITBOL-like pattern construction and matching in C++</b>"/>
 <meta name="generator" content="Org-mode"/>
-<meta name="generated" content="2013-09-03 08:31:16 BST"/>
+<meta name="generated" content="2013-09-05 13:31:26 BST"/>
 <meta name="author" content="nil"/>
 <meta name="description" content=""/>
 <meta name="keywords" content=""/>
@@ -99,7 +99,8 @@
 <div id="text-table-of-contents">
 <ul>
 <li><a href="#sec-1">1 Pattern Matching Tutorial</a></li>
-<li><a href="#sec-2">2 Pattern Functions and Operators</a></li>
+<li><a href="#sec-2">2 Example Code</a></li>
+<li><a href="#sec-3">3 Pattern Functions and Operators</a></li>
 </ul>
 </div>
 </div>
@@ -459,7 +460,7 @@ AB . CDE . IJ
 
 <p>
     Here <code>P</code> is an arbitrary pattern, and <code>S</code> is a variable of type
-    <code>std::string</code> that will be set to the sub-string matched by P. This
+    <code>string</code> that will be set to the sub-string matched by P. This
     assignment happens during pattern matching, so if <code>P</code> matches more than
     once, then the assignment happens more than once.
 </p>
@@ -491,7 +492,7 @@ AB . CDE . IJ
     (including any start point moves).
 </p>
 <p>
-    Finally the operations <code>*</code> and <code>%</code> may be used with values of type
+    Finally the operations <code>%</code> and <code>*</code> may be used with values of type
     <code>ostream</code>. The effect is to do a <code>&lt;&lt;</code> operation of the matched
     sub-string. These are particularly useful in debugging pattern matches.
 </p>
@@ -534,20 +535,20 @@ AB . CDE . IJ
 </p>
 
 
-<pre class="src src-c++">Match(Subject, <span style="color: #00ff00;">'('</span> &amp; Len (1) * Char &amp; <span style="color: #00ff00;">')'</span>, <span style="color: #00ff00;">'['</span> &amp; Char &amp; <span style="color: #00ff00;">']'</span>);
+<pre class="src src-c++">Match(Subject, <span style="color: #00ff00;">'('</span> &amp; Len(1) % c &amp; <span style="color: #00ff00;">')'</span>, <span style="color: #00ff00;">'['</span> &amp; c &amp; <span style="color: #00ff00;">']'</span>);
 </pre>
 
 <p>
     would do the trick, but that does not work, because the third argument to
     Match gets evaluated too early, before the call to Match, and before the
-    pattern match has had a chance to set <code>Char</code>.
+    pattern match has had a chance to set <code>c</code>.
 </p>
 <p>
     To solve this problem we provide the deferred replacement capability.  With
     this approach, which of course is only needed if the pattern involved has
     side effects, is to do the match in two stages. The call to <code>Match</code> sets a
-    pattern result in a variable of type <code>Matchres</code>, and then a subsequent
-    assignment operation uses this <code>Matchres</code> object to perform the required
+    pattern result in a variable of type <code>MatchRes</code>, and then a subsequent
+    assignment operation uses this <code>MatchRes</code> object to perform the required
     replacement.
 </p>
 <p>
@@ -556,10 +557,11 @@ AB . CDE . IJ
 </p>
 
 
-<pre class="src src-c++"><span style="color: #0000ff;">Matchres</span> <span style="color: #000000;">M</span>;
+<pre class="src src-c++"><span style="color: #0000ff;">MatchRes</span> <span style="color: #000000;">m</span>;
+<span style="color: #0000ff;">string</span> <span style="color: #000000;">c</span>;
 ...
-Match(Subject, <span style="color: #00ff00;">'('</span> &amp; Len(1) * Char &amp; <span style="color: #00ff00;">')'</span>, M);
-M = <span style="color: #00ff00;">'['</span> + Char + <span style="color: #00ff00;">']'</span>;
+Match(subject, <span style="color: #00ff00;">'('</span> &amp; Len(1) % c &amp; <span style="color: #00ff00;">')'</span>, m);
+M = <span style="color: #00ff00;">'['</span> + c + <span style="color: #00ff00;">']'</span>;
 </pre>
 
 <p>
@@ -578,8 +580,8 @@ M = <span style="color: #00ff00;">'['</span> + Char + <span style="color: #00ff0
 
 
 
-<pre class="src src-c++"><span style="color: #0000ff; font-weight: bold;">const</span> <span style="color: #0000ff;">Pattern</span> = Span(<span style="color: #00ff00;">"0123456789"</span>);
-<span style="color: #0000ff; font-weight: bold;">const</span> <span style="color: #0000ff;">Pattern</span> = Pos(0) &amp; Digs &amp; <span style="color: #00ff00;">'.'</span> &amp; Span(<span style="color: #00ff00;">' '</span>);
+<pre class="src src-c++"><span style="color: #0000ff; font-weight: bold;">const</span> <span style="color: #0000ff;">Pattern</span> <span style="color: #000000;">digs</span> = Span(<span style="color: #00ff00;">"0123456789"</span>);
+<span style="color: #0000ff; font-weight: bold;">const</span> <span style="color: #0000ff;">Pattern</span> <span style="color: #000000;">lNum</span> = Pos(0U) &amp; digs &amp; <span style="color: #00ff00;">'.'</span> &amp; Span(<span style="color: #00ff00;">' '</span>);
 </pre>
 
 <p>
@@ -587,7 +589,7 @@ M = <span style="color: #00ff00;">'['</span> + Char + <span style="color: #00ff0
 </p>
 
 
-<pre class="src src-c++">Match(Line, Lnum, <span style="color: #00ff00;">""</span>);
+<pre class="src src-c++">Match(line, lNum, <span style="color: #00ff00;">""</span>);
 </pre>
 
 <p>
@@ -599,7 +601,7 @@ M = <span style="color: #00ff00;">'['</span> + Char + <span style="color: #00ff0
 </p>
 
 
-<pre class="src src-c++"><span style="color: #0000ff; font-weight: bold;">const</span> <span style="color: #0000ff;">Pattern</span> <span style="color: #000000;">Digs</span> = Span(<span style="font-weight: bold; text-decoration: underline;">CharacterSets</span>::digit);
+<pre class="src src-c++"><span style="color: #0000ff; font-weight: bold;">const</span> <span style="color: #0000ff;">Pattern</span> <span style="color: #000000;">digs</span> = Span(<span style="font-weight: bold; text-decoration: underline;">CharacterSets</span>::digit);
 </pre>
 
 <p>
@@ -618,43 +620,43 @@ M = <span style="color: #00ff00;">'['</span> + Char + <span style="color: #00ff0
 </p>
 
 
-<pre class="src src-c++"><span style="font-weight: bold; text-decoration: underline;">std</span>::<span style="color: #0000ff;">string</span> <span style="color: #000000;">Num1</span>, <span style="color: #000000;">Num2</span>;
-
-<span style="color: #0000ff; font-weight: bold;">const</span> <span style="color: #0000ff;">Pattern</span> <span style="color: #000000;">B</span> = NSpan(<span style="color: #00ff00;">' '</span>);
-<span style="color: #0000ff; font-weight: bold;">const</span> <span style="color: #0000ff;">Pattern</span> <span style="color: #000000;">N</span> = Span(<span style="color: #00ff00;">"0123456789"</span>);
-<span style="color: #0000ff; font-weight: bold;">const</span> <span style="color: #0000ff;">Pattern</span> <span style="color: #000000;">T</span> = NSpan(<span style="color: #00ff00;">' '</span>) &amp; N * Num1 &amp; Span(<span style="color: #00ff00;">" ,"</span>) &amp; N * Num2;
+<pre class="src src-c++"><span style="color: #0000ff;">string</span> <span style="color: #000000;">num1</span>, <span style="color: #000000;">num2</span>;
+<span style="color: #0000ff; font-weight: bold;">const</span> <span style="color: #0000ff;">Pattern</span> <span style="color: #000000;">blank</span> = NSpan(<span style="color: #00ff00;">' '</span>);
+<span style="color: #0000ff; font-weight: bold;">const</span> <span style="color: #0000ff;">Pattern</span> <span style="color: #000000;">num</span> = Span(<span style="color: #00ff00;">"0123456789"</span>);
+<span style="color: #0000ff; font-weight: bold;">const</span> <span style="color: #0000ff;">Pattern</span> <span style="color: #000000;">nums</span> = blank &amp; num % num1 &amp; Span(<span style="color: #00ff00;">" ,"</span>) &amp; num % num2;
+Match(<span style="color: #00ff00;">" 124, 257 "</span>, nums);
 </pre>
 
 <p>
-    The match operation <code>Match(" 124, 257 ", T)</code> would assign the string <code>124</code>
-    to <code>Num1</code> and the string <code>257</code> to <code>Num2</code>.
+    The match operation <code>Match(" 124, 257 ", nums)</code> would assign the string
+    <code>124</code> to <code>num1</code> and the string <code>257</code> to <code>num2</code>.
 </p>
 <p>
     Now let's see how more complex elements can be built from the set of
     primitive elements. The following pattern matches strings that have the
-    syntax of Ada 95 based literals:
+    syntax of Ada 95 literals:
 </p>
 
 
-<pre class="src src-c++"><span style="color: #0000ff; font-weight: bold;">const</span> <span style="color: #0000ff;">Pattern</span> <span style="color: #000000;">Digs</span>  = Span(<span style="font-weight: bold; text-decoration: underline;">CharacterSets</span>::digit);
-<span style="color: #0000ff; font-weight: bold;">const</span> <span style="color: #0000ff;">Pattern</span> <span style="color: #000000;">UDigs</span> = Digs &amp; Arbno(<span style="color: #00ff00;">'_'</span> &amp; Digs);
+<pre class="src src-c++"><span style="color: #0000ff; font-weight: bold;">const</span> <span style="color: #0000ff;">Pattern</span> <span style="color: #000000;">digs</span>  = Span(<span style="font-weight: bold; text-decoration: underline;">CharacterSets</span>::digit);
+<span style="color: #0000ff; font-weight: bold;">const</span> <span style="color: #0000ff;">Pattern</span> <span style="color: #000000;">uDigs</span> = digs &amp; Arbno(<span style="color: #00ff00;">'_'</span> &amp; digs);
 
-<span style="color: #0000ff; font-weight: bold;">const</span> <span style="color: #0000ff;">Pattern</span> <span style="color: #000000;">Edig</span>  = Span(<span style="font-weight: bold; text-decoration: underline;">CharacterSets</span>::xdigit);
-<span style="color: #0000ff; font-weight: bold;">const</span> <span style="color: #0000ff;">Pattern</span> <span style="color: #000000;">UEdig</span> = Edig &amp; Arbno(<span style="color: #00ff00;">'_'</span> &amp; Edig);
+<span style="color: #0000ff; font-weight: bold;">const</span> <span style="color: #0000ff;">Pattern</span> <span style="color: #000000;">eDig</span>  = Span(<span style="font-weight: bold; text-decoration: underline;">CharacterSets</span>::xdigit);
+<span style="color: #0000ff; font-weight: bold;">const</span> <span style="color: #0000ff;">Pattern</span> <span style="color: #000000;">ueDdig</span> = eDig &amp; Arbno(<span style="color: #00ff00;">'_'</span> &amp; eDig);
 
-<span style="color: #0000ff; font-weight: bold;">const</span> <span style="color: #0000ff;">Pattern</span> <span style="color: #000000;">Bnum</span>  = Udigs &amp; <span style="color: #00ff00;">'#'</span> &amp; UEdig &amp; <span style="color: #00ff00;">'#'</span>;
+<span style="color: #0000ff; font-weight: bold;">const</span> <span style="color: #0000ff;">Pattern</span> <span style="color: #000000;">bNum</span>  = uDigs &amp; <span style="color: #00ff00;">'#'</span> &amp; ueDig &amp; <span style="color: #00ff00;">'#'</span>;
 </pre>
 
 <p>
-    A match against <code>Bnum</code> will now match the desired strings, <i>e.g.</i> it will
+    A match against <code>bNum</code> will now match the desired strings, <i>e.g.</i> it will
     match <code>16#123_abc#</code>, but not <code>a#b#</code>. However, this pattern is not quite
     complete, since it does not allow colons to replace the pound signs. The
     following is more complete:
 </p>
 
 
-<pre class="src src-c++"><span style="color: #0000ff; font-weight: bold;">const</span> <span style="color: #0000ff;">Pattern</span> <span style="color: #000000;">Bchar</span> = Any(<span style="color: #00ff00;">"#:"</span>);
-<span style="color: #0000ff; font-weight: bold;">const</span> <span style="color: #0000ff;">Pattern</span> <span style="color: #000000;">Bnum</span>  = Udigs &amp; Bchar &amp; UEdig &amp; Bchar;
+<pre class="src src-c++"><span style="color: #0000ff; font-weight: bold;">const</span> <span style="color: #0000ff;">Pattern</span> <span style="color: #000000;">bChar</span> = Any(<span style="color: #00ff00;">"#:"</span>);
+<span style="color: #0000ff; font-weight: bold;">const</span> <span style="color: #0000ff;">Pattern</span> <span style="color: #000000;">bNum</span>  = uDigs &amp; bChar &amp; ueDig &amp; bChar;
 </pre>
 
 <p>
@@ -664,12 +666,12 @@ M = <span style="color: #00ff00;">'['</span> + Char + <span style="color: #00ff0
 </p>
 
 
-<pre class="src src-c++"><span style="font-weight: bold; text-decoration: underline;">std</span>::<span style="color: #0000ff;">string</span> <span style="color: #000000;">Temp</span>;
-<span style="color: #0000ff; font-weight: bold;">const</span> <span style="color: #0000ff;">Pattern</span> <span style="color: #000000;">Bnum</span> = Udigs &amp; Bchar * Temp &amp; UEdig &amp; (+Temp)
+<pre class="src src-c++"><span style="color: #0000ff;">string</span> <span style="color: #000000;">temp</span>;
+<span style="color: #0000ff; font-weight: bold;">const</span> <span style="color: #0000ff;">Pattern</span> <span style="color: #000000;">bNum</span> = uDigs &amp; bChar % temp &amp; ueDdig &amp; (+temp)
 </pre>
 
 <p>
-    Here the first instance of the base character is stored in <code>Temp</code>, and
+    Here the first instance of the base character is stored in <code>temp</code>, and
     then later in the pattern we rematch the value that was assigned.
 </p>
 <p>
@@ -696,17 +698,14 @@ BALANCED_STRING ::= ELEMENT {ELEMENT}
 </p>
 
 
-<pre class="src src-c++">Element, Balanced_String : aliased Pattern;
-.
-.
-.
-Element = NotAny (<span style="color: #00ff00;">"[]{}"</span>)
-            |
-          (<span style="color: #00ff00;">'['</span> &amp; (+Balanced_String) &amp; <span style="color: #00ff00;">']'</span>)
-            |
-          (<span style="color: #00ff00;">'{'</span> &amp; (+Balanced_String) &amp; <span style="color: #00ff00;">'}'</span>);
+<pre class="src src-c++"><span style="color: #0000ff;">Pattern</span> <span style="color: #000000;">balancedString</span>;
 
-Balanced_String = Element &amp; Arbno (Element);
+<span style="color: #0000ff;">Pattern</span> <span style="color: #000000;">element</span> =
+    NotAny(<span style="color: #00ff00;">"[]{}"</span>)
+  | (<span style="color: #00ff00;">'['</span> &amp; (+balancedString) &amp; <span style="color: #00ff00;">']'</span>)
+  | (<span style="color: #00ff00;">'{'</span> &amp; (+balancedString) &amp; <span style="color: #00ff00;">'}'</span>);
+
+balancedString = element &amp; Arbno(element);
 </pre>
 
 <p>
@@ -720,7 +719,7 @@ Balanced_String = Element &amp; Arbno (Element);
 </p>
 
 
-<pre class="src src-c++">Match(<span style="color: #00ff00;">"xy[ab{cd}]"</span>, Balanced_String * Current_Output &amp; Fail);
+<pre class="src src-c++">Match(<span style="color: #00ff00;">"xy[ab{cd}]"</span>, balancedString % cout &amp; Fail());
 </pre>
 
 <p>
@@ -757,49 +756,71 @@ c
 </p>
 
 
-<pre class="src src-c++"><span style="font-weight: bold; text-decoration: underline;">std</span>::<span style="color: #0000ff;">string</span> <span style="color: #000000;">Max</span>, <span style="color: #000000;">Cur</span>;
-<span style="color: #0000ff;">unsigned</span> <span style="color: #000000;">Loc</span>;
-
-<span style="color: #0000ff;">bool</span> <span style="color: #0000ff; font-weight: bold;">GtS</span>()
+<pre class="src src-c++"><span style="color: #0000ff; font-weight: bold;">class</span> <span style="color: #0000ff;">MaxLen</span>
+:
+    <span style="color: #0000ff; font-weight: bold;">public</span> <span style="color: #0000ff;">BoolInterface</span>
 {
-   <span style="color: #0000ff; font-weight: bold;">return</span> Length(Cur) &gt; Length(Max);
-}
+    <span style="color: #0000ff; font-weight: bold;">const</span> <span style="color: #0000ff;">string</span>&amp; <span style="color: #000000;">cur_</span>;
+    <span style="color: #0000ff; font-weight: bold;">const</span> <span style="color: #0000ff;">string</span>&amp; <span style="color: #000000;">max_</span>;
 
-<span style="color: #0000ff; font-weight: bold;">const</span> <span style="color: #0000ff;">CharacterSet</span>&amp; <span style="color: #000000;">Digit</span> = <span style="font-weight: bold; text-decoration: underline;">CharacterSets</span>::digit;
-<span style="color: #0000ff; font-weight: bold;">const</span> <span style="color: #0000ff;">Pattern</span> <span style="color: #000000;">Digs</span> = Span(Digit);
+    <span style="color: #0000ff; font-weight: bold;">public</span>:
 
-<span style="color: #0000ff; font-weight: bold;">const</span> <span style="color: #0000ff;">Pattern</span> <span style="color: #000000;">Find</span> =
-  <span style="color: #00ff00;">""</span> * Max &amp; Fence            &amp; <span style="color: #ff00ff; font-weight: bold;">// </span><span style="color: #ff00ff;">initialize Max to null</span>
-  BreakX(Digit)               &amp; <span style="color: #ff00ff; font-weight: bold;">// </span><span style="color: #ff00ff;">scan looking for digits</span>
-  ((Digs * Cur                &amp; <span style="color: #ff00ff; font-weight: bold;">// </span><span style="color: #ff00ff;">assign next string to Cur</span>
-   (+GtS)                     &amp; <span style="color: #ff00ff; font-weight: bold;">// </span><span style="color: #ff00ff;">check size(Cur) &gt; Size(Max)</span>
-   Setcur(Loc))                 <span style="color: #ff00ff; font-weight: bold;">// </span><span style="color: #ff00ff;">if so, save location</span>
-            * Max)            &amp; <span style="color: #ff00ff; font-weight: bold;">// </span><span style="color: #ff00ff;">and assign to Max</span>
-  Fail;                         <span style="color: #ff00ff; font-weight: bold;">// </span><span style="color: #ff00ff;">seek all alternatives</span>
+        <span style="color: #0000ff; font-weight: bold;">MaxLen</span>(<span style="color: #0000ff; font-weight: bold;">const</span> <span style="color: #0000ff;">string</span>&amp; <span style="color: #000000;">cur</span>, <span style="color: #0000ff; font-weight: bold;">const</span> <span style="color: #0000ff;">string</span>&amp; <span style="color: #000000;">max</span>)
+        :
+            cur_(cur),
+            max_(max)
+        {}
+
+        <span style="color: #0000ff;">bool</span> <span style="color: #0000ff; font-weight: bold;">getBool</span>()
+        {
+            <span style="color: #0000ff; font-weight: bold;">return</span> cur_.size() &gt; max_.size();
+        }
+};
+
+.
+.
+.
+
+string cur, max;
+<span style="color: #0000ff;">unsigned</span> <span style="color: #000000;">loc</span>;
+
+<span style="color: #0000ff;">MaxLen</span> <span style="color: #0000ff; font-weight: bold;">GtS</span>(cur, max);
+
+<span style="color: #0000ff; font-weight: bold;">const</span> <span style="color: #0000ff;">CharacterSet</span>&amp; <span style="color: #000000;">digit</span> = <span style="font-weight: bold; text-decoration: underline;">CharacterSets</span>::digit;
+<span style="color: #0000ff; font-weight: bold;">const</span> <span style="color: #0000ff;">Pattern</span> <span style="color: #000000;">digits</span> = Span(digit);
+
+<span style="color: #0000ff; font-weight: bold;">const</span> <span style="color: #0000ff;">Pattern</span> <span style="color: #000000;">find</span> =
+    <span style="color: #00ff00;">""</span> % max &amp; Fence()         &amp; <span style="color: #ff00ff; font-weight: bold;">// </span><span style="color: #ff00ff;">initialize max to null</span>
+    BreakX(digit)              &amp; <span style="color: #ff00ff; font-weight: bold;">// </span><span style="color: #ff00ff;">scan looking for digits</span>
+    ((digits % cur             &amp; <span style="color: #ff00ff; font-weight: bold;">// </span><span style="color: #ff00ff;">assign next string to cur</span>
+     (+GtS)                    &amp; <span style="color: #ff00ff; font-weight: bold;">// </span><span style="color: #ff00ff;">check cur.size() &gt; max.size()</span>
+     Setcur(loc))                <span style="color: #ff00ff; font-weight: bold;">// </span><span style="color: #ff00ff;">if so, save location</span>
+             % max)            &amp; <span style="color: #ff00ff; font-weight: bold;">// </span><span style="color: #ff00ff;">and assign to max</span>
+    Fail();                      <span style="color: #ff00ff; font-weight: bold;">// </span><span style="color: #ff00ff;">seek all alternatives</span>
 </pre>
 
 <p>
     As we see from the comments here, complex patterns like this take on aspects
     of sequential programs. In fact they are sequential programs with general
     backtracking. In this pattern, we first use a pattern assignment that
-    matches null and assigns it to <code>Max</code>, so that it is initialized for the new
+    matches null and assigns it to <code>max</code>, so that it is initialized for the new
     match. Now <code>BreakX</code> scans to the next digit. <code>Arb</code> would do here, but
     <code>BreakX</code> will be more efficient.  Once we have found a digit, we scan out
-    the longest string of digits with <code>Span</code>, and assign it to <code>Cur</code>. The
-    deferred call to <code>GtS</code> tests if the string we assigned to <code>Cur</code> is the
-    longest so far. If not, then failure is signalled, and we seek alternatives
-    (this means that <code>BreakX</code> will extend and look for the next digit string).
-    If the call to <code>GtS</code> succeeds then the matched string is assigned as the
-    largest string so far into Max and its location is saved in <code>Loc</code>. Finally
-    Fail forces the match to fail and seek alternatives, so that the entire
-    string is searched.
+    the longest string of digits with <code>Span</code>, and assign it to <code>cur</code>. The
+    deferred call to <code>GtS.getBool()</code> tests if the string we assigned to <code>cur</code> is
+    the longest so far. If not, then failure is signalled, and we seek
+    alternatives (this means that <code>BreakX</code> will extend and look for the next
+    digit string).  If the call to <code>GtS.getBool()</code> succeeds then the matched
+    string is assigned as the largest string so far into <code>max</code> and its location
+    is saved in <code>loc</code>. Finally <code>Fail</code> forces the match to fail and seek
+    alternatives, so that the entire string is searched.
 </p>
 <p>
-    If the pattern <code>Find</code> is matched against a string, the variable <code>Max</code> at the
-    end of the pattern will have the longest string of digits, and <code>Loc</code> will be
+    If the pattern <code>find</code> is matched against a string, the variable <code>max</code> at the
+    end of the pattern will have the longest string of digits, and <code>loc</code> will be
     the starting character location of the string. For example,
-    <code>Match("ab123cd4657ef23", Find)</code> will assign ="4657"= to <code>Max</code> and <code>11</code> to
-    <code>Loc</code> (indicating that the string ends with the eleventh character of the
+    <code>Match("ab123cd4657ef23", find)</code> will assign ="4657"= to <code>max</code> and <code>11</code> to
+    <code>loc</code> (indicating that the string ends with the eleventh character of the
     string).
 </p>
 </li>
@@ -816,7 +837,7 @@ c
 
 <pre class="src src-c++"><span style="color: #0000ff;">SPITBOL</span>     <span style="color: #0000ff; font-weight: bold;">C</span>++
 (space)      &amp;
-   |         | (Or <span style="color: #0000ff; font-weight: bold;">for</span> <span style="color: #0000ff;">char</span>)
+   |         | (Or <span style="color: #0000ff; font-weight: bold;">for</span> Character)
    $         %
    .         *
    *         +
@@ -836,8 +857,8 @@ c
 
 
 <pre class="src src-c++"><span style="color: #0000ff;">SPITBOL</span>      <span style="color: #0000ff; font-weight: bold;">C</span>++
-X Y          Match(X, Y);
-<span style="color: #0000ff;">X</span> <span style="color: #000000;">Y</span> = Z      Match(X, Y, Z);
+x y          Match(x, y);
+<span style="color: #0000ff;">x</span> <span style="color: #000000;">y</span> = repl   Match(x, y, repl);
 </pre>
 
 <p>
@@ -850,8 +871,124 @@ X Y          Match(X, Y);
 </div>
 
 <div id="outline-container-2" class="outline-2">
-<h2 id="sec-2"><span class="section-number-2">2</span> Pattern Functions and Operators</h2>
+<h2 id="sec-2"><span class="section-number-2">2</span> Example Code</h2>
 <div class="outline-text-2" id="text-2">
+
+
+
+
+<pre class="src src-c++"><span style="color: #00ff00; font-weight: bold;">#include</span> <span style="color: #00ff00;">&lt;string&gt;</span>
+<span style="color: #00ff00; font-weight: bold;">#include</span> <span style="color: #00ff00;">&lt;iostream&gt;</span>
+
+<span style="color: #00ff00; font-weight: bold;">#include</span> <span style="color: #00ff00;">"Pattern.H"</span>
+
+<span style="color: #0000ff; font-weight: bold;">using</span> <span style="color: #0000ff; font-weight: bold;">namespace</span> <span style="font-weight: bold; text-decoration: underline;">PatMat</span>;
+<span style="color: #0000ff; font-weight: bold;">using</span> <span style="color: #0000ff; font-weight: bold;">namespace</span> <span style="font-weight: bold; text-decoration: underline;">std</span>;
+
+<span style="color: #0000ff; font-weight: bold;">class</span> <span style="color: #0000ff;">MaxLen</span>
+:
+    <span style="color: #0000ff; font-weight: bold;">public</span> <span style="color: #0000ff;">BoolInterface</span>
+{
+    <span style="color: #0000ff; font-weight: bold;">const</span> <span style="color: #0000ff;">string</span>&amp; <span style="color: #000000;">cur_</span>;
+    <span style="color: #0000ff; font-weight: bold;">const</span> <span style="color: #0000ff;">string</span>&amp; <span style="color: #000000;">max_</span>;
+
+    <span style="color: #0000ff; font-weight: bold;">public</span>:
+
+        <span style="color: #0000ff; font-weight: bold;">MaxLen</span>(<span style="color: #0000ff; font-weight: bold;">const</span> <span style="color: #0000ff;">string</span>&amp; <span style="color: #000000;">cur</span>, <span style="color: #0000ff; font-weight: bold;">const</span> <span style="color: #0000ff;">string</span>&amp; <span style="color: #000000;">max</span>)
+        :
+            cur_(cur),
+            max_(max)
+        {}
+
+        <span style="color: #0000ff;">bool</span> <span style="color: #0000ff; font-weight: bold;">getBool</span>()
+        {
+            <span style="color: #0000ff; font-weight: bold;">return</span> cur_.size() &gt; max_.size();
+        }
+};
+
+
+<span style="color: #0000ff;">int</span> <span style="color: #0000ff; font-weight: bold;">main</span>()
+{
+    {
+        <span style="color: #0000ff;">MatchRes</span> <span style="color: #000000;">m</span>;
+        <span style="color: #0000ff;">string</span> <span style="color: #000000;">subject</span>(<span style="color: #00ff00;">"Change brackets around character (a)"</span>);
+        <span style="color: #0000ff;">string</span> <span style="color: #000000;">c</span>;
+        Match(subject, <span style="color: #00ff00;">'('</span> &amp; Len(1) % c &amp; <span style="color: #00ff00;">')'</span>, m);
+        m = <span style="color: #00ff00;">'['</span> + c + <span style="color: #00ff00;">']'</span>;
+        cout &lt;&lt; subject &lt;&lt; endl;
+    }
+    {
+        <span style="color: #ff00ff; font-weight: bold;">//</span><span style="color: #ff00ff;">const Pattern digs = Span("0123456789");</span>
+        <span style="color: #0000ff; font-weight: bold;">const</span> <span style="color: #0000ff;">Pattern</span> <span style="color: #000000;">digs</span> = Span(<span style="font-weight: bold; text-decoration: underline;">CharacterSets</span>::digit);
+        <span style="color: #0000ff; font-weight: bold;">const</span> <span style="color: #0000ff;">Pattern</span> <span style="color: #000000;">lNum</span> = Pos(0U) &amp; digs &amp; <span style="color: #00ff00;">'.'</span> &amp; Span(<span style="color: #00ff00;">' '</span>);
+        <span style="color: #0000ff;">string</span> <span style="color: #000000;">line</span>(<span style="color: #00ff00;">"258. Words etc."</span>);
+        Match(line, lNum, <span style="color: #00ff00;">""</span>);
+        cout &lt;&lt; line &lt;&lt; endl;
+    }
+    {
+        <span style="color: #0000ff;">string</span> <span style="color: #000000;">num1</span>, <span style="color: #000000;">num2</span>;
+        <span style="color: #0000ff; font-weight: bold;">const</span> <span style="color: #0000ff;">Pattern</span> <span style="color: #000000;">blank</span> = NSpan(<span style="color: #00ff00;">' '</span>);
+        <span style="color: #0000ff; font-weight: bold;">const</span> <span style="color: #0000ff;">Pattern</span> <span style="color: #000000;">num</span> = Span(<span style="color: #00ff00;">"0123456789"</span>);
+        <span style="color: #0000ff; font-weight: bold;">const</span> <span style="color: #0000ff;">Pattern</span> <span style="color: #000000;">nums</span> = blank &amp; num % num1 &amp; Span(<span style="color: #00ff00;">" ,"</span>) &amp; num % num2;
+        Match(<span style="color: #00ff00;">" 124, 257 "</span>, nums);
+        cout &lt;&lt; <span style="color: #00ff00;">"num1 = "</span> &lt;&lt; num1 &lt;&lt; <span style="color: #00ff00;">"; num2 = "</span> &lt;&lt; num2 &lt;&lt; endl;
+    }
+    {
+        <span style="color: #0000ff; font-weight: bold;">const</span> <span style="color: #0000ff;">Pattern</span> <span style="color: #000000;">digs</span>  = Span(<span style="font-weight: bold; text-decoration: underline;">CharacterSets</span>::digit);
+        <span style="color: #0000ff; font-weight: bold;">const</span> <span style="color: #0000ff;">Pattern</span> <span style="color: #000000;">uDigs</span> = digs &amp; Arbno(<span style="color: #00ff00;">'_'</span> &amp; digs);
+        <span style="color: #0000ff; font-weight: bold;">const</span> <span style="color: #0000ff;">Pattern</span> <span style="color: #000000;">eDig</span>  = Span(<span style="font-weight: bold; text-decoration: underline;">CharacterSets</span>::xdigit);
+        <span style="color: #0000ff; font-weight: bold;">const</span> <span style="color: #0000ff;">Pattern</span> <span style="color: #000000;">ueDig</span> = eDig &amp; Arbno(<span style="color: #00ff00;">'_'</span> &amp; eDig);
+        <span style="color: #0000ff; font-weight: bold;">const</span> <span style="color: #0000ff;">Pattern</span> <span style="color: #000000;">bChar</span> = Any(<span style="color: #00ff00;">"#:"</span>);
+        <span style="color: #0000ff;">string</span> <span style="color: #000000;">temp</span>;
+        <span style="color: #0000ff; font-weight: bold;">const</span> <span style="color: #0000ff;">Pattern</span> <span style="color: #000000;">bNum</span> = uDigs &amp; bChar % temp &amp; ueDig &amp; (+temp);
+        <span style="color: #0000ff; font-weight: bold;">const</span> <span style="color: #0000ff;">string</span> <span style="color: #000000;">subject</span>(<span style="color: #00ff00;">"16#123_abc#"</span>);
+        <span style="color: #0000ff; font-weight: bold;">if</span> (Match(subject, bNum)) cout &lt;&lt; <span style="color: #00ff00;">"Matched "</span> &lt;&lt; subject &lt;&lt; endl;
+    }
+    {
+        <span style="color: #0000ff;">Pattern</span> <span style="color: #000000;">balancedString</span>;
+
+        <span style="color: #0000ff;">Pattern</span> <span style="color: #000000;">element</span> =
+            NotAny(<span style="color: #00ff00;">"[]{}"</span>)
+          | (<span style="color: #00ff00;">'['</span> &amp; (+balancedString) &amp; <span style="color: #00ff00;">']'</span>)
+          | (<span style="color: #00ff00;">'{'</span> &amp; (+balancedString) &amp; <span style="color: #00ff00;">'}'</span>);
+
+        balancedString = element &amp; Arbno(element);
+
+        cout &lt;&lt; Match(<span style="color: #00ff00;">"xy[ab{cd}]"</span>, balancedString % cout &amp; Fail()) &lt;&lt; endl;
+    }
+    {
+        <span style="color: #0000ff;">string</span> <span style="color: #000000;">cur</span>, <span style="color: #000000;">max</span>;
+        <span style="color: #0000ff;">unsigned</span> <span style="color: #000000;">loc</span>;
+
+        <span style="color: #0000ff;">MaxLen</span> <span style="color: #000000;">GtS</span>(cur, max);
+
+        <span style="color: #0000ff; font-weight: bold;">const</span> <span style="color: #0000ff;">CharacterSet</span>&amp; <span style="color: #000000;">digit</span> = <span style="font-weight: bold; text-decoration: underline;">CharacterSets</span>::digit;
+        <span style="color: #0000ff; font-weight: bold;">const</span> <span style="color: #0000ff;">Pattern</span> <span style="color: #000000;">digits</span> = Span(digit);
+
+        <span style="color: #0000ff; font-weight: bold;">const</span> <span style="color: #0000ff;">Pattern</span> <span style="color: #000000;">find</span> =
+            <span style="color: #00ff00;">""</span> % max &amp; Fence()         &amp; <span style="color: #ff00ff; font-weight: bold;">// </span><span style="color: #ff00ff;">initialize max to null</span>
+            BreakX(digit)              &amp; <span style="color: #ff00ff; font-weight: bold;">// </span><span style="color: #ff00ff;">scan looking for digits</span>
+            ((digits % cur             &amp; <span style="color: #ff00ff; font-weight: bold;">// </span><span style="color: #ff00ff;">assign next string to cur</span>
+             (+GtS)                    &amp; <span style="color: #ff00ff; font-weight: bold;">// </span><span style="color: #ff00ff;">check cur.size() &gt; max.size()</span>
+             Setcur(loc))                <span style="color: #ff00ff; font-weight: bold;">// </span><span style="color: #ff00ff;">if so, save location</span>
+                     % max)            &amp; <span style="color: #ff00ff; font-weight: bold;">// </span><span style="color: #ff00ff;">and assign to max</span>
+            Fail();                      <span style="color: #ff00ff; font-weight: bold;">// </span><span style="color: #ff00ff;">seek all alternatives</span>
+
+        Match(<span style="color: #00ff00;">"ab123cd4657ef23"</span>, find);
+        cout&lt;&lt; <span style="color: #00ff00;">"max = "</span> &lt;&lt; max &lt;&lt; <span style="color: #00ff00;">"; loc = "</span> &lt;&lt; loc &lt;&lt; endl;
+    }
+
+    <span style="color: #0000ff; font-weight: bold;">return</span> 0;
+}
+</pre>
+
+</div>
+
+</div>
+
+<div id="outline-container-3" class="outline-2">
+<h2 id="sec-3"><span class="section-number-2">3</span> Pattern Functions and Operators</h2>
+<div class="outline-text-2" id="text-3">
 
 
 
@@ -1341,7 +1478,7 @@ X Y          Match(X, Y);
 </div>
 
 <div id="postamble">
-<p class="date">Date: 2013-09-03 08:31:16 BST</p>
+<p class="date">Date: 2013-09-05 13:31:26 BST</p>
 <p class="creator">Org version 7.8.11 with Emacs version 24</p>
 <a href="http://validator.w3.org/check?uri=referer">Validate XHTML 1.0</a>
 

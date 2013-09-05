@@ -51,13 +51,13 @@ $(LIBSO): $(SOURCES) $(INCLUDES) $(LIBDIR) Makefile Make/Makefile.config
 test: $(LIBSO)
 	$V $(MAKE) -C Test
 
-.PHONY: test1
-test1: $(LIBSO)
-	$V $(MAKE) -C Test test1
-
 .PHONY: valgrind
 valgrind: $(LIBSO)
 	$V $(MAKE) MEMTEST=valgrind -C Test
+
+.DEFAULT:
+%::
+	$V $(MAKE) -C Test $@
 
 ###-----------------------------------------------------------------------------
 ### Miscellaneous commands
