@@ -1206,22 +1206,22 @@ Pattern operator&(const Pattern& l, const Character r)
 ///  Match
 // ----------------------------------------------------------------------------
 
-bool Match(const Character *subj, const Pattern& p, int flags)
+bool Match(const Character *subject, const Pattern& p, int flags)
 {
     MatchState ma;
     ma.flags = flags;
-    ma.subject = PMString(subj);
+    ma.subject = subject;
     ma.pattern = p.pat_;
     ma.matchCookie = 0;
     // XXX check for MATCH_EXCEPTION, throw exception!?
     return match(ma) == MATCH_SUCCESS;
 }
 
-bool Match(const std::string& subj, const Pattern& p, int flags)
+bool Match(const std::string& subject, const Pattern& p, int flags)
 {
     MatchState ma;
     ma.flags = flags;
-    ma.subject = PMString(subj);
+    ma.subject = subject;
     ma.pattern = p.pat_;
     ma.matchCookie = 0;
     // XXX check for MATCH_EXCEPTION, throw exception!?
@@ -1235,7 +1235,7 @@ bool Match(const std::string& subj, const Pattern& p, int flags)
 
 bool Match
 (
-    std::string& subj,
+    std::string& subject,
     const Pattern& p,
     const std::string& replacement,
     int flags
@@ -1243,20 +1243,24 @@ bool Match
 {
     MatchState ma;
     ma.flags = flags;
-    ma.subject = PMString(subj);
+    ma.subject = subject;
     ma.pattern = p.pat_;
     ma.matchCookie = 0;
+
     // XXX check for MATCH_EXCEPTION, throw exception!?
     if (match(ma) != MATCH_SUCCESS)
+    {
         return false;
-    // debug output??
-    subj.replace(ma.start - 1, ma.stop - ma.start + 1, replacement);
+    }
+
+    subject.replace(ma.start - 1, ma.stop - ma.start + 1, replacement);
+
     return true;
 }
 
 bool Match
 (
-    std::string& subj,
+    std::string& subject,
     const Pattern& p,
     const Character *replacement,
     int flags
@@ -1264,38 +1268,42 @@ bool Match
 {
     MatchState ma;
     ma.flags = flags;
-    ma.subject = PMString(subj);
+    ma.subject = subject;
     ma.pattern = p.pat_;
     ma.matchCookie = 0;
+
     // XXX check for MATCH_EXCEPTION, throw exception!?
     if (match(ma) != MATCH_SUCCESS)
+    {
         return false;
-    // debug output??
-    subj.replace(ma.start - 1, ma.stop - ma.start + 1, replacement);
+    }
+
+    subject.replace(ma.start - 1, ma.stop - ma.start + 1, replacement);
+
     return true;
 }
 
 bool Match
 (
-    std::string& subj,
-    const Pattern& p,
     MatchRes& result,
+    const Pattern& p,
     int flags
 )
 {
     MatchState ma;
     ma.flags = flags;
-    ma.subject = PMString(subj);
+    ma.subject = result;
     ma.pattern = p.pat_;
     ma.matchCookie = 0;
+
     // XXX check for MATCH_EXCEPTION, throw exception!?
     if (match(ma) == MATCH_SUCCESS)
     {
-        result.start_ = ma.start;
+        result.start_ = ma.start - 1;
         result.stop_ = ma.stop;
-        result.subj_ = &subj;   // DANGER!
         return true;
     }
+
     return false;
 }
 

@@ -30,14 +30,17 @@
     CLOSED: [2013-08-26 Mon 22:37]
     + &=
     + |=
-*** TODO [1/2] Any, Break, BreakX, NotAny, NSpan, Span
-    + [ ] std::string functions () (void*)
+*** DONE [2/2] Any, Break, BreakX, NotAny, NSpan, Span
+    CLOSED: [2013-09-05 Thu 22:15]
+    + [X] std::string functions () (void*)
     + [X] handle charset arguments
-*** TODO MatchRes
-    MatchRes.string() // return string matched?
-    MatchRes keeping string pointer is dangerous!
-    return zero-based start()?
-    add len()?
+*** DONE MatchRes
+    CLOSED: [2013-09-05 Thu 22:52]
+    + MatchRes.string() // return string matched?
+    + MatchRes keeping string pointer is dangerous!
+    + return zero-based start()
+    + add len()?
+    All resolved by deriving MatchRes from std::string.
 *** TODO Template everything on Character and containers
     Support
     + Character

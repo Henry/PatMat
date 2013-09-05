@@ -31,12 +31,11 @@ class MaxLen
 int main()
 {
     {
-        MatchRes m;
-        string subject("Change brackets around character (a)");
+        MatchRes m("Change brackets around character (a)");
         string c;
-        Match(subject, '(' & Len(1) % c & ')', m);
+        Match(m, '(' & Len(1) % c & ')');
         m = '[' + c + ']';
-        cout << subject << endl;
+        cout << m << endl;
     }
     {
         //const Pattern digs = Span("0123456789");

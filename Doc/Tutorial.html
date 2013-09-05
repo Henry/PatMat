@@ -7,7 +7,7 @@
 <meta http-equiv="Content-Type" content="text/html;charset=iso-8859-1"/>
 <meta name="title" content="<b>PatMat: SPITBOL-like pattern construction and matching in C++</b>"/>
 <meta name="generator" content="Org-mode"/>
-<meta name="generated" content="2013-09-05 13:31:26 BST"/>
+<meta name="generated" content="2013-09-05 22:56:08 BST"/>
 <meta name="author" content="nil"/>
 <meta name="description" content=""/>
 <meta name="keywords" content=""/>
@@ -535,7 +535,7 @@ AB . CDE . IJ
 </p>
 
 
-<pre class="src src-c++">Match(Subject, <span style="color: #00ff00;">'('</span> &amp; Len(1) % c &amp; <span style="color: #00ff00;">')'</span>, <span style="color: #00ff00;">'['</span> &amp; c &amp; <span style="color: #00ff00;">']'</span>);
+<pre class="src src-c++">Match(subject, <span style="color: #00ff00;">'('</span> &amp; Len(1) % c &amp; <span style="color: #00ff00;">')'</span>, <span style="color: #00ff00;">'['</span> &amp; c &amp; <span style="color: #00ff00;">']'</span>);
 </pre>
 
 <p>
@@ -557,17 +557,17 @@ AB . CDE . IJ
 </p>
 
 
-<pre class="src src-c++"><span style="color: #0000ff;">MatchRes</span> <span style="color: #000000;">m</span>;
-<span style="color: #0000ff;">string</span> <span style="color: #000000;">c</span>;
+<pre class="src src-c++"><span style="color: #0000ff;">string</span> <span style="color: #000000;">c</span>;
+<span style="color: #0000ff;">MatchRes</span> <span style="color: #0000ff; font-weight: bold;">m</span>(c);
 ...
-Match(subject, <span style="color: #00ff00;">'('</span> &amp; Len(1) % c &amp; <span style="color: #00ff00;">')'</span>, m);
-M = <span style="color: #00ff00;">'['</span> + c + <span style="color: #00ff00;">']'</span>;
+Match(m, <span style="color: #00ff00;">'('</span> &amp; Len(1) % c &amp; <span style="color: #00ff00;">')'</span>);
+m = <span style="color: #00ff00;">'['</span> + c + <span style="color: #00ff00;">']'</span>;
 </pre>
 
 <p>
-    As with other <code>Match</code> cases, there is a function and procedure form of this
-    match call. An assignment after a failed match has no effect. Note that
-    <code>Subject</code> should not be modified between the calls.
+    An assignment after a failed match has no effect. Note that
+    <code>MatchRes m</code> should not be modified between the calls as it stores the start
+    and end of the matched sub-string.
 </p>
 </li>
 </ul>
@@ -910,12 +910,11 @@ x y          Match(x, y);
 <span style="color: #0000ff;">int</span> <span style="color: #0000ff; font-weight: bold;">main</span>()
 {
     {
-        <span style="color: #0000ff;">MatchRes</span> <span style="color: #000000;">m</span>;
-        <span style="color: #0000ff;">string</span> <span style="color: #000000;">subject</span>(<span style="color: #00ff00;">"Change brackets around character (a)"</span>);
+        <span style="color: #0000ff;">MatchRes</span> <span style="color: #000000;">m</span>(<span style="color: #00ff00;">"Change brackets around character (a)"</span>);
         <span style="color: #0000ff;">string</span> <span style="color: #000000;">c</span>;
-        Match(subject, <span style="color: #00ff00;">'('</span> &amp; Len(1) % c &amp; <span style="color: #00ff00;">')'</span>, m);
+        Match(m, <span style="color: #00ff00;">'('</span> &amp; Len(1) % c &amp; <span style="color: #00ff00;">')'</span>);
         m = <span style="color: #00ff00;">'['</span> + c + <span style="color: #00ff00;">']'</span>;
-        cout &lt;&lt; subject &lt;&lt; endl;
+        cout &lt;&lt; m &lt;&lt; endl;
     }
     {
         <span style="color: #ff00ff; font-weight: bold;">//</span><span style="color: #ff00ff;">const Pattern digs = Span("0123456789");</span>
@@ -1478,7 +1477,7 @@ x y          Match(x, y);
 </div>
 
 <div id="postamble">
-<p class="date">Date: 2013-09-05 13:31:26 BST</p>
+<p class="date">Date: 2013-09-05 22:56:08 BST</p>
 <p class="creator">Org version 7.8.11 with Emacs version 24</p>
 <a href="http://validator.w3.org/check?uri=referer">Validate XHTML 1.0</a>
 

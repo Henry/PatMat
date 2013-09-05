@@ -35,14 +35,13 @@ bool valid::validate
 
 bool valid::validate
 (
-    const Pattern& p,
-    string& s,
     MatchRes& result,
+    const Pattern& p,
     const int expected_result
 )
 {
     tests++;
-    if (Match(s, p, result, 0) == expected_result)
+    if (Match(result, p, 0) == expected_result)
     {
         successes++;
         return true;
@@ -51,7 +50,7 @@ bool valid::validate
     {
         cout<< "test " << tests << " *** FAILED! ***\n"
             << "pattern = " << p << "\n"
-            << "string = " << s << endl;
+            << "MatchRes = " << result << endl;
         return false;
     }
 }

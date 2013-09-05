@@ -281,7 +281,7 @@
     character, and replace the parentheses with square brackets. At first glance
     it would seem that:
     #+begin_src c++
-      Match(Subject, '(' & Len(1) % c & ')', '[' & c & ']');
+      Match(subject, '(' & Len(1) % c & ')', '[' & c & ']');
     #+end_src
     would do the trick, but that does not work, because the third argument to
     Match gets evaluated too early, before the call to Match, and before the
@@ -297,15 +297,15 @@
     Using this approach, we can now write the above operation properly in a
     manner that will work:
     #+begin_src c++
-      MatchRes m;
       string c;
+      MatchRes m(c);
       ...
-      Match(subject, '(' & Len(1) % c & ')', m);
-      M = '[' + c + ']';
+      Match(m, '(' & Len(1) % c & ')');
+      m = '[' + c + ']';
     #+end_src
-    As with other =Match= cases, there is a function and procedure form of this
-    match call. An assignment after a failed match has no effect. Note that
-    =Subject= should not be modified between the calls.
+    An assignment after a failed match has no effect. Note that
+    =MatchRes m= should not be modified between the calls as it stores the start
+    and end of the matched sub-string.
 
 *** Examples of Pattern Matching
     First a simple example of the use of pattern replacement to remove a line

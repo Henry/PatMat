@@ -21,9 +21,8 @@ public:
 
     bool validate
     (
-        const Pattern& p,
-        std::string& s,
         MatchRes& result,
+        const Pattern& p,
         const int expected_result
     );
 

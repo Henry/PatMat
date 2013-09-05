@@ -101,11 +101,11 @@ int main()
 
     // assign on match & replace w/ value from match
     string sss;
-    MatchRes match;
-    if (Match(subject, goodbye * sss, match))
+    MatchRes match(subject);
+    if (Match(match, goodbye * sss))
     {
         match = "<b>" + sss + "</b>";
-        cout << "replaced: " << subject << '\n';
+        cout << "replaced: " << match << '\n';
     }
 
     // test "delayed evaluation" of string value

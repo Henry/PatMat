@@ -353,12 +353,23 @@ public:
 
     // Matching
 
-        friend bool Match(const Character *subj, const Pattern& p, int flags);
-        friend bool Match(const std::string& subj, const Pattern& p, int flags);
+        friend bool Match
+        (
+            const Character *subject,
+            const Pattern& p,
+            int flags
+        );
 
         friend bool Match
         (
-            std::string& subj,
+            const std::string& subject,
+            const Pattern& p,
+            int flags
+        );
+
+        friend bool Match
+        (
+            std::string& subject,
             const Pattern& p,
             const std::string& replacement,
             int flags
@@ -366,7 +377,7 @@ public:
 
         friend bool Match
         (
-            std::string& subj,
+            std::string& subject,
             const Pattern& p,
             const Character *replacement,
             int flags
@@ -374,9 +385,8 @@ public:
 
         friend bool Match
         (
-            std::string& subj,
-            const Pattern& p,
             MatchRes& result,
+            const Pattern& p,
             int flags
         );
 };
@@ -386,27 +396,27 @@ public:
 /// MatchRes: match result object
 // -----------------------------------------------------------------------------
 class MatchRes
+:
+    public std::string
 {
     int start_;
     int stop_;
-    std::string *subj_;
 
     // Subject can be replaced: must not be literal
     friend bool Match
     (
-        std::string& subj,
-        const Pattern& p,
         MatchRes& res,
+        const Pattern& p,
         int flags = 0
     );
 
 public:
 
-    MatchRes()
+    MatchRes(const std::string& str)
     :
+        std::string(str),
         start_(0),
-        stop_(0),
-        subj_(0)
+        stop_(0)
     {}
 
     inline int start()
@@ -421,7 +431,7 @@ public:
 
     inline bool matched()
     {
-        return start_ > 0 && stop_ > 0;
+        return stop_ > 0;
     }
 
     bool operator=(const std::string& replacement)
@@ -429,7 +439,7 @@ public:
         // debug output??
         if (matched())
         {
-            (*subj_).replace(start_ - 1, stop_ - start_ + 1, replacement);
+            replace(start_, stop_ - start_, replacement);
             return true;
         }
         return false;
@@ -440,7 +450,7 @@ public:
         // debug output??
         if (matched())
         {
-            (*subj_).replace(start_ - 1, stop_ - start_ + 1, replacement);
+            replace(start_, stop_ - start_, replacement);
             return true;
         }
         return false;
