@@ -29,3 +29,10 @@
 * Documentation
   + [[http://henry.github.com/PatMat/Doc/Tutorial.html][Tutorial]]
   + [[http://henry.github.com/PatMat/Doc/TODO.html][TODO]]
+* Build and Test
+  The default build setup is to compile with =g++= but =PatMat= has also been
+  tested with =clang++= and any other standard C++ compiler should be suitable.
+  The particular compiler can be configured by editing =Make/Makefile.config=.
+  + To build the PatMat library: =make=
+  + To run all the tests: =make test=
+  + To run the tutorial examples: =make tutorial=
