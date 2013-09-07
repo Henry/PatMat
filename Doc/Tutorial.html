@@ -7,7 +7,7 @@
 <meta http-equiv="Content-Type" content="text/html;charset=iso-8859-1"/>
 <meta name="title" content="<b>PatMat: SPITBOL-like pattern construction and matching in C++</b>"/>
 <meta name="generator" content="Org-mode"/>
-<meta name="generated" content="2013-09-07 23:02:24 BST"/>
+<meta name="generated" content="2013-09-07 23:04:49 BST"/>
 <meta name="author" content="nil"/>
 <meta name="description" content=""/>
 <meta name="keywords" content=""/>
@@ -424,9 +424,9 @@ AB . CDE . IJ
 </pre>
 
 <p>
-    On the first attempt, this pattern attempts to match the string ="A"=.  If
-    this fails, then the alternative matches a ="B"=, followed by an attempt to
-    match <code>P</code> again. This second attempt first attempts to match ="A"=, and so
+    On the first attempt, this pattern attempts to match the string "A".  If
+    this fails, then the alternative matches a "B", followed by an attempt to
+    match <code>P</code> again. This second attempt first attempts to match "A", and so
     on. The result is a pattern that will match a string of <code>B</code>'s followed by a
     single <code>A</code>.
 </p>
@@ -814,7 +814,7 @@ string cur, max;
     If the pattern <code>find</code> is matched against a string, the variable <code>max</code> at the
     end of the pattern will have the longest string of digits, and <code>loc</code> will be
     the starting character location of the string. For example,
-    <code>Match("ab123cd4657ef23", find)</code> will assign ="4657"= to <code>max</code> and <code>11</code> to
+    <code>Match("ab123cd4657ef23", find)</code> will assign "4657" to <code>max</code> and <code>11</code> to
     <code>loc</code> (indicating that the string ends with the eleventh character of the
     string).
 </p>
@@ -1472,7 +1472,7 @@ x y          Match(x, y);
 </div>
 
 <div id="postamble">
-<p class="date">Date: 2013-09-07 23:02:24 BST</p>
+<p class="date">Date: 2013-09-07 23:04:49 BST</p>
 <p class="creator">Org version 7.8.11 with Emacs version 24</p>
 <a href="http://validator.w3.org/check?uri=referer">Validate XHTML 1.0</a>
 

@@ -202,9 +202,9 @@
     #+begin_src c++
       P = ("A" | ("B" & (+P)))
     #+end_src
-    On the first attempt, this pattern attempts to match the string ="A"=.  If
-    this fails, then the alternative matches a ="B"=, followed by an attempt to
-    match =P= again. This second attempt first attempts to match ="A"=, and so
+    On the first attempt, this pattern attempts to match the string "A".  If
+    this fails, then the alternative matches a "B", followed by an attempt to
+    match =P= again. This second attempt first attempts to match "A", and so
     on. The result is a pattern that will match a string of =B='s followed by a
     single =A=.
 
@@ -495,7 +495,7 @@
     If the pattern =find= is matched against a string, the variable =max= at the
     end of the pattern will have the longest string of digits, and =loc= will be
     the starting character location of the string. For example,
-    =Match("ab123cd4657ef23", find)= will assign ="4657"= to =max= and =11= to
+    =Match("ab123cd4657ef23", find)= will assign "4657" to =max= and =11= to
     =loc= (indicating that the string ends with the eleventh character of the
     string).
 
