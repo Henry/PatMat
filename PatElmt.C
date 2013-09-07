@@ -73,7 +73,7 @@ PatElmt_::PatElmt_(Character c)
     val.Char = c;
 }
 
-PatElmt_::PatElmt_(const PMString& str)
+PatElmt_::PatElmt_(const std::string& str)
 :
     pCode_(PC_Null),
     index_(1),
@@ -110,7 +110,7 @@ PatElmt_::PatElmt_(const PMString& str)
             break;
         default:
             pCode_ = PC_String;
-            val.Str = new PMString(str);
+            val.Str = new std::string(str);
             break;
     }
 }
@@ -148,7 +148,7 @@ void PatElmt_::setStr(const Character* str, const unsigned l)
             break;
         default:
             pCode_ = PC_String;
-            val.Str = new PMString(str, l);
+            val.Str = new std::string(str, l);
             break;
     }
 }
@@ -217,7 +217,7 @@ PatElmt_ *copy(const PatElmt_ *P)
             switch (E->pCode_)
             {
                 case PC_String:
-                    E->val.Str = new PMString(*(E->val.Str));
+                    E->val.Str = new std::string(*(E->val.Str));
                     break;
                 case PC_Any_Set:
                 case PC_Break_Set:

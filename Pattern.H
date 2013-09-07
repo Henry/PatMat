@@ -66,17 +66,6 @@ typedef char Character;
 
 
 // -----------------------------------------------------------------------------
-/// PMString
-// -----------------------------------------------------------------------------
-typedef std::string PMString;
-
-inline bool isInStr(Character c, const PMString& S)
-{
-    return S.find(c) != PMString::npos;
-}
-
-
-// -----------------------------------------------------------------------------
 /// StringInterface: string object interface
 // -----------------------------------------------------------------------------
 
@@ -153,21 +142,21 @@ class Pattern
 
     // Private static functions
 
-        static Pattern inline orStrPat(const PMString&, const Pattern&);
-        static Pattern inline orPatStr(const Pattern&, const PMString&);
-        static Pattern inline orStrStr(const PMString&, const PMString&);
+        static Pattern inline orStrPat(const std::string&, const Pattern&);
+        static Pattern inline orPatStr(const Pattern&, const std::string&);
+        static Pattern inline orStrStr(const std::string&, const std::string&);
 
         static Pattern inline callOnmatch
         (
             const Pattern&,
-            void (*)(const PMString&, void*, void*),
+            void (*)(const std::string&, void*, void*),
             void*
         );
 
         static Pattern inline callImmed
         (
             const Pattern&,
-            void (*)(const PMString&, void*, void*),
+            void (*)(const std::string&, void*, void*),
             void*
         );
 
@@ -343,8 +332,8 @@ public:
         friend Pattern Tab(UnsignedInterface*);
         friend Pattern Tab(const unsigned int*);
 
-        friend Pattern assignOnmatch(const Pattern& p, PMString *var);
-        friend Pattern assignImmed(const Pattern& p, PMString *var);
+        friend Pattern assignOnmatch(const Pattern& p, std::string *var);
+        friend Pattern assignImmed(const Pattern& p, std::string *var);
 
     // Output
 

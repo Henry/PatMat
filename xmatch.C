@@ -962,7 +962,7 @@ static void freeDynamicObjects(DynamicObject_ *dop)
 static void matchTrace
 (
     const PatElmt_ *n,
-    const PMString subj,
+    const std::string subj,
     const int cursor
 )
 {
@@ -1330,7 +1330,7 @@ Match_Succeed:
                 const PatElmt_ *nodeOnM = stack(specialEntry).node;
                 unsigned start = stack(specialEntry).cursor + 1;
                 unsigned stop = stack(s).cursor;
-                PMString str = slice(subject, start, stop);
+                std::string str = slice(subject, start, stop);
 
                 switch (nodeOnM->pCode_)
                 {
@@ -1471,7 +1471,7 @@ Match:
         case PC_Any_VF:
             // Any (string function case)
             {
-                PMString str
+                std::string str
                 (
                     node->val.VF.func(ms.matchCookie, node->val.VF.cookie)
                 );
@@ -1491,7 +1491,7 @@ Match:
         case PC_Any_VP:
             // Any (string pointer case)
             {
-                PMString str(*node->val.VP);
+                std::string str(*node->val.VP);
                 if (Debug)
                 {
                     cout<< indent(regionLevel) << node
@@ -1596,7 +1596,7 @@ Match:
         case PC_Assign_Imm:
             // Assign immediate. This node performs the actual assignment
             {
-                PMString str
+                std::string str
                 (
                     slice(ms.subject, stack(stack.base + 1).cursor + 1, cursor)
                 );
@@ -1701,7 +1701,7 @@ Match:
         case PC_Break_VF:
             // Break (string function case)
             {
-                PMString str
+                std::string str
                 (
                     node->val.VF.func(ms.matchCookie, node->val.VF.cookie)
                 );
@@ -1724,7 +1724,7 @@ Match:
         case PC_Break_VP:
             // Break (string pointer case)
             {
-                PMString str(*node->val.VP);
+                std::string str(*node->val.VP);
                 if (Debug)
                 {
                     cout<< indent(regionLevel) << node << " matching Break '"
@@ -1778,7 +1778,7 @@ Match:
         case PC_BreakX_VF:
             // BreakX (string function case)
             {
-                PMString str
+                std::string str
                 (
                     node->val.VF.func(ms.matchCookie, node->val.VF.cookie)
                 );
@@ -1802,7 +1802,7 @@ Match:
         case PC_BreakX_VP:
             // BreakX (string pointer case)
             {
-                PMString str(*node->val.VP);
+                std::string str(*node->val.VP);
                 if (Debug)
                 {
                     cout<< indent(regionLevel) << node << " matching BreakX '"
@@ -1991,7 +1991,7 @@ Match:
         case PC_NotAny_VF:
             // NotAny (string function case)
             {
-                PMString str
+                std::string str
                 (
                     node->val.VF.func(ms.matchCookie, node->val.VF.cookie)
                 );
@@ -2011,7 +2011,7 @@ Match:
         case PC_NotAny_VP:
             // NotAny (string pointer case)
             {
-                PMString str(*node->val.VP);
+                std::string str(*node->val.VP);
                 if (Debug)
                 {
                     cout<< indent(regionLevel) << node
@@ -2054,7 +2054,7 @@ Match:
         case PC_NSpan_VF:
             // NSpan (string function case)
             {
-                PMString str
+                std::string str
                 (
                     node->val.VF.func(ms.matchCookie, node->val.VF.cookie)
                 );
@@ -2073,7 +2073,7 @@ Match:
         case PC_NSpan_VP:
             // NSpan (string pointer case)
             {
-                PMString str(*node->val.VP);
+                std::string str(*node->val.VP);
                 if (Debug)
                 {
                     cout<< indent(regionLevel) << node
@@ -2415,7 +2415,7 @@ Match:
         case PC_Span_VF:
             // Span (string function case)
             {
-                PMString str
+                std::string str
                 (
                     node->val.VF.func(ms.matchCookie, node->val.VF.cookie)
                 );
@@ -2444,7 +2444,7 @@ Match:
         case PC_Span_VP:
             // Span (string pointer case)
             {
-                PMString str(*node->val.VP);
+                std::string str(*node->val.VP);
                 if (Debug)
                 {
                     cout<< indent(regionLevel) << node
@@ -2629,7 +2629,7 @@ Match:
         case PC_String_VF:
             // String (function case)
             {
-                PMString str
+                std::string str
                 (
                     node->val.VF.func(ms.matchCookie, node->val.VF.cookie)
                 );
@@ -2654,7 +2654,7 @@ Match:
         case PC_String_VP:
             // String (vstring pointer case)
             {
-                PMString str(*node->val.VP);
+                std::string str(*node->val.VP);
                 if (Debug)
                 {
                     cout<< indent(regionLevel) << node
@@ -2757,7 +2757,7 @@ Match:
         case PC_Call_Imm:
             // Call immediate. This node performs the call
             {
-                PMString str
+                std::string str
                 (
                     slice(ms.subject, stack(stack.base + 1).cursor + 1, cursor)
                 );

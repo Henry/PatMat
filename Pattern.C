@@ -140,20 +140,20 @@ Pattern& Pattern::operator=(const Pattern& p)
 ///  Helper functions (passed as callbacks)
 // ----------------------------------------------------------------------------
 
-static PMString fetch_string_pointer(void *global_cookie, void *local_cookie)
+static std::string fetch_string_pointer(void *global_cookie, void *local_cookie)
 {
     std::string s = *static_cast<std::string*>(local_cookie);
     (void)global_cookie;
-    return PMString(s);
+    return std::string(s);
 }
 
-static PMString fetch_string_object(void *global_cookie, void *local_cookie)
+static std::string fetch_string_object(void *global_cookie, void *local_cookie)
 {
     StringInterface *obj = static_cast<StringInterface*>(local_cookie);
     unsigned l;
     const Character *p = obj->getString(&l);
     (void)global_cookie;
-    return PMString(p, l);
+    return std::string(p, l);
 }
 
 static unsigned fetch_unsigned_object(void *global_cookie, void *local_cookie)
@@ -195,7 +195,7 @@ Pattern& Pattern::operator|=(const Pattern& r)
     return *this = *this | r;
 }
 
-inline Pattern Pattern::orStrPat(const PMString& l, const Pattern& r)
+inline Pattern Pattern::orStrPat(const std::string& l, const Pattern& r)
 {
     return Pattern
     (
@@ -205,7 +205,7 @@ inline Pattern Pattern::orStrPat(const PMString& l, const Pattern& r)
     );
 }
 
-inline Pattern Pattern::orPatStr(const Pattern& l, const PMString& r)
+inline Pattern Pattern::orPatStr(const Pattern& l, const std::string& r)
 {
     return Pattern
     (
@@ -215,49 +215,49 @@ inline Pattern Pattern::orPatStr(const Pattern& l, const PMString& r)
     );
 }
 
-inline Pattern Pattern::orStrStr(const PMString& l, const PMString& r)
+inline Pattern Pattern::orStrStr(const std::string& l, const std::string& r)
 {
     return Pattern(1, alternate(new PatElmt_(l), new PatElmt_(r)));
 }
 
 Pattern operator|(const std::string& l, const Pattern& r)
 {
-    return Pattern::orStrPat(PMString(l), r);
+    return Pattern::orStrPat(std::string(l), r);
 }
 
 Pattern operator|(const Character *l, const Pattern& r)
 {
-    return Pattern::orStrPat(PMString(l), r);
+    return Pattern::orStrPat(std::string(l), r);
 }
 
 Pattern operator|(const Pattern& l, const std::string& r)
 {
-    return Pattern::orPatStr(l, PMString(r));
+    return Pattern::orPatStr(l, std::string(r));
 }
 
 Pattern operator|(const Pattern& l, const Character *r)
 {
-    return Pattern::orPatStr(l, PMString(r));
+    return Pattern::orPatStr(l, std::string(r));
 }
 
 Pattern operator|(const std::string& l, const std::string& r)
 {
-    return Pattern::orStrStr(PMString(l), PMString(r));
+    return Pattern::orStrStr(std::string(l), std::string(r));
 }
 
 Pattern operator|(const Character *l, const std::string& r)
 {
-    return Pattern::orStrStr(PMString(l), PMString(r));
+    return Pattern::orStrStr(std::string(l), std::string(r));
 }
 
 Pattern operator|(const std::string& l, const Character *r)
 {
-    return Pattern::orStrStr(PMString(l), PMString(r));
+    return Pattern::orStrStr(std::string(l), std::string(r));
 }
 
 Pattern Or(const Character *l, const Character *r)
 {
-    return Pattern::orStrStr(PMString(l), PMString(r));
+    return Pattern::orStrStr(std::string(l), std::string(r));
 }
 
 template<class T>
@@ -411,7 +411,7 @@ Pattern Arbno(const Character c)
     return Pattern(0, arbnoSimple(new PatElmt_(c)));
 }
 
-Pattern Arbno(const PMString& str)
+Pattern Arbno(const std::string& str)
 {
     if (str.length() == 0)
     {
@@ -425,7 +425,7 @@ Pattern Arbno(const PMString& str)
 
 Pattern Arbno(const Character *s)
 {
-    return Arbno(PMString(s));
+    return Arbno(std::string(s));
 }
 
 Pattern Arbno(const Pattern& p)
@@ -475,7 +475,7 @@ Pattern Arbno(const Pattern& p)
 
 static void put_string_pointer
 (
-    const PMString& str,
+    const std::string& str,
     void *global_cookie,
     void *local_cookie
 )
@@ -486,7 +486,7 @@ static void put_string_pointer
 
 static void put_string_object
 (
-    const PMString& str,
+    const std::string& str,
     void *global_cookie,
     void *local_cookie
 )
@@ -498,7 +498,7 @@ static void put_string_object
 
 static void output_string
 (
-    const PMString& str,
+    const std::string& str,
     void *global_cookie,
     void *local_cookie
 )
@@ -522,7 +522,7 @@ static void output_string
 //  Where n is the number of nodes in p, the a node is numbered n + 1,
 //  and the e node is n + 2.
 
-inline Pattern assignOnmatch(const Pattern& p, PMString *var)
+inline Pattern assignOnmatch(const Pattern& p, std::string *var)
 {
     PatElmt_ *pe = copy(p.pat_->pe_);
     PatElmt_ *e = new PatElmt_(PC_R_Enter, 0, EOP);
@@ -545,7 +545,7 @@ inline Pattern assignOnmatch(const Pattern& p, PMString *var)
 inline Pattern Pattern::callOnmatch
 (
     const Pattern& p,
-    void (*func) (const PMString&, void *, void *),
+    void (*func) (const std::string&, void *, void *),
     void *cookie
 )
 {
@@ -583,7 +583,7 @@ Pattern operator*(const Pattern& p, std::ostream& stream)
 //  Where n is the number of nodes in p, the a node is numbered n + 1,
 //  and the e node is n + 2.
 
-inline Pattern assignImmed(const Pattern& p, PMString *var)
+inline Pattern assignImmed(const Pattern& p, std::string *var)
 {
     PatElmt_ *pe = copy(p.pat_->pe_);
     PatElmt_ *e = new PatElmt_(PC_R_Enter, 0, EOP);
@@ -606,7 +606,7 @@ inline Pattern assignImmed(const Pattern& p, PMString *var)
 inline Pattern Pattern::callImmed
 (
     const Pattern& p,
-    void (*func) (const PMString&, void *, void *),
+    void (*func) (const std::string&, void *, void *),
     void *cookie
 )
 {

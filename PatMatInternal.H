@@ -66,7 +66,7 @@ struct Dynamic
 
     union Val
     {
-        PMString *str;          // type == DY_VSTR
+        std::string *str;          // type == DY_VSTR
         bool pred;              // type == DY_BOOL
         struct
         {                       // type == DY_PAT
@@ -251,17 +251,17 @@ class PatElmt_
         // PC_Assign_Imm_VP | PC_Assign_OnM_VP | PC_Any_VP | PC_Break_VP |
         // PC_BreakX_VP | PC_NotAny_VP | PC_NSpan_VP | PC_Span_VP |
         // PC_String_VP
-        PMString *VP;
+        std::string *VP;
 
         // PC_Call_Imm PC_Call_OnM
         struct
         {
-            void (*func) (const PMString&, void *, void *);
+            void (*func) (const std::string&, void *, void *);
             void *cookie;
         } MF;
 
         // PC_String
-        PMString *Str;
+        std::string *Str;
 
         // PC_String_2
         Character Str2[2];
@@ -314,7 +314,7 @@ class PatElmt_
         // | PC_Span_VF | PC_String_VF
         struct
         {
-            PMString (*func) (void *, void *);
+            std::string (*func) (void *, void *);
             void *cookie;
         } VF;
 
@@ -333,7 +333,7 @@ class PatElmt_
 
 
         PatElmt_(Character c);
-        PatElmt_(const PMString& str);
+        PatElmt_(const std::string& str);
         void setStr(const Character* str, const unsigned l);
         PatElmt_(const Character* str, const unsigned l);
         PatElmt_(const Character* str);
@@ -383,7 +383,7 @@ class PatElmt_
             const PatternCode pc,
             const IndexT index,
             const PatElmt_ *pNext,
-            PMString *vp
+            std::string *vp
         );
 
         inline PatElmt_
@@ -391,7 +391,7 @@ class PatElmt_
             const PatternCode pc,
             const IndexT index,
             const PatElmt_ *pNext,
-            void(*func)(const PMString&, void *, void *),
+            void(*func)(const std::string&, void *, void *),
             void *cookie
         );
 
@@ -458,7 +458,7 @@ class PatElmt_
             const PatternCode pc,
             const IndexT index,
             const PatElmt_ *pNext,
-            PMString (*func)(void *, void *),
+            std::string (*func)(void *, void *),
             void *cookie
         );
 
@@ -480,7 +480,7 @@ class PatElmt_
 struct MatchState
 {
     int flags;
-    PMString subject;
+    std::string subject;
     Pattern_ *pattern;
     void *matchCookie;
     unsigned start, stop;  // Output from match
