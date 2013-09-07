@@ -7,7 +7,7 @@
 <meta http-equiv="Content-Type" content="text/html;charset=iso-8859-1"/>
 <meta name="title" content="<b>PatMat: SPITBOL-like pattern construction and matching in C++</b>"/>
 <meta name="generator" content="Org-mode"/>
-<meta name="generated" content="2013-09-05 23:29:35 BST"/>
+<meta name="generated" content="2013-09-07 20:27:53 BST"/>
 <meta name="author" content="nil"/>
 <meta name="description" content=""/>
 <meta name="keywords" content=""/>
@@ -109,7 +109,7 @@
 <h2 id="sec-1"><span class="section-number-2">1</span> Pattern Matching Tutorial</h2>
 <div class="outline-text-2" id="text-1">
 
-<p>  A pattern matching operation (a call to one of the Match subprograms) takes a
+<p>  A pattern matching operation (a call to one of the <code>Match</code> functions) takes a
   subject string and a pattern, and optionally a replacement string. The
   replacement string option is only allowed if the subject is a variable.
 </p>
@@ -143,9 +143,9 @@
     match <code>B</code>.
 </p>
 <p>
-   There is full backtracking, which means that if a given pattern element fails
-   to match, then previous alternatives are matched.  For example if we have the
-   pattern:
+    There is full backtracking, which means that if a given pattern element
+    fails to match, then previous alternatives are matched.  For example if we
+    have the pattern:
 </p>
 
 
@@ -153,14 +153,14 @@
 </pre>
 
 <p>
-   First we attempt to match <code>A</code>, if that succeeds, then we go on to try to
-   match <code>C</code>, and if that succeeds, we go on to try to match <code>E</code>. If <code>E</code> fails,
-   then we try <code>F</code>. If <code>F</code> fails, then we go back and try matching <code>D</code> instead
-   of <code>C</code>. Let's make this explicit using a specific example, and introducing
-   the simplest kind of pattern element, which is a literal string. The meaning
-   of this pattern element is simply to match the characters that correspond to
-   the string characters. Now let's rewrite the above pattern form with specific
-   string literals as the pattern elements:
+    First we attempt to match <code>A</code>, if that succeeds, then we go on to try to
+    match <code>C</code>, and if that succeeds, we go on to try to match <code>E</code>. If <code>E</code> fails,
+    then we try <code>F</code>. If <code>F</code> fails, then we go back and try matching <code>D</code> instead
+    of <code>C</code>. Let's make this explicit using a specific example, and introducing
+    the simplest kind of pattern element, which is a literal string. The meaning
+    of this pattern element is simply to match the characters that correspond to
+    the string characters. Now let's rewrite the above pattern form with
+    specific string literals as the pattern elements:
 </p>
 
 
@@ -168,7 +168,7 @@
 </pre>
 
 <p>
-   The following strings will be attempted in sequence:
+    The following strings will be attempted in sequence:
 </p>
 
 
@@ -183,8 +183,8 @@ AB . CDE . IJ
 </pre>
 
 <p>
-   Here we use the dot simply to separate the pieces of the string matched by
-   the three separate elements.
+    Here we use the dot simply to separate the pieces of the string matched by
+    the three separate elements.
 </p>
 </li>
 </ul>
@@ -227,14 +227,10 @@ AB . CDE . IJ
 
 <p>
     This mode of pattern matching is called the unanchored mode. It is also
-    possible to put the pattern matcher into anchored mode by setting the global
-    variable Anchored_Mode to True. This will cause all subsequent matches to be
-    performed in anchored mode, where the match is required to start at the
-    first character.
-</p>
-<p>
-    We will also see later how the effect of an anchored match can be obtained
-    for a single specified anchor point if this is desired.
+    possible to put the pattern matcher into anchored mode by providing the
+    optional flag Pattern::ANCHOR to the <code>Match</code> function.  This will cause the
+    match to be performed in anchored mode, where the match is required to
+    start at the first character.
 </p>
 </li>
 </ul>
@@ -244,7 +240,7 @@ AB . CDE . IJ
     pattern elements that correspond to special predefined alternations:
 <ul>
 <li id="sec-1-3-1">Arb<br/>
-      Matches any string. First it matches the null string, and then on a
+      Matches any string.  First it matches the null string, and then on a
       subsequent failure, matches one character, and then two characters, and so
       on. It only fails if the entire remaining string is matched.
 </li>
@@ -252,7 +248,7 @@ AB . CDE . IJ
 <ul>
 <li id="sec-1-3-2">Bal<br/>
       Matches a non-empty string that is parentheses balanced with respect to
-      ordinary <code>()</code> characters. Examples of balanced strings are ="ABC"=,
+      ordinary <code>()</code> characters.  Examples of balanced strings are ="ABC"=,
       ="A((B)C)"=, and ="A(B)C(D)E"=.  Bal matches the shortest possible
       balanced string on the first attempt, and if there is a subsequent
       failure, attempts to extend the string.
@@ -276,7 +272,7 @@ AB . CDE . IJ
 <ul>
 <li id="sec-1-3-5">Fence<br/>
       Matches the null string at first, and then if a failure causes
-      alternatives to be sought, aborts the match (like a Cancel). Note that
+      alternatives to be sought, aborts the match (like a <code>Cancel</code>). Note that
       using <code>Fence</code> at the start of a pattern has the same effect as matching in
       anchored mode.
 </li>
@@ -290,7 +286,7 @@ AB . CDE . IJ
 </ul>
 <ul>
 <li id="sec-1-3-7">Succeed<br/>
-      Repeatedly matches the null string (it is equivalent to the alternation
+      Repeatedly matches the null string.  It is equivalent to the alternation
 
 
 
@@ -298,9 +294,8 @@ AB . CDE . IJ
 </pre>
 
 <p>
-      This is a special pattern element, which is useful
-      in conjunction with some of the special pattern elements that have side
-      effects.
+      This is a special pattern element, which is useful in conjunction with
+      some of the special pattern elements that have side effects.
 </p>
 </li>
 </ul>
@@ -361,7 +356,7 @@ AB . CDE . IJ
 <ul>
 <li id="sec-1-4-6">Len(N)<br/>
       Where <code>N</code> is a natural number, matches the given number of characters. For
-      example, <code>Len(10)</code> matches any string that is exactly ten characters long.
+      example, <code>Len(10)</code> matches any string that is exactly 10 characters long.
 </li>
 </ul>
 <ul>
@@ -514,8 +509,8 @@ AB . CDE . IJ
     A special use of deferred matching is the construction of predicate
     functions. The element <code>(+P)</code> where <code>P</code> is an access to a function that
     returns a <code>bool</code> value, causes the function to be called at the time the
-    element is matched. If the function returns True, then the null string is
-    matched, if the function returns False, then failure is signalled and
+    element is matched. If the function returns <code>true</code>, then the null string is
+    matched, if the function returns <code>false</code>, then failure is signalled and
     previous alternatives are sought.
 </p>
 </li>
@@ -523,7 +518,7 @@ AB . CDE . IJ
 <ul>
 <li id="sec-1-8">Deferred Replacement<br/>
     The simple model given for pattern replacement (where the matched sub-string
-    is replaced by the string given as the third argument to Match) works fine
+    is replaced by the string given as the third argument to <code>Match</code>) works fine
     in simple cases, but this approach does not work in the case where the
     expression used as the replacement string is dependent on values set by the
     match.
@@ -1477,7 +1472,7 @@ x y          Match(x, y);
 </div>
 
 <div id="postamble">
-<p class="date">Date: 2013-09-05 23:29:35 BST</p>
+<p class="date">Date: 2013-09-07 20:27:53 BST</p>
 <p class="creator">Org version 7.8.11 with Emacs version 24</p>
 <a href="http://validator.w3.org/check?uri=referer">Validate XHTML 1.0</a>
 
