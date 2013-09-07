@@ -208,7 +208,7 @@
     on. The result is a pattern that will match a string of =B='s followed by a
     single =A=.
 
-    This particular example could simply be written as =NSpan('B') & 'A'=, but
+    This particular example could simply be written as =(NSpan('B') & 'A')=, but
     the use of recursive patterns in the general case can construct complex
     patterns which could not otherwise be built.
 
