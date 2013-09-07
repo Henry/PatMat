@@ -7,7 +7,7 @@
 #+STARTUP: hidestars odd
 
 * Pattern Matching Tutorial
-  A pattern matching operation (a call to one of the Match subprograms) takes a
+  A pattern matching operation (a call to one of the =Match= functions) takes a
   subject string and a pattern, and optionally a replacement string. The
   replacement string option is only allowed if the subject is a variable.
 
@@ -30,25 +30,25 @@
     which means first attempt to match =A=, and then if that does not succeed,
     match =B=.
 
-   There is full backtracking, which means that if a given pattern element fails
-   to match, then previous alternatives are matched.  For example if we have the
-   pattern:
-   #+begin_src c++
-     (A | B) & (C | D) & (E | F)
-   #+end_src
-   First we attempt to match =A=, if that succeeds, then we go on to try to
-   match =C=, and if that succeeds, we go on to try to match =E=. If =E= fails,
-   then we try =F=. If =F= fails, then we go back and try matching =D= instead
-   of =C=. Let's make this explicit using a specific example, and introducing
-   the simplest kind of pattern element, which is a literal string. The meaning
-   of this pattern element is simply to match the characters that correspond to
-   the string characters. Now let's rewrite the above pattern form with specific
-   string literals as the pattern elements:
-   #+begin_src c++
-     ("ABC" | "AB") & ("DEF" | "CDE") & ("GH" | "IJ")
-   #+end_src
-   The following strings will be attempted in sequence:
-   #+begin_src c++
+    There is full backtracking, which means that if a given pattern element
+    fails to match, then previous alternatives are matched.  For example if we
+    have the pattern:
+    #+begin_src c++
+      (A | B) & (C | D) & (E | F)
+    #+end_src
+    First we attempt to match =A=, if that succeeds, then we go on to try to
+    match =C=, and if that succeeds, we go on to try to match =E=. If =E= fails,
+    then we try =F=. If =F= fails, then we go back and try matching =D= instead
+    of =C=. Let's make this explicit using a specific example, and introducing
+    the simplest kind of pattern element, which is a literal string. The meaning
+    of this pattern element is simply to match the characters that correspond to
+    the string characters. Now let's rewrite the above pattern form with
+    specific string literals as the pattern elements:
+    #+begin_src c++
+      ("ABC" | "AB") & ("DEF" | "CDE") & ("GH" | "IJ")
+    #+end_src
+    The following strings will be attempted in sequence:
+    #+begin_src c++
       ABC . DEF . GH
       ABC . DEF . IJ
       ABC . CDE . GH
@@ -57,9 +57,9 @@
       AB . DEF . IJ
       AB . CDE . GH
       AB . CDE . IJ
-   #+end_src
-   Here we use the dot simply to separate the pieces of the string matched by
-   the three separate elements.
+    #+end_src
+    Here we use the dot simply to separate the pieces of the string matched by
+    the three separate elements.
 
 *** Moving the Start Point
     A pattern is not required to match starting at the first character of the
@@ -86,24 +86,21 @@
          section
     #+end_src
     This mode of pattern matching is called the unanchored mode. It is also
-    possible to put the pattern matcher into anchored mode by setting the global
-    variable Anchored_Mode to True. This will cause all subsequent matches to be
-    performed in anchored mode, where the match is required to start at the
-    first character.
-
-    We will also see later how the effect of an anchored match can be obtained
-    for a single specified anchor point if this is desired.
+    possible to put the pattern matcher into anchored mode by providing the
+    optional flag Pattern::ANCHOR to the =Match= function.  This will cause the
+    match to be performed in anchored mode, where the match is required to
+    start at the first character.
 
 *** Other Pattern Elements
     In addition to strings (or single characters), there are many special
     pattern elements that correspond to special predefined alternations:
 ***** Arb
-      Matches any string. First it matches the null string, and then on a
+      Matches any string.  First it matches the null string, and then on a
       subsequent failure, matches one character, and then two characters, and so
       on. It only fails if the entire remaining string is matched.
 ***** Bal
       Matches a non-empty string that is parentheses balanced with respect to
-      ordinary =()= characters. Examples of balanced strings are ="ABC"=,
+      ordinary =()= characters.  Examples of balanced strings are ="ABC"=,
       ="A((B)C)"=, and ="A(B)C(D)E"=.  Bal matches the shortest possible
       balanced string on the first attempt, and if there is a subsequent
       failure, attempts to extend the string.
@@ -118,7 +115,7 @@
       effects.
 ***** Fence
       Matches the null string at first, and then if a failure causes
-      alternatives to be sought, aborts the match (like a Cancel). Note that
+      alternatives to be sought, aborts the match (like a =Cancel=). Note that
       using =Fence= at the start of a pattern has the same effect as matching in
       anchored mode.
 ***** Rem
@@ -126,13 +123,12 @@
       is a specialized pattern element, which is useful in conjunction with some
       of the special pattern elements that have side effects.
 ***** Succeed
-      Repeatedly matches the null string (it is equivalent to the alternation
+      Repeatedly matches the null string.  It is equivalent to the alternation
       #+begin_src c++
         ("" | "" | "" ....).
       #+end_src
-      This is a special pattern element, which is useful
-      in conjunction with some of the special pattern elements that have side
-      effects.
+      This is a special pattern element, which is useful in conjunction with
+      some of the special pattern elements that have side effects.
 
 *** Pattern Construction Functions
     The following functions construct additional pattern elements
@@ -168,7 +164,7 @@
       concatenation.
 ***** Len(N)
       Where =N= is a natural number, matches the given number of characters. For
-      example, =Len(10)= matches any string that is exactly ten characters long.
+      example, =Len(10)= matches any string that is exactly 10 characters long.
 ***** NotAny(S)
       Where =S= is a string, matches a single character that is not one of the
       characters of =S=. Fails if the current characer is one of the given set
@@ -266,13 +262,13 @@
     A special use of deferred matching is the construction of predicate
     functions. The element =(+P)= where =P= is an access to a function that
     returns a =bool= value, causes the function to be called at the time the
-    element is matched. If the function returns True, then the null string is
-    matched, if the function returns False, then failure is signalled and
+    element is matched. If the function returns =true=, then the null string is
+    matched, if the function returns =false=, then failure is signalled and
     previous alternatives are sought.
 
 *** Deferred Replacement
     The simple model given for pattern replacement (where the matched sub-string
-    is replaced by the string given as the third argument to Match) works fine
+    is replaced by the string given as the third argument to =Match=) works fine
     in simple cases, but this approach does not work in the case where the
     expression used as the replacement string is dependent on values set by the
     match.
