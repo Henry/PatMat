@@ -103,9 +103,9 @@ Pattern operator*(const Pattern& p, StringInterface *obj);
 // ----------------------------------------------------------------------------
 //
 // Constructs a pattern that will match any non-empty string that is parentheses
-// balanced with respect to the normal parentheses characters.  Attempts to
-// extend the string if a subsequent failure occurs.
-Pattern Bal();
+// balanced with respect to the parentheses characters open and close.
+// Attempts to extend the string if a subsequent failure occurs.
+Pattern Bal(const Character open, const Character close);
 
 // ----------------------------------------------------------------------------
 ///  Break

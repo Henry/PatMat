@@ -156,6 +156,10 @@ void PatMat::Pattern::dump(std::ostream& os) const
                 writeNodeId(os, e.val.Alt);
                 break;
 
+            case PC_Bal:
+                os  << "('" << e.val.open << "', '" << e.val.close << "')";
+                break;
+
             case PC_Rpat:
                 os  << e.val.PP;
                 break;
@@ -336,12 +340,16 @@ static const PatElmt_ *writePattern
 
         case PC_Abort:
         case PC_Arb_X:
-        case PC_Bal:
         case PC_Fail:
         case PC_Fence:
         case PC_Rem:
         case PC_Succeed:
             os  << patternCodeNames[e.pCode_] << "()";
+            break;
+
+        case PC_Bal:
+            os  << patternCodeNames[e.pCode_]
+                << "('" << e.val.open << "', '" << e.val.close << "')";
             break;
 
         case PC_Any_Set:

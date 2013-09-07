@@ -11,8 +11,7 @@ int main()
     string subject4("())(");
     string subject5("((())");
 
-    // Pattern p1 = Bal();
-    Pattern p1 = Pos(0U) & Bal() & Rpos(0U);
+    Pattern p1 = Pos(0U) & Bal('(', ')') & Rpos(0U);
 
     tst.validate(p1, subject1, true);
     tst.validate(p1, subject2, true);

@@ -182,6 +182,23 @@ inline PatElmt_::PatElmt_
     const PatternCode pc,
     const IndexT index,
     const PatElmt_ *pNext,
+    const Character open,
+    const Character close
+)
+:
+    pCode_(pc),
+    index_(index),
+    pNext_(pNext)
+{
+    val.open = open;
+    val.close = close;
+}
+
+inline PatElmt_::PatElmt_
+(
+    const PatternCode pc,
+    const IndexT index,
+    const PatElmt_ *pNext,
     const CharacterSet& set
 )
 :

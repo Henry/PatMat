@@ -230,7 +230,7 @@ class PatElmt_
 
     union Val
     {
-        // PC_Arb_Y | PC_Assign | PC_Bal | PC_BreakX_X | PC_Cancel | PC_EOP |
+        // PC_Arb_Y | PC_Assign | PC_BreakX_X | PC_Cancel | PC_EOP |
         // PC_Fail | PC_Fence | PC_Fence_X | PC_Fence_Y | PC_Null | PC_R_Enter
         // | PC_R_Remove | PC_R_Restore | PC_Rest | PC_Succeed | PC_Unanchored
         // => null;
@@ -292,8 +292,15 @@ class PatElmt_
         // PC_NSpan_CH | PC_Span_CH
         Character Char;
 
-        // PC_Any_Set | PC_Break_Set | PC_BreakX_set | PC_NotAny_Set | PC_NSpan_Set
-        // | PC_Span_Set
+        // PC_Bal
+        struct
+        {
+            Character open;
+            Character close;
+        };
+
+        // PC_Any_Set | PC_Break_Set | PC_BreakX_set | PC_NotAny_Set
+        // | PC_NSpan_Set | PC_Span_Set
         CharacterSet *set;
 
         // PC_Arbno_Y | PC_Len_Nat | PC_Pos_Nat | PC_RPos_Nat | PC_RTab_Nat |
@@ -350,7 +357,16 @@ class PatElmt_
             const PatternCode pc,
             const IndexT index,
             const PatElmt_ *pNext,
-            const Character Char
+            const Character c
+        );
+
+        inline PatElmt_
+        (
+            const PatternCode pc,
+            const IndexT index,
+            const PatElmt_ *pNext,
+            const Character open,
+            const Character close
         );
 
         inline PatElmt_

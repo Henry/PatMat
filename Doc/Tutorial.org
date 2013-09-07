@@ -98,12 +98,6 @@
       Matches any string.  First it matches the null string, and then on a
       subsequent failure, matches one character, and then two characters, and so
       on. It only fails if the entire remaining string is matched.
-***** Bal
-      Matches a non-empty string that is parentheses balanced with respect to
-      ordinary =()= characters.  Examples of balanced strings are ="ABC"=,
-      ="A((B)C)"=, and ="A(B)C(D)E"=.  Bal matches the shortest possible
-      balanced string on the first attempt, and if there is a subsequent
-      failure, attempts to extend the string.
 ***** Abort
       Immediately aborts the entire pattern match, signalling failure. This is a
       specialized pattern element, which is useful in conjunction with some of
@@ -144,6 +138,12 @@
       #+end_src
       The pattern =P= may contain any number of
       pattern elements including the use of alternatiion and concatenation.
+***** Bal(Open, Close)
+      Matches a non-empty string that is parentheses balanced with respect to
+      characters =Open= and =Close=.  Examples of balanced strings are ="ABC"=,
+      ="A((B)C)"=, and ="A(B)C(D)E"=.  =Bal(Open, Close)= matches the shortest
+      possible balanced string on the first attempt, and if there is a
+      subsequent failure, attempts to extend the string.
 ***** Break(S)
       Where =S= is a string, matches a string of zero or more characters up to
       but not including a break character that is one of the characters given in
@@ -376,8 +376,8 @@
     then later in the pattern we rematch the value that was assigned.
 
     For an example of a recursive pattern, let's define a pattern that is like
-    the built in =Bal=, but the string matched is balanced with respect to
-    square brackets or curly brackets.
+    the built in =Bal(Open, Close)=, but the string matched is balanced with
+    respect to square brackets OR curly brackets.
 
     The language for such strings might be defined in extended BNF as
     #+begin_src c++

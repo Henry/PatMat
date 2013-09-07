@@ -1633,11 +1633,11 @@ Match:
                 cout<< indent(regionLevel) << node
                     << " matching or extending Bal\n";
             }
-            if (cursor >= len || subject[cursor] == ')')
+            if (cursor >= len || subject[cursor] == node->val.close)
             {
                 goto Fail;
             }
-            if (subject[cursor] == '(')
+            if (subject[cursor] == node->val.open)
             {
                 unsigned Paren_Count = 1;
                 for (;;)
@@ -1647,11 +1647,11 @@ Match:
                     {
                         goto Fail;
                     }
-                    else if (subject[cursor] == '(')
+                    else if (subject[cursor] == node->val.open)
                     {
                         Paren_Count++;
                     }
-                    else if (subject[cursor] == ')')
+                    else if (subject[cursor] == node->val.close)
                     {
                         if (--Paren_Count == 0)
                         {

@@ -637,9 +637,9 @@ Pattern operator%(const Pattern& p, std::ostream& stream)
 ///  Bal
 // ----------------------------------------------------------------------------
 
-Pattern Bal()
+Pattern Bal(const Character c1, const Character c2)
 {
-    return Pattern(1, new PatElmt_(PC_Bal, 1, EOP));
+    return Pattern(1, new PatElmt_(PC_Bal, 1, EOP, c1, c2));
 }
 
 

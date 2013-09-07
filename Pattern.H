@@ -252,7 +252,7 @@ public:
         friend Pattern operator%(const Pattern& p, StringInterface *);
         friend Pattern operator%(const Pattern& p, std::ostream&);
 
-        friend Pattern Bal();
+        friend Pattern Bal(const Character open, const Character close);
 
         friend Pattern Break(const Character);
         friend Pattern Break(const CharacterSet&);
