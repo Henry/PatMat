@@ -140,8 +140,8 @@
       pattern elements including the use of alternatiion and concatenation.
 ***** Bal(Open, Close)
       Matches a non-empty string that is parentheses balanced with respect to
-      characters =Open= and =Close=.  Examples of balanced strings are ="ABC"=,
-      ="A((B)C)"=, and ="A(B)C(D)E"=.  =Bal(Open, Close)= matches the shortest
+      characters =Open= and =Close=.  Examples of balanced strings are "ABC",
+      "A((B)C)", and "A(B)C(D)E".  =Bal(Open, Close)= matches the shortest
       possible balanced string on the first attempt, and if there is a
       subsequent failure, attempts to extend the string.
 ***** Break(S)
