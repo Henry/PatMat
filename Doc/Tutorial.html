@@ -7,7 +7,7 @@
 <meta http-equiv="Content-Type" content="text/html;charset=iso-8859-1"/>
 <meta name="title" content="<b>PatMat: SPITBOL-like pattern construction and matching in C++</b>"/>
 <meta name="generator" content="Org-mode"/>
-<meta name="generated" content="2013-09-07 20:27:53 BST"/>
+<meta name="generated" content="2013-09-07 22:55:02 BST"/>
 <meta name="author" content="nil"/>
 <meta name="description" content=""/>
 <meta name="keywords" content=""/>
@@ -246,23 +246,14 @@ AB . CDE . IJ
 </li>
 </ul>
 <ul>
-<li id="sec-1-3-2">Bal<br/>
-      Matches a non-empty string that is parentheses balanced with respect to
-      ordinary <code>()</code> characters.  Examples of balanced strings are ="ABC"=,
-      ="A((B)C)"=, and ="A(B)C(D)E"=.  Bal matches the shortest possible
-      balanced string on the first attempt, and if there is a subsequent
-      failure, attempts to extend the string.
-</li>
-</ul>
-<ul>
-<li id="sec-1-3-3">Abort<br/>
+<li id="sec-1-3-2">Abort<br/>
       Immediately aborts the entire pattern match, signalling failure. This is a
       specialized pattern element, which is useful in conjunction with some of
       the special pattern elements that have side effects.
 </li>
 </ul>
 <ul>
-<li id="sec-1-3-4">Fail<br/>
+<li id="sec-1-3-3">Fail<br/>
       The null alternation. Matches no possible strings, so it always signals
       failure. This is a specialized pattern element, which is useful in
       conjunction with some of the special pattern elements that have side
@@ -270,7 +261,7 @@ AB . CDE . IJ
 </li>
 </ul>
 <ul>
-<li id="sec-1-3-5">Fence<br/>
+<li id="sec-1-3-4">Fence<br/>
       Matches the null string at first, and then if a failure causes
       alternatives to be sought, aborts the match (like a <code>Cancel</code>). Note that
       using <code>Fence</code> at the start of a pattern has the same effect as matching in
@@ -278,14 +269,14 @@ AB . CDE . IJ
 </li>
 </ul>
 <ul>
-<li id="sec-1-3-6">Rem<br/>
+<li id="sec-1-3-5">Rem<br/>
       Matches from the current point to the last character in the string. This
       is a specialized pattern element, which is useful in conjunction with some
       of the special pattern elements that have side effects.
 </li>
 </ul>
 <ul>
-<li id="sec-1-3-7">Succeed<br/>
+<li id="sec-1-3-6">Succeed<br/>
       Repeatedly matches the null string.  It is equivalent to the alternation
 
 
@@ -327,7 +318,16 @@ AB . CDE . IJ
 </p></li>
 </ul>
 <ul>
-<li id="sec-1-4-3">Break(S)<br/>
+<li id="sec-1-4-3">Bal(Open, Close)<br/>
+      Matches a non-empty string that is parentheses balanced with respect to
+      characters <code>Open</code> and <code>Close</code>.  Examples of balanced strings are ="ABC"=,
+      ="A((B)C)"=, and ="A(B)C(D)E"<code>.  =Bal(Open, Close)</code> matches the shortest
+      possible balanced string on the first attempt, and if there is a
+      subsequent failure, attempts to extend the string.
+</li>
+</ul>
+<ul>
+<li id="sec-1-4-4">Break(S)<br/>
       Where <code>S</code> is a string, matches a string of zero or more characters up to
       but not including a break character that is one of the characters given in
       the string <code>S</code>.  Can match the null string, but cannot match the last
@@ -336,14 +336,14 @@ AB . CDE . IJ
 </li>
 </ul>
 <ul>
-<li id="sec-1-4-4">BreakX(S)<br/>
+<li id="sec-1-4-5">BreakX(S)<br/>
       Where <code>S</code> is a string, behaves exactly like <code>Break(S)</code> when it first
       matches, but if a string is successfully matched, then a susequent failure
       causes an attempt to extend the matched string.
 </li>
 </ul>
 <ul>
-<li id="sec-1-4-5">Fence(P)<br/>
+<li id="sec-1-4-6">Fence(P)<br/>
       Where <code>P</code> is a pattern, attempts to match the pattern <code>P</code> including trying
       all possible alternatives of <code>P</code>. If none of these alternatives succeeds,
       then the <code>Fence</code> pattern fails. If one alternative succeeds, then the
@@ -354,20 +354,20 @@ AB . CDE . IJ
 </li>
 </ul>
 <ul>
-<li id="sec-1-4-6">Len(N)<br/>
+<li id="sec-1-4-7">Len(N)<br/>
       Where <code>N</code> is a natural number, matches the given number of characters. For
       example, <code>Len(10)</code> matches any string that is exactly 10 characters long.
 </li>
 </ul>
 <ul>
-<li id="sec-1-4-7">NotAny(S)<br/>
+<li id="sec-1-4-8">NotAny(S)<br/>
       Where <code>S</code> is a string, matches a single character that is not one of the
       characters of <code>S</code>. Fails if the current characer is one of the given set
       of characters.
 </li>
 </ul>
 <ul>
-<li id="sec-1-4-8">NSpan(S)<br/>
+<li id="sec-1-4-9">NSpan(S)<br/>
       Where <code>S</code> is a string, matches a string of zero or more characters that is
       among the characters given in the string. Always matches the longest
       possible such string.  Always succeeds, since it can match the null
@@ -375,33 +375,33 @@ AB . CDE . IJ
 </li>
 </ul>
 <ul>
-<li id="sec-1-4-9">Pos(N)<br/>
+<li id="sec-1-4-10">Pos(N)<br/>
       Where <code>N</code> is a natural number, matches the null string if exactly <code>N</code>
       characters have been matched so far, and otherwise fails.
 </li>
 </ul>
 <ul>
-<li id="sec-1-4-10">Rpos(N)<br/>
+<li id="sec-1-4-11">Rpos(N)<br/>
       Where <code>N</code> is a natural number, matches the null string if exactly <code>N</code>
       characters remain to be matched, and otherwise fails.
 </li>
 </ul>
 <ul>
-<li id="sec-1-4-11">Rtab(N)<br/>
+<li id="sec-1-4-12">Rtab(N)<br/>
       Where <code>N</code> is a natural number, matches characters from the current
       position until exactly <code>N</code> characters remain to be matched in the
       string. Fails if fewer than <code>N</code> unmatched characters remain in the string.
 </li>
 </ul>
 <ul>
-<li id="sec-1-4-12">Tab(N)<br/>
+<li id="sec-1-4-13">Tab(N)<br/>
       Where <code>N</code> is a natural number, matches characters from the current
       position until exactly <code>N</code> characters have been matched in all. Fails if
       more than <code>N</code> characters have already been matched.
 </li>
 </ul>
 <ul>
-<li id="sec-1-4-13">Span(S)<br/>
+<li id="sec-1-4-14">Span(S)<br/>
       Where <code>S</code> is a string, matches a string of one or more characters that is
       among the characters given in the string. Always matches the longest
       possible such string.  Fails if the current character is not one of the
@@ -671,8 +671,8 @@ Match(<span style="color: #00ff00;">" 124, 257 "</span>, nums);
 </p>
 <p>
     For an example of a recursive pattern, let's define a pattern that is like
-    the built in <code>Bal</code>, but the string matched is balanced with respect to
-    square brackets or curly brackets.
+    the built in <code>Bal(Open, Close)</code>, but the string matched is balanced with
+    respect to square brackets OR curly brackets.
 </p>
 <p>
     The language for such strings might be defined in extended BNF as
@@ -1092,9 +1092,9 @@ x y          Match(x, y);
 <span style="color: #ff00ff; font-weight: bold;">// </span><span style="color: #ff00ff;">----------------------------------------------------------------------------</span>
 <span style="color: #ff00ff; font-weight: bold;">//</span>
 <span style="color: #ff00ff; font-weight: bold;">// </span><span style="color: #ff00ff;">Constructs a pattern that will match any non-empty string that is parentheses</span>
-<span style="color: #ff00ff; font-weight: bold;">// </span><span style="color: #ff00ff;">balanced with respect to the normal parentheses characters.  Attempts to</span>
-<span style="color: #ff00ff; font-weight: bold;">// </span><span style="color: #ff00ff;">extend the string if a subsequent failure occurs.</span>
-<span style="color: #0000ff;">Pattern</span> <span style="color: #0000ff; font-weight: bold;">Bal</span>();
+<span style="color: #ff00ff; font-weight: bold;">// </span><span style="color: #ff00ff;">balanced with respect to the parentheses characters open and close.</span>
+<span style="color: #ff00ff; font-weight: bold;">// </span><span style="color: #ff00ff;">Attempts to extend the string if a subsequent failure occurs.</span>
+<span style="color: #0000ff;">Pattern</span> <span style="color: #0000ff; font-weight: bold;">Bal</span>(<span style="color: #0000ff; font-weight: bold;">const</span> <span style="color: #0000ff;">Character</span> <span style="color: #000000;">open</span>, <span style="color: #0000ff; font-weight: bold;">const</span> <span style="color: #0000ff;">Character</span> <span style="color: #000000;">close</span>);
 
 <span style="color: #ff00ff; font-weight: bold;">// </span><span style="color: #ff00ff;">----------------------------------------------------------------------------</span>
 <span style="color: #ff00ff; font-weight: bold;">///  </span><span style="color: #ff00ff;">Break</span>
@@ -1472,7 +1472,7 @@ x y          Match(x, y);
 </div>
 
 <div id="postamble">
-<p class="date">Date: 2013-09-07 20:27:53 BST</p>
+<p class="date">Date: 2013-09-07 22:55:02 BST</p>
 <p class="creator">Org version 7.8.11 with Emacs version 24</p>
 <a href="http://validator.w3.org/check?uri=referer">Validate XHTML 1.0</a>
 
