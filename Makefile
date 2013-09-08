@@ -66,7 +66,7 @@ $(LIBDIR):
 	$R mkdir -p $(LIBDIR)
 
 README.org: index.org
-	@sed 's%file:%http://henry.github.com/PatMat/%' $< > $@
+	@sed 's%file:%http://henry.github.com/PatMat/%g' $< > $@
 
 .PHONY: doc
 doc: index.html README.org
