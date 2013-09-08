@@ -29,9 +29,6 @@ platforms
 core
 vgcore*
 
-# Ignore the Ada sources
-Ada
-
 updateDocs
 
 # end-of-file
