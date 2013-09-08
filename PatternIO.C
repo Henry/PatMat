@@ -536,7 +536,7 @@ static const PatElmt_ *writePattern
         case PC_R_Restore:
         case PC_Unanchored:
             // Other pattern codes should not appear as leading elements
-            os  << "???";
+            os  << '<' << patternCodeNames[e.pCode_] << '>';
             break;
     }
 
@@ -564,7 +564,7 @@ static void writePatternSequence
     // The name of EOP is "" (the null string)
     if (e == EOP)
     {
-        os  << "\"\"";
+        os  << "EOP";
     }
     else
     {
@@ -613,6 +613,19 @@ static void writePatternSequence
 // ----------------------------------------------------------------------------
 /// std::ostream& operator<<(std::ostream& os, const Pattern& p)
 // ----------------------------------------------------------------------------
+
+std::ostream& PatMat::operator<<(std::ostream& os, const PatElmt_& pe)
+{
+    // Build a reference array whose n'th element points to the
+    // pattern element whose index_ value is n.
+    PatElmt_ *refs[pe.index_];
+    buildRefArray(&pe, refs);
+
+    writePatternSequence(os, &pe, &EOP_Element, refs, false);
+
+    return os;
+}
+
 
 std::ostream& PatMat::operator<<(std::ostream& os, const Pattern& p)
 {

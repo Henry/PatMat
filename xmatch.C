@@ -962,7 +962,7 @@ static void freeDynamicObjects(DynamicObject_ *dop)
 static void matchTrace
 (
     const PatElmt_ *n,
-    const std::string subj,
+    const std::string subject,
     const int cursor
 )
 {
@@ -971,21 +971,23 @@ static void matchTrace
         return;
     }
 
-    cout<< endl;
-    (void)n;    // display node addr, type, data??
-    cout<< subj << endl;
+    cout<< "Pattern: " << *n << "\n"
+        << "Subject: " << subject << endl
+        << "         ";
 
-    // display caret under cursor location
-    // alternative (for wide patterns) could be inserting /\ or <*> within
+    // Display caret under cursor location
     for (int i = 0; i < cursor; i++)
     {
-        if (subj[i] == '\t')
+        if (subject[i] == '\t')
+        {
             cout<< '\t';
+        }
         else
+        {
             cout<< ' ';
+        }
     }
-    cout<< '^';
-    cout<< endl;
+    cout<< '^' << endl;
 }
 
 
@@ -1244,9 +1246,13 @@ static MatchRet XMatch(MatchState& ms)
 
     // Start of processing for XMatch
 
-    if (Debug)
+    if (Debug || ms.flags & Pattern::TRACE)
     {
         cout<< endl;
+    }
+
+    if (Debug)
+    {
         cout<< indent(regionLevel) << "Initiating pattern match\n";
         cout<< indent(regionLevel) << "subject = \"" << subject << "\"\n";
         cout<< indent(regionLevel) << "length = " << len << endl;
@@ -1411,7 +1417,7 @@ Match:
 
     // Processing is NOT allowed to fall through
 
-    if (Debug && ms.flags & Pattern::TRACE)
+    if (Debug || ms.flags & Pattern::TRACE)
     {
         matchTrace(node, subject, cursor);
     }

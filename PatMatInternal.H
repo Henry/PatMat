@@ -171,12 +171,12 @@ public:
     PATTERN_CODE(NSpan_CH, "NSpan", 0),                                        \
     PATTERN_CODE(Span_CH, "Span", 1),                                          \
                                                                                \
-    PATTERN_CODE(Any_Set, "Any", 1),                                            \
-    PATTERN_CODE(Break_Set, "Break", 0),                                        \
-    PATTERN_CODE(BreakX_Set, "BreakX", 0),                                      \
-    PATTERN_CODE(NotAny_Set, "NotAny", 1),                                      \
-    PATTERN_CODE(NSpan_Set, "NSpan", 0),                                        \
-    PATTERN_CODE(Span_Set, "Span", 1),                                          \
+    PATTERN_CODE(Any_Set, "Any", 1),                                           \
+    PATTERN_CODE(Break_Set, "Break", 0),                                       \
+    PATTERN_CODE(BreakX_Set, "BreakX", 0),                                     \
+    PATTERN_CODE(NotAny_Set, "NotAny", 1),                                     \
+    PATTERN_CODE(NSpan_Set, "NSpan", 0),                                       \
+    PATTERN_CODE(Span_Set, "Span", 1),                                         \
                                                                                \
     PATTERN_CODE(Arbno_Y, "Arbno", 0),                                         \
     PATTERN_CODE(Len_Nat, "Len", 1),                                           \
@@ -486,6 +486,11 @@ class PatElmt_
             void(*func)(void *, void *, Dynamic *),
             void *cookie
         );
+
+
+    // Output
+
+        friend std::ostream& operator<<(std::ostream &, const PatElmt_&);
 };
 
 

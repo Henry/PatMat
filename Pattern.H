@@ -168,7 +168,7 @@ public:
     // Match flags
     static const int DEBUG = 1;
     static const int ANCHOR = 2;
-    static const int TRACE = 3;
+    static const int TRACE = 4;
 
     // Constructors
 
