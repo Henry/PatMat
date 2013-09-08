@@ -629,13 +629,7 @@ std::ostream& PatMat::operator<<(std::ostream& os, const PatElmt_& pe)
 
 std::ostream& PatMat::operator<<(std::ostream& os, const Pattern& p)
 {
-    // Build a reference array whose n'th element points to the
-    // pattern element whose index_ value is n.
-    PatElmt_ *refs[p.pat_->pe_->index_];
-    buildRefArray(p.pat_->pe_, refs);
-
-    writePatternSequence(os, p.pat_->pe_, &EOP_Element, refs, false);
-
+    os << *(p.pat_->pe_);
     return os;
 }
 

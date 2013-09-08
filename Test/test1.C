@@ -67,7 +67,7 @@ int main()
     p2.dump(cout);
 
     // print as an expression
-    cout << "Image p2: " << p2 << '\n';
+    cout << "Pattern p2: " << p2 << '\n';
 
     if (Match(subject, p2))
         cout << "matched!\n";
@@ -94,7 +94,7 @@ int main()
     p3.dump(cout);
 
     // print as an expression
-    cout << "Image p3: " << p3 << '\n';
+    cout << "Pattern p3: " << p3 << '\n';
 
     if (!Match("Hello", Setcur(pos) & 'l' % nonv & Abort()))
         cout << "l: " << nonv << " at pos " << pos << '\n';
