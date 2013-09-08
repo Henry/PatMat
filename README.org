@@ -13,7 +13,9 @@
 
 * Original Sources
   + [[http://www.snobol4.org/spipat/][SPIPAT]]
-  + [[http://www2.adacore.com/gap-static/GNAT_Book/html/rts/g-spipat__adb.htm][GNAT.SPITBOL.PATTERNS]]
+  +
+    [[http://www2.adacore.com/gap-static/GNAT_Book/html/rts/g-spipat__adb.htm][GNAT.SPITBOL.PATTERNS]]
+   [[http://henry.github.com/PatMat/Doc/Ada/g-spipat.ads][g-spipat.ads]] [[file:Doc/Ada/g-spipat.adb][g-spipat.adb]]
   + [[https://github.com/hardbol/spitbol][SPITBOL]]
   This software and documentation is developed from both the =SPIPAT= C/C++
   package of Philip L. Budne and the original =GNAT.SPITBOL.PATTERNS= package of
