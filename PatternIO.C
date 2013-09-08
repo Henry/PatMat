@@ -611,7 +611,7 @@ static void writePatternSequence
 // -----------------------------------------------------------------------------
 
 // ----------------------------------------------------------------------------
-/// std::ostream& operator<<(std::ostream& os, const Pattern& p)
+/// std::ostream& operator<<(std::ostream& os, const PatElmt_& pe)
 // ----------------------------------------------------------------------------
 
 std::ostream& PatMat::operator<<(std::ostream& os, const PatElmt_& pe)
@@ -626,6 +626,10 @@ std::ostream& PatMat::operator<<(std::ostream& os, const PatElmt_& pe)
     return os;
 }
 
+
+// ----------------------------------------------------------------------------
+/// std::ostream& operator<<(std::ostream& os, const Pattern& p)
+// ----------------------------------------------------------------------------
 
 std::ostream& PatMat::operator<<(std::ostream& os, const Pattern& p)
 {
