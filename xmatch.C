@@ -1417,7 +1417,7 @@ Match:
 
     // Processing is NOT allowed to fall through
 
-    if (Debug || ms.flags & Pattern::TRACE)
+    if (ms.flags & Pattern::TRACE)
     {
         matchTrace(node, subject, cursor);
     }
