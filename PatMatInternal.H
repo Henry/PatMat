@@ -67,21 +67,21 @@ struct Dynamic
 
     union Val
     {
-        std::string *str;          // type == DY_VSTR
+        std::string *str;       // type == DY_VSTR
         bool pred;              // type == DY_BOOL
         struct
         {                       // type == DY_PAT
             Pattern_ *p;
-            void (*release) (void *cookie);
-            void *cookie;
+            void (*release) (void* cookie);
+            void* cookie;
         } pat;
     } val;
 };
 
 Pattern_ *dynamicFunc
 (
-    void (*func) (void *, void *, Dynamic *),
-    void *cookie
+    void(*func)(void*, void*, Dynamic *),
+    void* cookie
 );
 
 
@@ -245,8 +245,8 @@ class PatElmt_
         // PC_Pred_Func
         struct
         {
-            bool(*func) (void *, void *);
-            void *cookie;
+            bool(*func)(void*, const void*);
+            const void* iPtr;
         } BF;
 
         // PC_Assign_Imm_VP | PC_Assign_OnM_VP | PC_Any_VP | PC_Break_VP |
@@ -257,8 +257,8 @@ class PatElmt_
         // PC_Call_Imm PC_Call_OnM
         struct
         {
-            void (*func) (const std::string&, void *, void *);
-            void *cookie;
+            void(*func)(const std::string&, void*, void*);
+            void* iPtr;
         } MF;
 
         // PC_String
@@ -285,8 +285,8 @@ class PatElmt_
         // PC_Setcur_Func
         struct
         {
-            void (*func) (unsigned, void *, void *);
-            void *cookie;
+            void(*func)(unsigned int, void*, void*);
+            void* iPtr;
         } CF;
 
         // PC_Any_CH | PC_Break_CH | PC_BreakX_CH | PC_Char | PC_NotAny_CH |
@@ -311,8 +311,8 @@ class PatElmt_
         // PC_Pos_NF | PC_Len_NF | PC_RPos_NF | PC_RTab_NF |
         struct
         {
-            unsigned int (*func) (void *, void *);
-            void *cookie;
+            unsigned int(*func)(void*, const void*);
+            const void* iPtr;
         } NF;
 
         // PC_Pos_NP | PC_Len_NP | PC_RPos_NP | PC_RTab_NP | PC_Tab_NP
@@ -322,15 +322,15 @@ class PatElmt_
         // | PC_Span_VF | PC_String_VF
         struct
         {
-            std::string (*func) (void *, void *);
-            void *cookie;
+            std::string(*func)(void*, const void*);
+            const void* iPtr;
         } VF;
 
         // PC_Dynamic_Func
         struct
         {
-            void (*func) (void *, void *, Dynamic *);
-            void *cookie;
+            void(*func)(void*, void*, Dynamic*);
+            void* iPtr;
         } DF;
     } val;
 
@@ -391,8 +391,8 @@ class PatElmt_
             const PatternCode pc,
             const IndexT index,
             const PatElmt_ *pNext,
-            bool(*func)(void *, void *),
-            void *cookie
+            bool(*func)(void*, const void*),
+            const void* iPtr
         );
 
         inline PatElmt_
@@ -408,8 +408,8 @@ class PatElmt_
             const PatternCode pc,
             const IndexT index,
             const PatElmt_ *pNext,
-            void(*func)(const std::string&, void *, void *),
-            void *cookie
+            void(*func)(const std::string&, void*, void*),
+            void* iPtr
         );
 
         inline PatElmt_
@@ -425,8 +425,8 @@ class PatElmt_
             const PatternCode pc,
             const IndexT index,
             const PatElmt_ *pNext,
-            void(*func)(unsigned, void *, void *),
-            void *cookie
+            void(*func)(unsigned int, void*, void*),
+            void* iPtr
         );
 
         inline PatElmt_
@@ -458,8 +458,8 @@ class PatElmt_
             const PatternCode pc,
             const IndexT index,
             const PatElmt_ *pNext,
-            unsigned(*func)(void *, void *),
-            void *cookie
+            unsigned int(*func)(void*, const void*),
+            const void* iPtr
         );
 
         inline PatElmt_
@@ -475,8 +475,8 @@ class PatElmt_
             const PatternCode pc,
             const IndexT index,
             const PatElmt_ *pNext,
-            std::string (*func)(void *, void *),
-            void *cookie
+            std::string(*func)(void*, const void*),
+            const void* iPtr
         );
 
         inline PatElmt_
@@ -484,8 +484,8 @@ class PatElmt_
             const PatternCode pc,
             const IndexT index,
             const PatElmt_ *pNext,
-            void(*func)(void *, void *, Dynamic *),
-            void *cookie
+            void(*func)(void*, void*, Dynamic*),
+            void* iPtr
         );
 
 
@@ -504,7 +504,7 @@ struct MatchState
     int flags;
     std::string subject;
     Pattern_ *pattern;
-    void *matchCookie;
+    void* matchCookie;
     unsigned int start, stop;  // Output from match
     const char *exception;
 };

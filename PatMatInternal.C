@@ -92,17 +92,17 @@ Pattern_::~Pattern_()
                 delete refs[j]->val.set;
                 break;
             case PC_Pred_Func:
-                (void)refs[j]->val.BF.cookie;
+                (void)refs[j]->val.BF.iPtr;
                 break;
             case PC_Call_Imm:
             case PC_Call_OnM:
-                (void)refs[j]->val.MF.cookie;
+                (void)refs[j]->val.MF.iPtr;
                 break;
             case PC_Pos_NF:
             case PC_Len_NF:
             case PC_RPos_NF:
             case PC_RTab_NF:
-                (void)refs[j]->val.NF.cookie;
+                (void)refs[j]->val.NF.iPtr;
                 break;
             case PC_Any_VF:
             case PC_Break_VF:
@@ -111,10 +111,10 @@ Pattern_::~Pattern_()
             case PC_NSpan_VF:
             case PC_Span_VF:
             case PC_String_VF:
-                (void)refs[j]->val.VF.cookie;
+                (void)refs[j]->val.VF.iPtr;
                 break;
             case PC_Dynamic_Func:
-                (void)refs[j]->val.DF.cookie;
+                (void)refs[j]->val.DF.iPtr;
                 break;
             default:
                 break;

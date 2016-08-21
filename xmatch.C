@@ -1354,7 +1354,7 @@ Match_Succeed:
                         (
                             str,
                             ms.matchCookie,
-                            nodeOnM->val.MF.cookie
+                            nodeOnM->val.MF.iPtr
                         );
                         if (Debug)
                         {
@@ -1479,7 +1479,7 @@ Match:
             {
                 std::string str
                 (
-                    node->val.VF.func(ms.matchCookie, node->val.VF.cookie)
+                    node->val.VF.func(ms.matchCookie, node->val.VF.iPtr)
                 );
                 if (Debug)
                 {
@@ -1709,7 +1709,7 @@ Match:
             {
                 std::string str
                 (
-                    node->val.VF.func(ms.matchCookie, node->val.VF.cookie)
+                    node->val.VF.func(ms.matchCookie, node->val.VF.iPtr)
                 );
                 if (Debug)
                 {
@@ -1786,7 +1786,7 @@ Match:
             {
                 std::string str
                 (
-                    node->val.VF.func(ms.matchCookie, node->val.VF.cookie)
+                    node->val.VF.func(ms.matchCookie, node->val.VF.iPtr)
                 );
                 if (Debug)
                 {
@@ -1938,7 +1938,7 @@ Match:
             // Len (Integer function case)
             {
                 unsigned int n =
-                    node->val.NF.func(ms.matchCookie, node->val.NF.cookie);
+                    node->val.NF.func(ms.matchCookie, node->val.NF.iPtr);
                 if (Debug)
                 {
                     cout<< indent(regionLevel) << node
@@ -1999,7 +1999,7 @@ Match:
             {
                 std::string str
                 (
-                    node->val.VF.func(ms.matchCookie, node->val.VF.cookie)
+                    node->val.VF.func(ms.matchCookie, node->val.VF.iPtr)
                 );
                 if (Debug)
                 {
@@ -2062,7 +2062,7 @@ Match:
             {
                 std::string str
                 (
-                    node->val.VF.func(ms.matchCookie, node->val.VF.cookie)
+                    node->val.VF.func(ms.matchCookie, node->val.VF.iPtr)
                 );
                 if (Debug)
                 {
@@ -2119,7 +2119,7 @@ Match:
             // Pos (Integer function case)
             {
                 unsigned int n =
-                node->val.NF.func(ms.matchCookie, node->val.NF.cookie);
+                node->val.NF.func(ms.matchCookie, node->val.NF.iPtr);
                 if (Debug)
                 {
                     cout<< indent(regionLevel) << node
@@ -2160,7 +2160,7 @@ Match:
             }
             if
             (
-                node->val.BF.func(ms.matchCookie, node->val.BF.cookie)
+                node->val.BF.func(ms.matchCookie, node->val.BF.iPtr)
             )
             {
                 goto Succeed;
@@ -2262,7 +2262,7 @@ Match:
             {
                 unsigned int n =
                 node->val.NF.func(ms.matchCookie,
-                node->val.NF.cookie);
+                node->val.NF.iPtr);
                 if (Debug)
                 {
                     cout<< indent(regionLevel) << node
@@ -2315,7 +2315,7 @@ Match:
             // RTab (integer function case)
             {
                 unsigned int n =
-                node->val.NF.func(ms.matchCookie, node->val.NF.cookie);
+                node->val.NF.func(ms.matchCookie, node->val.NF.iPtr);
 
                 if (Debug)
                 {
@@ -2351,7 +2351,7 @@ Match:
             }
 
         case PC_Setcur:
-            // cursor assignment
+            // Cursor assignment
             if (Debug)
             {
                 cout<< indent(regionLevel) << node
@@ -2361,13 +2361,13 @@ Match:
             goto Succeed;
 
         case PC_Setcur_Func:
-            // cursor assignment
+            // Cursor assignment
             if (Debug)
             {
                 cout<< indent(regionLevel) << node
                     << " matching Setcur_Func\n";
             }
-            (node->val.CF.func)(cursor, ms.matchCookie, node->val.CF.cookie);
+            (node->val.CF.func)(cursor, ms.matchCookie, node->val.CF.iPtr);
             goto Succeed;
 
         case PC_Span_CH:
@@ -2423,7 +2423,7 @@ Match:
             {
                 std::string str
                 (
-                    node->val.VF.func(ms.matchCookie, node->val.VF.cookie)
+                    node->val.VF.func(ms.matchCookie, node->val.VF.iPtr)
                 );
                 if (Debug)
                 {
@@ -2637,7 +2637,7 @@ Match:
             {
                 std::string str
                 (
-                    node->val.VF.func(ms.matchCookie, node->val.VF.cookie)
+                    node->val.VF.func(ms.matchCookie, node->val.VF.iPtr)
                 );
                 unsigned int l = str.length();
 
@@ -2708,7 +2708,7 @@ Match:
             // Tab (integer function case)
             {
                 unsigned int n =
-                    node->val.NF.func(ms.matchCookie, node->val.NF.cookie);
+                    node->val.NF.func(ms.matchCookie, node->val.NF.iPtr);
                 if (Debug)
                 {
                     cout<< indent(regionLevel) << node
@@ -2772,7 +2772,7 @@ Match:
                     cout<< indent(regionLevel) << node
                         << " executing immediate write of \"" << str << "\"\n";
                 }
-                node->val.MF.func(str, ms.matchCookie, node->val.MF.cookie);
+                node->val.MF.func(str, ms.matchCookie, node->val.MF.iPtr);
                 stack.popRegion();
                 regionLevel--;
                 goto Succeed;
@@ -2800,7 +2800,7 @@ Match:
                     cout<< indent(regionLevel) << node
                         << " calling dynamic function" << endl;
                 }
-                node->val.DF.func(ms.matchCookie, node->val.DF.cookie, &d);
+                node->val.DF.func(ms.matchCookie, node->val.DF.iPtr, &d);
                 switch (d.type)
                 {
                     case Dynamic::DY_BOOL:

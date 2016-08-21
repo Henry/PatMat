@@ -86,8 +86,8 @@ inline PatElmt_::PatElmt_
     const PatternCode pc,
     const IndexT index,
     const PatElmt_ *pNext,
-    bool(*func)(void *, void *),
-    void *cookie
+    bool(*func)(void*, const void*),
+    const void* iPtr
 )
 :
     pCode_(pc),
@@ -95,7 +95,7 @@ inline PatElmt_::PatElmt_
     pNext_(pNext)
 {
     val.BF.func = func;
-    val.BF.cookie = cookie;
+    val.BF.iPtr = iPtr;
 }
 
 inline PatElmt_::PatElmt_
@@ -118,8 +118,8 @@ inline PatElmt_::PatElmt_
     const PatternCode pc,
     const IndexT index,
     const PatElmt_ *pNext,
-    void(*func)(const std::string&, void *, void *),
-    void *cookie
+    void(*func)(const std::string&, void*, void*),
+    void* iPtr
 )
 :
     pCode_(pc),
@@ -127,7 +127,7 @@ inline PatElmt_::PatElmt_
     pNext_(pNext)
 {
     val.MF.func = func;
-    val.MF.cookie = cookie;
+    val.MF.iPtr = iPtr;
 }
 
 inline PatElmt_::PatElmt_
@@ -150,8 +150,8 @@ inline PatElmt_::PatElmt_
     const PatternCode pc,
     const IndexT index,
     const PatElmt_ *pNext,
-    void(*func)(unsigned, void *, void *),
-    void *cookie
+    void(*func)(unsigned int, void*, void*),
+    void* iPtr
 )
 :
     pCode_(pc),
@@ -159,7 +159,7 @@ inline PatElmt_::PatElmt_
     pNext_(pNext)
 {
     val.CF.func = func;
-    val.CF.cookie = cookie;
+    val.CF.iPtr = iPtr;
 }
 
 inline PatElmt_::PatElmt_
@@ -244,8 +244,8 @@ inline PatElmt_::PatElmt_
     const PatternCode pc,
     const IndexT index,
     const PatElmt_ *pNext,
-    unsigned(*func)(void *, void *),
-    void *cookie
+    unsigned int(*func)(void*, const void*),
+    const void* iPtr
 )
 :
     pCode_(pc),
@@ -253,7 +253,7 @@ inline PatElmt_::PatElmt_
     pNext_(pNext)
 {
     val.NF.func = func;
-    val.NF.cookie = cookie;
+    val.NF.iPtr = iPtr;
 }
 
 inline PatElmt_::PatElmt_
@@ -276,8 +276,8 @@ inline PatElmt_::PatElmt_
     const PatternCode pc,
     const IndexT index,
     const PatElmt_ *pNext,
-    std::string (*func)(void *, void *),
-    void *cookie
+    std::string(*func)(void*, const void*),
+    const void* iPtr
 )
 :
     pCode_(pc),
@@ -285,7 +285,7 @@ inline PatElmt_::PatElmt_
     pNext_(pNext)
 {
     val.VF.func = func;
-    val.VF.cookie = cookie;
+    val.VF.iPtr = iPtr;
 }
 
 inline PatElmt_::PatElmt_
@@ -293,8 +293,8 @@ inline PatElmt_::PatElmt_
     const PatternCode pc,
     const IndexT index,
     const PatElmt_ *pNext,
-    void(*func)(void *, void *, Dynamic *),
-    void *cookie
+    void(*func)(void*, void*, Dynamic *),
+    void* iPtr
 )
 :
     pCode_(pc),
@@ -302,7 +302,7 @@ inline PatElmt_::PatElmt_
     pNext_(pNext)
 {
     val.DF.func = func;
-    val.DF.cookie = cookie;
+    val.DF.iPtr = iPtr;
 }
 
 
@@ -326,7 +326,12 @@ inline bool isInStr(Character c, const std::string& S)
     return S.find(c) != std::string::npos;
 }
 
-inline std::string slice(const std::string& str, unsigned int start, unsigned stop)
+inline std::string slice
+(
+    const std::string& str,
+    unsigned int start,
+    unsigned stop
+)
 {
     return str.substr(start - 1, stop - start + 1);
 }

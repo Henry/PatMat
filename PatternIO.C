@@ -165,7 +165,7 @@ void PatMat::Pattern::dump(std::ostream& os) const
                 break;
 
             case PC_Pred_Func:
-                os  << e.val.BF.func << '(' << e.val.BF.cookie << ')';
+                os  << e.val.BF.func << '(' << e.val.BF.iPtr << ')';
                 break;
 
             case PC_Assign_Imm:
@@ -182,7 +182,7 @@ void PatMat::Pattern::dump(std::ostream& os) const
 
             case PC_Call_Imm:
             case PC_Call_OnM:
-                os  << e.val.MF.func << '(' << e.val.MF.cookie << ')';
+                os  << e.val.MF.func << '(' << e.val.MF.iPtr << ')';
                 break;
 
             case PC_String:
@@ -258,7 +258,7 @@ void PatMat::Pattern::dump(std::ostream& os) const
             case PC_RPos_NF:
             case PC_RTab_NF:
             case PC_Tab_NF:
-                os  << e.val.NF.func << '(' << e.val.NF.cookie << ')';
+                os  << e.val.NF.func << '(' << e.val.NF.iPtr << ')';
                 break;
 
             case PC_Pos_NP:
@@ -276,7 +276,7 @@ void PatMat::Pattern::dump(std::ostream& os) const
             case PC_NSpan_VF:
             case PC_Span_VF:
             case PC_String_VF:
-                os  << e.val.VF.func << '(' << e.val.VF.cookie << ')';
+                os  << e.val.VF.func << '(' << e.val.VF.iPtr << ')';
                 break;
 
             default:
@@ -370,7 +370,7 @@ static const PatElmt_ *writePattern
         case PC_Span_VF:
         case PC_String_VF:
             os  << patternCodeNames[e.pCode_]
-                << '(' << e.val.VF.func << '(' << e.val.VF.cookie << "))";
+                << '(' << e.val.VF.func << '(' << e.val.VF.iPtr << "))";
             break;
 
         case PC_Any_VP:
@@ -441,7 +441,7 @@ static const PatElmt_ *writePattern
         case PC_RTab_NF:
         case PC_Tab_NF:
             os  << patternCodeNames[e.pCode_]
-                << '('<<  e.val.NF.func << '(' << e.val.NF.cookie << "))";
+                << '('<<  e.val.NF.func << '(' << e.val.NF.iPtr << "))";
             break;
 
         case PC_Len_NP:
@@ -470,18 +470,18 @@ static const PatElmt_ *writePattern
 
         case PC_Pred_Func:
             os  << patternCodeNames[e.pCode_]
-                << '(' << e.val.BF.func << '(' << e.val.BF.cookie << "))";
+                << '(' << e.val.BF.func << '(' << e.val.BF.iPtr << "))";
             break;
 
         case PC_Dynamic_Func:
             os  << patternCodeNames[e.pCode_]
-                << '(' << e.val.DF.func << '(' << e.val.DF.cookie << "))";
+                << '(' << e.val.DF.func << '(' << e.val.DF.iPtr << "))";
             break;
 
         case PC_Setcur_Func:
             // XXX not virtualized
             os  << patternCodeNames[e.pCode_]
-                << '(' << e.val.CF.func << '(' << e.val.CF.cookie << "))";
+                << '(' << e.val.CF.func << '(' << e.val.CF.iPtr << "))";
             break;
 
         case PC_String:
@@ -523,7 +523,7 @@ static const PatElmt_ *writePattern
             os  << '(';
             writePatternSequence(os, refs[e.index_]->pNext_, &e, refs, true);
             os  << patternCodeNames[e.pCode_];
-            os  << e.val.MF.func << '(' << e.val.MF.cookie << "))";
+            os  << e.val.MF.func << '(' << e.val.MF.iPtr << "))";
             break;
 
         case PC_Arb_Y:

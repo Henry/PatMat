@@ -277,7 +277,7 @@ public:
         friend Pattern Defer(Pattern&);
         friend Pattern Defer(std::string&);
         friend Pattern Defer(StringInterface&);
-        friend Pattern Defer(BoolInterface&);
+        friend Pattern Defer(const BoolInterface&);
 
         friend Pattern Fail();
 
@@ -285,7 +285,7 @@ public:
         friend Pattern Fence(const Pattern&);
 
         friend Pattern Len(const unsigned int);
-        friend Pattern Len(UnsignedInterface&);
+        friend Pattern Len(const UnsignedInterface&);
         friend Pattern Len(const unsigned int*);
 
         friend Pattern NotAny(const Character);
@@ -301,17 +301,17 @@ public:
         friend Pattern NSpan(StringInterface&);
 
         friend Pattern Pos(const unsigned int);
-        friend Pattern Pos(UnsignedInterface&);
+        friend Pattern Pos(const UnsignedInterface&);
         friend Pattern Pos(const unsigned int*);
 
         friend Pattern Rem();
 
         friend Pattern Rpos(const unsigned int);
-        friend Pattern Rpos(UnsignedInterface&);
+        friend Pattern Rpos(const UnsignedInterface&);
         friend Pattern Rpos(const unsigned int*);
 
         friend Pattern Rtab(const unsigned int);
-        friend Pattern Rtab(UnsignedInterface&);
+        friend Pattern Rtab(const UnsignedInterface&);
         friend Pattern Rtab(const unsigned int*);
 
         friend Pattern Setcur(unsigned int&);
@@ -325,7 +325,7 @@ public:
         friend Pattern Succeed();
 
         friend Pattern Tab(const unsigned int);
-        friend Pattern Tab(UnsignedInterface&);
+        friend Pattern Tab(const UnsignedInterface&);
         friend Pattern Tab(const unsigned int*);
 
         friend Pattern assignOnmatch(const Pattern& p, std::string& var);
@@ -392,7 +392,7 @@ class MatchRes
     (
         MatchRes& res,
         const Pattern& p,
-        int flags = 0
+        int flags
     );
 
 public:

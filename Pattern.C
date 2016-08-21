@@ -140,41 +140,31 @@ Pattern& Pattern::operator=(const Pattern& p)
 ///  Helper functions (passed as callbacks)
 // ----------------------------------------------------------------------------
 
-static std::string fetch_string_pointer(void* global_cookie, void* local_cookie)
+static std::string getStringPointer(void* global_cookie, const void* iPtr)
 {
-    const std::string s = *static_cast<const std::string*>(local_cookie);
     (void)global_cookie;
-    return std::string(s);
+    return std::string(*static_cast<const std::string*>(iPtr));
 }
 
-static std::string fetch_string_object(void* global_cookie, void* local_cookie)
+static std::string getString(void* global_cookie, const void* iPtr)
 {
-    const StringInterface* obj =
-        static_cast<const StringInterface*>(local_cookie);
-    unsigned int l;
-    const Character* p = obj->get(l);
     (void)global_cookie;
+    unsigned int l;
+    const Character* p =
+        static_cast<const StringInterface*>(iPtr)->get(l);
     return std::string(p, l);
 }
 
-static unsigned int fetch_unsigned_object
-(
-    void* global_cookie,
-    void* local_cookie
-)
+static unsigned int getUnsignedInt(void* global_cookie, const void* iPtr)
 {
-    const UnsignedInterface* obj =
-        static_cast<const UnsignedInterface*>(local_cookie);
     (void)global_cookie;
-    return obj->get();
+    return static_cast<const UnsignedInterface*>(iPtr)->get();
 }
 
-static bool fetch_bool_object(void* global_cookie, void* local_cookie)
+static bool getBool(void* global_cookie, const void* iPtr)
 {
-    const BoolInterface* obj =
-        static_cast<const BoolInterface*>(local_cookie);
     (void)global_cookie;
-    return obj->get();
+    return static_cast<const BoolInterface*>(iPtr)->get();
 }
 
 
@@ -342,7 +332,7 @@ Pattern Any(std::string* str)
     return Pattern
     (
         0,
-        new PatElmt_(PC_Any_VF, 1, EOP, fetch_string_pointer, str)
+        new PatElmt_(PC_Any_VF, 1, EOP, getStringPointer, str)
     );
 }
 
@@ -351,7 +341,7 @@ Pattern Any(StringInterface& obj)
     return Pattern
     (
         0,
-        new PatElmt_(PC_Any_VF, 1, EOP, fetch_string_object, &obj)
+        new PatElmt_(PC_Any_VF, 1, EOP, getString, &obj)
     );
 }
 
@@ -480,37 +470,37 @@ Pattern Arbno(const Pattern& p)
 ///  Assignment
 // ----------------------------------------------------------------------------
 
-static void put_string_pointer
+static void setStringPointer
 (
     const std::string& str,
     void* global_cookie,
-    void* local_cookie
+    void* iPtr
 )
 {
-    *static_cast<std::string*>(local_cookie) = str;
+    *static_cast<std::string*>(iPtr) = str;
     (void)global_cookie;
 }
 
-static void put_string_object
+static void setString
 (
     const std::string& str,
     void* global_cookie,
-    void* local_cookie
+    void* iPtr
 )
 {
-    StringInterface *obj = static_cast<StringInterface*>(local_cookie);
+    StringInterface *obj = static_cast<StringInterface*>(iPtr);
     (void)global_cookie;
     obj->set(str);
 }
 
-static void output_string
+static void writeString
 (
     const std::string& str,
     void* global_cookie,
-    void* local_cookie
+    void* iPtr
 )
 {
-    std::ostream *stream = static_cast<std::ostream*>(local_cookie);
+    std::ostream *stream = static_cast<std::ostream*>(iPtr);
     *stream
         << str
         << '\n'; // SNOBOL doesn't, Ada does
@@ -553,29 +543,29 @@ inline Pattern Pattern::callOnmatch
 (
     const Pattern& p,
     void (*func) (const std::string&, void* , void* ),
-    void* cookie
+    void* iPtr
 )
 {
     PatElmt_* pe = copy(p.pat_->pe_);
     PatElmt_* e = new PatElmt_(PC_R_Enter, 0, EOP);
-    PatElmt_* c = new PatElmt_(PC_Call_OnM, 0, EOP, func, cookie);
+    PatElmt_* c = new PatElmt_(PC_Call_OnM, 0, EOP, func, iPtr);
     return Pattern(p.pat_->stackIndex_ + 3, bracket(e, pe, c));
 }
 
 Pattern operator*(const Pattern& p, std::string& str)
 {
-    return Pattern::callOnmatch(p, put_string_pointer, &str);
+    return Pattern::callOnmatch(p, setStringPointer, &str);
 }
 
 Pattern operator*(const Pattern& p, StringInterface& obj)
 {
-    return Pattern::callOnmatch(p, put_string_object, &obj);
+    return Pattern::callOnmatch(p, setString, &obj);
 }
 
 // Could use a StringObject that does output on "set"
 Pattern operator*(const Pattern& p, std::ostream& stream)
 {
-    return Pattern::callOnmatch(p, output_string, &stream);
+    return Pattern::callOnmatch(p, writeString, &stream);
 }
 
 
@@ -614,29 +604,29 @@ inline Pattern Pattern::callImmed
 (
     const Pattern& p,
     void (*func) (const std::string&, void* , void* ),
-    void* cookie
+    void* iPtr
 )
 {
     PatElmt_* Pat = copy(p.pat_->pe_);
     PatElmt_* e = new PatElmt_(PC_R_Enter, 0, EOP);
-    PatElmt_* c = new PatElmt_(PC_Call_Imm, 0, EOP, func, cookie);
+    PatElmt_* c = new PatElmt_(PC_Call_Imm, 0, EOP, func, iPtr);
     return Pattern(3, bracket(e, Pat, c));
 }
 
 Pattern operator%(const Pattern& p, std::string& var)
 {
-    return Pattern::callImmed(p, put_string_pointer, &var);
+    return Pattern::callImmed(p, setStringPointer, &var);
 }
 
 Pattern operator%(const Pattern& p, StringInterface& obj)
 {
-    return Pattern::callImmed(p, put_string_object, &obj);
+    return Pattern::callImmed(p, setString, &obj);
 }
 
 // Could use a StringObject that does output on "set"
 Pattern operator%(const Pattern& p, std::ostream& stream)
 {
-    return Pattern::callImmed(p, output_string, &stream);
+    return Pattern::callImmed(p, writeString, &stream);
 }
 
 
@@ -674,7 +664,7 @@ Pattern Break(std::string* str)
     return Pattern
     (
         0,
-        new PatElmt_(PC_Break_VF, 1, EOP, fetch_string_pointer, str)
+        new PatElmt_(PC_Break_VF, 1, EOP, getStringPointer, str)
     );
 }
 
@@ -683,7 +673,7 @@ Pattern Break(StringInterface& obj)
     return Pattern
     (
         0,
-        new PatElmt_(PC_Break_VF, 1, EOP, fetch_string_object, &obj)
+        new PatElmt_(PC_Break_VF, 1, EOP, getString, &obj)
     );
 }
 
@@ -730,7 +720,7 @@ Pattern BreakX(std::string* str)
 {
     return BreakXMake
     (
-        new PatElmt_(PC_BreakX_VF, 3, NULL, fetch_string_pointer, str)
+        new PatElmt_(PC_BreakX_VF, 3, NULL, getStringPointer, str)
     );
 }
 
@@ -738,7 +728,7 @@ Pattern BreakX(StringInterface& obj)
 {
     return BreakXMake
     (
-        new PatElmt_(PC_BreakX_VF, 3, NULL, fetch_string_object, &obj)
+        new PatElmt_(PC_BreakX_VF, 3, NULL, getString, &obj)
     );
 }
 
@@ -769,7 +759,7 @@ Pattern Defer(std::string& str)
     return Pattern
     (
         0,
-        new PatElmt_(PC_String_VF, 1, EOP, fetch_string_pointer, &str)
+        new PatElmt_(PC_String_VF, 1, EOP, getStringPointer, &str)
     );
 }
 
@@ -778,16 +768,16 @@ Pattern Defer(StringInterface& obj)
     return Pattern
     (
         0,
-        new PatElmt_(PC_String_VF, 1, EOP, fetch_string_object, &obj)
+        new PatElmt_(PC_String_VF, 1, EOP, getString, &obj)
     );
 }
 
-Pattern Defer(BoolInterface& obj)
+Pattern Defer(const BoolInterface& obj)
 {
     return Pattern
     (
         3,
-        new PatElmt_(PC_Pred_Func, 1, EOP, fetch_bool_object, &obj)
+        new PatElmt_(PC_Pred_Func, 1, EOP, getBool, &obj)
     );
 }
 
@@ -848,12 +838,12 @@ Pattern Len(const unsigned int count)
     }
 }
 
-Pattern Len(UnsignedInterface& obj)
+Pattern Len(const UnsignedInterface& obj)
 {
     return Pattern
     (
         0,
-        new PatElmt_(PC_Len_NF, 1, EOP, fetch_unsigned_object, &obj)
+        new PatElmt_(PC_Len_NF, 1, EOP, getUnsignedInt, &obj)
     );
 }
 
@@ -887,7 +877,7 @@ Pattern NotAny(std::string* str)
     return Pattern
     (
         0,
-        new PatElmt_(PC_NotAny_VF, 1, EOP, fetch_string_pointer, str)
+        new PatElmt_(PC_NotAny_VF, 1, EOP, getStringPointer, str)
     );
 }
 
@@ -896,7 +886,7 @@ Pattern NotAny(StringInterface& obj)
     return Pattern
     (
         0,
-        new PatElmt_(PC_NotAny_VF, 1, EOP, fetch_string_object, &obj)
+        new PatElmt_(PC_NotAny_VF, 1, EOP, getString, &obj)
     );
 }
 
@@ -925,7 +915,7 @@ Pattern NSpan(std::string* str)
     return Pattern
     (
         0,
-        new PatElmt_(PC_NSpan_VF, 1, EOP, fetch_string_pointer, str)
+        new PatElmt_(PC_NSpan_VF, 1, EOP, getStringPointer, str)
     );
 }
 
@@ -934,7 +924,7 @@ Pattern NSpan(StringInterface& obj)
     return Pattern
     (
         0,
-        new PatElmt_(PC_NSpan_VF, 1, EOP, fetch_string_object, &obj)
+        new PatElmt_(PC_NSpan_VF, 1, EOP, getString, &obj)
     );
 }
 
@@ -948,12 +938,12 @@ Pattern Pos(const unsigned int count)
     return Pattern(0, new PatElmt_(PC_Pos_Nat, 1, EOP, count));
 }
 
-Pattern Pos(UnsignedInterface& obj)
+Pattern Pos(const UnsignedInterface& obj)
 {
     return Pattern
     (
         0,
-        new PatElmt_(PC_Pos_NF, 1, EOP, fetch_unsigned_object, &obj)
+        new PatElmt_(PC_Pos_NF, 1, EOP, getUnsignedInt, &obj)
     );
 }
 
@@ -982,12 +972,12 @@ Pattern Rpos(const unsigned int count)
     return Pattern(0, new PatElmt_(PC_RPos_Nat, 1, EOP, count));
 }
 
-Pattern Rpos(UnsignedInterface& obj)
+Pattern Rpos(const UnsignedInterface& obj)
 {
     return Pattern
     (
         0,
-        new PatElmt_(PC_RPos_NF, 1, EOP, fetch_unsigned_object, &obj)
+        new PatElmt_(PC_RPos_NF, 1, EOP, getUnsignedInt, &obj)
     );
 }
 
@@ -1006,12 +996,12 @@ Pattern Rtab(const unsigned int count)
     return Pattern(0, new PatElmt_(PC_RTab_Nat, 1, EOP, count));
 }
 
-Pattern Rtab(UnsignedInterface& obj)
+Pattern Rtab(const UnsignedInterface& obj)
 {
     return Pattern
     (
         0,
-        new PatElmt_(PC_RTab_NF, 1, EOP, fetch_unsigned_object, &obj)
+        new PatElmt_(PC_RTab_NF, 1, EOP, getUnsignedInt, &obj)
     );
 }
 
@@ -1056,7 +1046,7 @@ Pattern Span(std::string* str)
     return Pattern
     (
         0,
-        new PatElmt_(PC_Span_VF, 1, EOP, fetch_string_pointer, str)
+        new PatElmt_(PC_Span_VF, 1, EOP, getStringPointer, str)
     );
 }
 
@@ -1065,7 +1055,7 @@ Pattern Span(StringInterface& obj)
     return Pattern
     (
         0,
-        new PatElmt_(PC_Span_VF, 1, EOP, fetch_string_object, &obj)
+        new PatElmt_(PC_Span_VF, 1, EOP, getString, &obj)
     );
 }
 
@@ -1089,12 +1079,12 @@ Pattern Tab(const unsigned int count)
     return Pattern(0, new PatElmt_(PC_Tab_Nat, 1, EOP, count));
 }
 
-Pattern Tab(UnsignedInterface& obj)
+Pattern Tab(const UnsignedInterface& obj)
 {
     return Pattern
     (
         0,
-        new PatElmt_(PC_Tab_NF, 1, EOP, fetch_unsigned_object, &obj)
+        new PatElmt_(PC_Tab_NF, 1, EOP, getUnsignedInt, &obj)
     );
 }
 
