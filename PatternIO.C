@@ -165,7 +165,7 @@ void PatMat::Pattern::dump(std::ostream& os) const
                 break;
 
             case PC_Pred_Func:
-                os  << e.val.BF.func << '(' << e.val.BF.iPtr << ')';
+                os  << e.val.BF;
                 break;
 
             case PC_Assign_Imm:
@@ -258,7 +258,7 @@ void PatMat::Pattern::dump(std::ostream& os) const
             case PC_RPos_NF:
             case PC_RTab_NF:
             case PC_Tab_NF:
-                os  << e.val.NF.func << '(' << e.val.NF.iPtr << ')';
+                os  << e.val.NF;
                 break;
 
             case PC_Pos_NP:
@@ -441,7 +441,7 @@ static const PatElmt_ *writePattern
         case PC_RTab_NF:
         case PC_Tab_NF:
             os  << patternCodeNames[e.pCode_]
-                << '('<<  e.val.NF.func << '(' << e.val.NF.iPtr << "))";
+                << '(' <<  e.val.NF << ')';
             break;
 
         case PC_Len_NP:
@@ -459,7 +459,7 @@ static const PatElmt_ *writePattern
 
         case PC_R_Enter:
             // allows correct processing of PC_Fence_X & PC_Call_*
-            //sp.Kill_Concat = true;
+            // sp.Kill_Concat = true;
             eNext = refs[e.index_ - 2];
             break;
 
@@ -470,7 +470,7 @@ static const PatElmt_ *writePattern
 
         case PC_Pred_Func:
             os  << patternCodeNames[e.pCode_]
-                << '(' << e.val.BF.func << '(' << e.val.BF.iPtr << "))";
+                << '(' << e.val.BF << ')';
             break;
 
         case PC_Dynamic_Func:
@@ -479,9 +479,8 @@ static const PatElmt_ *writePattern
             break;
 
         case PC_Setcur_Func:
-            // XXX not virtualized
             os  << patternCodeNames[e.pCode_]
-                << '(' << e.val.CF.func << '(' << e.val.CF.iPtr << "))";
+                << '(' << e.val.CF << ')';
             break;
 
         case PC_String:

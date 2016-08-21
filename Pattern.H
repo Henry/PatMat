@@ -104,6 +104,8 @@ public:
     {}
 
     virtual unsigned int get() const = 0;
+
+    virtual void set(const unsigned int) = 0;
 };
 
 

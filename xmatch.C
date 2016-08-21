@@ -865,7 +865,7 @@ namespace PatMat
 /// Constant pattern elements
 // -----------------------------------------------------------------------------
 const PatElmt_ EOP_Element(PC_EOP, 0, NULL);
-const PatElmt_ *EOP = &EOP_Element;
+const PatElmt_* EOP = &EOP_Element;
 
 static const PatElmt_ CP_Assign(PC_Assign, 0, NULL);
 static const PatElmt_ CP_Abort(PC_Abort, 0, NULL);
@@ -922,32 +922,32 @@ static const char* logicError()
 
 struct DynamicObject_
 {
-    DynamicObject_ *next;
-    void (*release) (void *obj);
-    void *obj;
+    DynamicObject_* next;
+    void (*release) (void* obj);
+    void* obj;
 };
 
 static int saveDynamicObject
 (
-    DynamicObject_ **list,
-    void (*release) (void *obj), void *obj
+    DynamicObject_** list,
+    void (*release) (void* obj), void* obj
 )
 {
-    DynamicObject_ *dop = new DynamicObject_;
+    DynamicObject_* dop = new DynamicObject_;
     if (!dop) return 0;
 
     dop->release = release;
     dop->obj = obj;
-    dop->next = *list;
+    dop->next =* list;
     *list = dop;
     return 1;
 }
 
-static void freeDynamicObjects(DynamicObject_ *dop)
+static void freeDynamicObjects(DynamicObject_* dop)
 {
     while (dop)
     {
-        DynamicObject_ *next = dop->next;
+        DynamicObject_* next = dop->next;
         IDOUT(cout<< "Releasing " <<  dop->obj << endl;)
         (dop->release) (dop->obj);
         delete dop;
@@ -961,7 +961,7 @@ static void freeDynamicObjects(DynamicObject_ *dop)
 // -----------------------------------------------------------------------------
 static void matchTrace
 (
-    const PatElmt_ *n,
+    const PatElmt_* n,
     const std::string subject,
     const int cursor
 )
@@ -1014,7 +1014,7 @@ static MatchRet XMatch(MatchState& ms)
 
         //- This pattern element reference is reestablished as the current
         //  node to be matched (which will attempt an appropriate rematch).
-        PatElmt_ const *node;
+        PatElmt_ const* node;
 
         //- Null constructor for initialisation
         StackEntry()
@@ -1035,7 +1035,7 @@ static MatchRet XMatch(MatchState& ms)
         int size;
 
         StackEntry staticEntries_[stackSize];
-        StackEntry *entries_;
+        StackEntry* entries_;
 
         //- Start of stack in the negative addressing used (-1)
         const int first;
@@ -1083,7 +1083,7 @@ static MatchRet XMatch(MatchState& ms)
         void resize()
         {
             int oldSize = size;
-            StackEntry *oldEntries = entries_;
+            StackEntry* oldEntries = entries_;
 
             size *= 2;
             entries_ = new StackEntry[size];
@@ -1103,7 +1103,7 @@ static MatchRet XMatch(MatchState& ms)
 
         //- Push an entry onto the pattern matching stack
         //  with current cursor value
-        inline void push(unsigned int cursor, const PatElmt_ *node)
+        inline void push(unsigned int cursor, const PatElmt_* node)
         {
             if (ptr < 1 - size)
             {
@@ -1117,7 +1117,7 @@ static MatchRet XMatch(MatchState& ms)
 
         //- Push an entry onto the pattern matching stack
         //  with current stackPtr value
-        inline void push(int stackPtr, const PatElmt_ *node)
+        inline void push(int stackPtr, const PatElmt_* node)
         {
             if (ptr < 1 - size)
             {
@@ -1196,7 +1196,7 @@ static MatchRet XMatch(MatchState& ms)
 
     // Pointer to current pattern node.
     // updated as the match proceeds through its constituent elements.
-    const PatElmt_ *node;
+    const PatElmt_* node;
 
     // Subject string
     const Character* subject = ms.subject.c_str();
@@ -1242,7 +1242,7 @@ static MatchRet XMatch(MatchState& ms)
     // successful match.
     bool assignOnM = false;
 
-    DynamicObject_ *dynamicList = NULL;
+    DynamicObject_* dynamicList = NULL;
 
     // Start of processing for XMatch
 
@@ -1333,7 +1333,7 @@ Match_Succeed:
             {
                 int innerBase = stack(s - 1).cursor;
                 int specialEntry = innerBase + 1;
-                const PatElmt_ *nodeOnM = stack(specialEntry).node;
+                const PatElmt_* nodeOnM = stack(specialEntry).node;
                 unsigned int start = stack(specialEntry).cursor + 1;
                 unsigned int stop = stack(s).cursor;
                 std::string str = slice(subject, start, stop);
@@ -1936,8 +1936,7 @@ Match:
         case PC_Len_NF:
             // Len (Integer function case)
             {
-                unsigned int n =
-                    node->val.NF.func(node->val.NF.iPtr);
+                const unsigned int n = node->val.NF->get();
                 if (Debug)
                 {
                     cout<< indent(regionLevel) << node
@@ -2117,8 +2116,7 @@ Match:
         case PC_Pos_NF:
             // Pos (Integer function case)
             {
-                unsigned int n =
-                node->val.NF.func(node->val.NF.iPtr);
+                const unsigned int n = node->val.NF->get();
                 if (Debug)
                 {
                     cout<< indent(regionLevel) << node
@@ -2157,10 +2155,7 @@ Match:
                 cout<< indent(regionLevel) << node
                     << " matching predicate function\n";
             }
-            if
-            (
-                node->val.BF.func(node->val.BF.iPtr)
-            )
+            if (node->val.BF->get())
             {
                 goto Succeed;
             }
@@ -2259,8 +2254,7 @@ Match:
         case PC_RPos_NF:
             // RPos (integer function case)
             {
-                unsigned int n =
-                node->val.NF.func(node->val.NF.iPtr);
+                const unsigned int n = node->val.NF->get();
                 if (Debug)
                 {
                     cout<< indent(regionLevel) << node
@@ -2312,9 +2306,7 @@ Match:
         case PC_RTab_NF:
             // RTab (integer function case)
             {
-                unsigned int n =
-                node->val.NF.func(node->val.NF.iPtr);
-
+                const unsigned int n = node->val.NF->get();
                 if (Debug)
                 {
                     cout<< indent(regionLevel) << node
@@ -2365,7 +2357,7 @@ Match:
                 cout<< indent(regionLevel) << node
                     << " matching Setcur_Func\n";
             }
-            (node->val.CF.func)(cursor, node->val.CF.iPtr);
+            node->val.CF->set(cursor);
             goto Succeed;
 
         case PC_Span_CH:
@@ -2705,8 +2697,7 @@ Match:
         case PC_Tab_NF:
             // Tab (integer function case)
             {
-                unsigned int n =
-                    node->val.NF.func(node->val.NF.iPtr);
+                const unsigned int n = node->val.NF->get();
                 if (Debug)
                 {
                     cout<< indent(regionLevel) << node

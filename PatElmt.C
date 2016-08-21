@@ -48,7 +48,7 @@ namespace PatMat
 /// Exceptions
 // -----------------------------------------------------------------------------
 
-void __dead patMatException(const char *msg)
+void __dead patMatException(const char* msg)
 {
     std::cout<< "PatMat exception: " << msg<< std::endl;
     std::exit(1);
@@ -176,7 +176,7 @@ PatElmt_::PatElmt_(const Character* str)
 ///  Copy
 // ----------------------------------------------------------------------------
 
-PatElmt_ *copy(const PatElmt_ *P)
+PatElmt_* copy(const PatElmt_* P)
 {
     if (P == NULL)
     {
@@ -186,11 +186,11 @@ PatElmt_ *copy(const PatElmt_ *P)
     else
     {
         // References to elements in P, indexed by index_ field
-        PatElmt_ *E;
-        PatElmt_ *Refs[P->index_];
+        PatElmt_* E;
+        PatElmt_* Refs[P->index_];
 
         // Holds copies of elements of P, indexed by index_ field
-        PatElmt_ *Copies[P->index_];
+        PatElmt_* Copies[P->index_];
 
         buildRefArray(P, Refs);
 
@@ -244,7 +244,7 @@ PatElmt_ *copy(const PatElmt_ *P)
 // since other fixups are required on the left operand in this case, and
 // they might as well be done all together.
 
-void setSuccessor(const PatElmt_ *pe, const PatElmt_ *succ)
+void setSuccessor(const PatElmt_* pe, const PatElmt_* succ)
 {
     if (pe == NULL)
     {
@@ -256,7 +256,7 @@ void setSuccessor(const PatElmt_ *pe, const PatElmt_ *succ)
     }
     else
     {
-        PatElmt_ *Refs[pe->index_];
+        PatElmt_* Refs[pe->index_];
         // We build a reference array for L whose N'th element points to
         // the pattern element of L whose original index_ value is N.
 
@@ -264,7 +264,7 @@ void setSuccessor(const PatElmt_ *pe, const PatElmt_ *succ)
 
         for (int j = 0; j < pe->index_; j++)
         {
-            PatElmt_ *p = Refs[j];
+            PatElmt_* p = Refs[j];
             if (p->pNext_ == EOP)
             {
                 p->pNext_ = succ;
@@ -282,7 +282,7 @@ void setSuccessor(const PatElmt_ *pe, const PatElmt_ *succ)
 ///  Alternation
 // ----------------------------------------------------------------------------
 
-PatElmt_ *alternate(const PatElmt_ *l, const PatElmt_ *r)
+PatElmt_* alternate(const PatElmt_* l, const PatElmt_* r)
 {
     // If the left pattern is null, then we just add the alternation
     // node with an index one greater than the right hand pattern.
@@ -296,7 +296,7 @@ PatElmt_ *alternate(const PatElmt_ *l, const PatElmt_ *r)
         // for its elements, and adjust their index values to acccomodate
         // the right hand elements. Then add the alternation node.
         int n = l->index_;
-        PatElmt_ *Refs[n];
+        PatElmt_* Refs[n];
 
         buildRefArray(l, Refs);
 
@@ -312,9 +312,9 @@ PatElmt_ *alternate(const PatElmt_ *l, const PatElmt_ *r)
 // ----------------------------------------------------------------------------
 ///  Arbno
 // ----------------------------------------------------------------------------
-PatElmt_ *arbnoSimple(const PatElmt_ *p)
+PatElmt_* arbnoSimple(const PatElmt_* p)
 {
-    PatElmt_ *s = new PatElmt_(PC_Arbno_S, p->index_ + 1, EOP, p);
+    PatElmt_* s = new PatElmt_(PC_Arbno_S, p->index_ + 1, EOP, p);
     setSuccessor(p, s);
     return s;
 }
@@ -323,7 +323,7 @@ PatElmt_ *arbnoSimple(const PatElmt_ *p)
 // ----------------------------------------------------------------------------
 ///  Bracket
 // ----------------------------------------------------------------------------
-PatElmt_ *bracket(PatElmt_ *e, PatElmt_ *p, PatElmt_ *a)
+PatElmt_* bracket(PatElmt_* e, PatElmt_* p, PatElmt_* a)
 {
     if (p == EOP)
     {
@@ -346,7 +346,7 @@ PatElmt_ *bracket(PatElmt_ *e, PatElmt_ *p, PatElmt_ *a)
 // ----------------------------------------------------------------------------
 ///  Concatenation
 // ----------------------------------------------------------------------------
-const PatElmt_ *concat(const PatElmt_ *l, const PatElmt_ *r, unsigned incr)
+const PatElmt_* concat(const PatElmt_* l, const PatElmt_* r, unsigned incr)
 {
     if (l == EOP)
     {
@@ -361,13 +361,13 @@ const PatElmt_ *concat(const PatElmt_ *l, const PatElmt_ *r, unsigned incr)
     // We build a reference array for l whose N'th element points to
     // the pattern element of l whose original index_ value is N.
     int n = l->index_;
-    PatElmt_ *Refs[n];
+    PatElmt_* Refs[n];
 
     buildRefArray(l, Refs);
 
     for (int j = 0; j < n; j++)
     {
-        PatElmt_ *p = Refs[j];
+        PatElmt_* p = Refs[j];
 
         p->index_ += r->index_;
 

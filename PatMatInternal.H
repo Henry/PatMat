@@ -67,20 +67,20 @@ struct Dynamic
 
     union Val
     {
-        std::string *str;       // type == DY_VSTR
+        std::string* str;       // type == DY_VSTR
         bool pred;              // type == DY_BOOL
         struct
         {                       // type == DY_PAT
-            Pattern_ *p;
+            Pattern_* p;
             void (*release) (void* cookie);
             void* cookie;
         } pat;
     } val;
 };
 
-Pattern_ *dynamicFunc
+Pattern_* dynamicFunc
 (
-    void(*func)(void*, Dynamic *),
+    void(*func)(void*, Dynamic* ),
     void* cookie
 );
 
@@ -96,19 +96,19 @@ public:
     unsigned int stackIndex_;
 
     // The pattern element tree
-    const PatElmt_ *pe_;
+    const PatElmt_* pe_;
 
     // Reference count
     unsigned int refs_;
 
     // Constructor
-    Pattern_(const unsigned int stackIndex, const PatElmt_ *p);
+    Pattern_(const unsigned int stackIndex, const PatElmt_* p);
 
     // Destructor
     ~Pattern_();
 
     // Decrement reference count and delete if reference count -> 0
-    static void free(Pattern_ *p);
+    static void free(Pattern_* p);
 };
 
 
@@ -227,7 +227,7 @@ class PatElmt_
     IndexT index_;
 
     //- Successor element), to be matched after this one
-    const PatElmt_ *pNext_;
+    const PatElmt_* pNext_;
 
     union Val
     {
@@ -237,22 +237,18 @@ class PatElmt_
         // => null;
 
         // PC_Alt | PC_Arb_X | PC_Arbno_S | PC_Arbno_X
-        const PatElmt_ *Alt;
+        const PatElmt_* Alt;
 
         // PC_Rpat
-        Pattern_ **PP;
+        Pattern_** PP;
 
         // PC_Pred_Func
-        struct
-        {
-            bool(*func)(const void*);
-            const void* iPtr;
-        } BF;
+        const BoolInterface* BF;
 
         // PC_Assign_Imm_VP | PC_Assign_OnM_VP | PC_Any_VP | PC_Break_VP |
         // PC_BreakX_VP | PC_NotAny_VP | PC_NSpan_VP | PC_Span_VP |
         // PC_String_VP
-        std::string *VP;
+        std::string* VP;
 
         // PC_Call_Imm PC_Call_OnM
         struct
@@ -262,7 +258,7 @@ class PatElmt_
         } MF;
 
         // PC_String
-        std::string *Str;
+        std::string* Str;
 
         // PC_String_2
         Character Str2[2];
@@ -280,14 +276,10 @@ class PatElmt_
         Character Str6[6];
 
         // PC_Setcur
-        unsigned int *Var;
+        unsigned int* Var;
 
         // PC_Setcur_Func
-        struct
-        {
-            void(*func)(unsigned int, void*);
-            void* iPtr;
-        } CF;
+        UnsignedInterface* CF;
 
         // PC_Any_CH | PC_Break_CH | PC_BreakX_CH | PC_Char | PC_NotAny_CH |
         // PC_NSpan_CH | PC_Span_CH
@@ -302,21 +294,17 @@ class PatElmt_
 
         // PC_Any_Set | PC_Break_Set | PC_BreakX_set | PC_NotAny_Set
         // | PC_NSpan_Set | PC_Span_Set
-        CharacterSet *set;
+        CharacterSet* set;
 
         // PC_Arbno_Y | PC_Len_Nat | PC_Pos_Nat | PC_RPos_Nat | PC_RTab_Nat |
         // PC_Tab_Nat
         unsigned int Nat;
 
         // PC_Pos_NF | PC_Len_NF | PC_RPos_NF | PC_RTab_NF |
-        struct
-        {
-            unsigned int(*func)(const void*);
-            const void* iPtr;
-        } NF;
+        const UnsignedInterface* NF;
 
         // PC_Pos_NP | PC_Len_NP | PC_RPos_NP | PC_RTab_NP | PC_Tab_NP
-        const unsigned int *NP;
+        const unsigned int* NP;
 
         // PC_Any_VF | PC_Break_VF | PC_BreakX_VF | PC_NotAny_VF | PC_NSpan_VF
         // | PC_Span_VF | PC_String_VF
@@ -350,14 +338,14 @@ class PatElmt_
         (
             const PatternCode pc,
             const IndexT index,
-            const PatElmt_ *pNext
+            const PatElmt_* pNext
         );
 
         inline PatElmt_
         (
             const PatternCode pc,
             const IndexT index,
-            const PatElmt_ *pNext,
+            const PatElmt_* pNext,
             const Character c
         );
 
@@ -365,7 +353,7 @@ class PatElmt_
         (
             const PatternCode pc,
             const IndexT index,
-            const PatElmt_ *pNext,
+            const PatElmt_* pNext,
             const Character open,
             const Character close
         );
@@ -374,40 +362,39 @@ class PatElmt_
         (
             const PatternCode pc,
             const IndexT index,
-            const PatElmt_ *pNext,
-            const PatElmt_ *alt
+            const PatElmt_* pNext,
+            const PatElmt_* alt
         );
 
         inline PatElmt_
         (
             const PatternCode pc,
             const IndexT index,
-            const PatElmt_ *pNext,
-            Pattern_ **pat
+            const PatElmt_* pNext,
+            Pattern_** pat
         );
 
         inline PatElmt_
         (
             const PatternCode pc,
             const IndexT index,
-            const PatElmt_ *pNext,
-            bool(*func)(const void*),
-            const void* iPtr
+            const PatElmt_* pNext,
+            const BoolInterface* iPtr
         );
 
         inline PatElmt_
         (
             const PatternCode pc,
             const IndexT index,
-            const PatElmt_ *pNext,
-            std::string *vp
+            const PatElmt_* pNext,
+            std::string* vp
         );
 
         inline PatElmt_
         (
             const PatternCode pc,
             const IndexT index,
-            const PatElmt_ *pNext,
+            const PatElmt_* pNext,
             void(*func)(const std::string&, void*),
             void* iPtr
         );
@@ -416,24 +403,23 @@ class PatElmt_
         (
             const PatternCode pc,
             const IndexT index,
-            const PatElmt_ *pNext,
-            unsigned int *Var
+            const PatElmt_* pNext,
+            unsigned int* Var
         );
 
         inline PatElmt_
         (
             const PatternCode pc,
             const IndexT index,
-            const PatElmt_ *pNext,
-            void(*func)(unsigned int, void*),
-            void* iPtr
+            const PatElmt_* pNext,
+            UnsignedInterface* iPtr
         );
 
         inline PatElmt_
         (
             const PatternCode pc,
             const IndexT index,
-            const PatElmt_ *pNext,
+            const PatElmt_* pNext,
             const CharacterSet& set
         );
 
@@ -441,7 +427,7 @@ class PatElmt_
         (
             const PatternCode pc,
             const IndexT index,
-            const PatElmt_ *pNext,
+            const PatElmt_* pNext,
             const std::string& s
         );
 
@@ -449,7 +435,7 @@ class PatElmt_
         (
             const PatternCode pc,
             const IndexT index,
-            const PatElmt_ *pNext,
+            const PatElmt_* pNext,
             const unsigned int Nat
         );
 
@@ -457,24 +443,23 @@ class PatElmt_
         (
             const PatternCode pc,
             const IndexT index,
-            const PatElmt_ *pNext,
-            unsigned int(*func)(const void*),
-            const void* iPtr
+            const PatElmt_* pNext,
+            const UnsignedInterface* iPtr
         );
 
         inline PatElmt_
         (
             const PatternCode pc,
             const IndexT index,
-            const PatElmt_ *pNext,
-            const unsigned int *NP
+            const PatElmt_* pNext,
+            const unsigned int* NP
         );
 
         inline PatElmt_
         (
             const PatternCode pc,
             const IndexT index,
-            const PatElmt_ *pNext,
+            const PatElmt_* pNext,
             std::string(*func)(const void*),
             const void* iPtr
         );
@@ -483,7 +468,7 @@ class PatElmt_
         (
             const PatternCode pc,
             const IndexT index,
-            const PatElmt_ *pNext,
+            const PatElmt_* pNext,
             void(*func)(void*, Dynamic*),
             void* iPtr
         );
@@ -503,9 +488,9 @@ struct MatchState
 {
     int flags;
     std::string subject;
-    Pattern_ *pattern;
+    Pattern_* pattern;
     unsigned int start, stop;  // Output from match
-    const char *exception;
+    const char* exception;
 };
 
 enum MatchRet
@@ -521,20 +506,20 @@ MatchRet match(MatchState&);
 // -----------------------------------------------------------------------------
 /// PatElmt function declarations
 // -----------------------------------------------------------------------------
-PatElmt_ *copy(const PatElmt_ *P);
-PatElmt_ *alternate(const PatElmt_ *L, const PatElmt_ *R);
-PatElmt_ *arbnoSimple(const PatElmt_ *P);
-PatElmt_ *bracket(PatElmt_ *E, PatElmt_ *P, PatElmt_ *A);
-const PatElmt_ *concat(const PatElmt_ *L, const PatElmt_ *R, unsigned int Incr);
-void setSuccessor(const PatElmt_ *Pat, const PatElmt_ *Succ);
-void buildRefArray(const PatElmt_ *E, PatElmt_** RA);
+PatElmt_* copy(const PatElmt_* P);
+PatElmt_* alternate(const PatElmt_* L, const PatElmt_* R);
+PatElmt_* arbnoSimple(const PatElmt_* P);
+PatElmt_* bracket(PatElmt_* E, PatElmt_* P, PatElmt_* A);
+const PatElmt_* concat(const PatElmt_* L, const PatElmt_* R, unsigned int Incr);
+void setSuccessor(const PatElmt_* Pat, const PatElmt_* Succ);
+void buildRefArray(const PatElmt_* E, PatElmt_** RA);
 
 
 // -----------------------------------------------------------------------------
 /// EOP: End of pattern indicator
 // -----------------------------------------------------------------------------
 extern const PatElmt_ EOP_Element;
-extern const PatElmt_ *EOP;
+extern const PatElmt_* EOP;
 
 
 // -----------------------------------------------------------------------------

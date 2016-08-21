@@ -92,7 +92,7 @@ Pattern_::~Pattern_()
                 delete refs[j]->val.set;
                 break;
             case PC_Pred_Func:
-                (void)refs[j]->val.BF.iPtr;
+                (void)refs[j]->val.BF;
                 break;
             case PC_Call_Imm:
             case PC_Call_OnM:
@@ -102,7 +102,7 @@ Pattern_::~Pattern_()
             case PC_Len_NF:
             case PC_RPos_NF:
             case PC_RTab_NF:
-                (void)refs[j]->val.NF.iPtr;
+                (void)refs[j]->val.NF;
                 break;
             case PC_Any_VF:
             case PC_Break_VF:

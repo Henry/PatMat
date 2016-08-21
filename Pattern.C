@@ -153,16 +153,6 @@ static std::string getString(const void* iPtr)
     return std::string(p, l);
 }
 
-static unsigned int getUnsignedInt(const void* iPtr)
-{
-    return static_cast<const UnsignedInterface*>(iPtr)->get();
-}
-
-static bool getBool(const void* iPtr)
-{
-    return static_cast<const BoolInterface*>(iPtr)->get();
-}
-
 
 // ----------------------------------------------------------------------------
 ///  Alternation
@@ -766,7 +756,7 @@ Pattern Defer(const BoolInterface& obj)
     return Pattern
     (
         3,
-        new PatElmt_(PC_Pred_Func, 1, EOP, getBool, &obj)
+        new PatElmt_(PC_Pred_Func, 1, EOP, &obj)
     );
 }
 
@@ -832,7 +822,7 @@ Pattern Len(const UnsignedInterface& obj)
     return Pattern
     (
         0,
-        new PatElmt_(PC_Len_NF, 1, EOP, getUnsignedInt, &obj)
+        new PatElmt_(PC_Len_NF, 1, EOP, &obj)
     );
 }
 
@@ -932,7 +922,7 @@ Pattern Pos(const UnsignedInterface& obj)
     return Pattern
     (
         0,
-        new PatElmt_(PC_Pos_NF, 1, EOP, getUnsignedInt, &obj)
+        new PatElmt_(PC_Pos_NF, 1, EOP, &obj)
     );
 }
 
@@ -966,7 +956,7 @@ Pattern Rpos(const UnsignedInterface& obj)
     return Pattern
     (
         0,
-        new PatElmt_(PC_RPos_NF, 1, EOP, getUnsignedInt, &obj)
+        new PatElmt_(PC_RPos_NF, 1, EOP, &obj)
     );
 }
 
@@ -990,7 +980,7 @@ Pattern Rtab(const UnsignedInterface& obj)
     return Pattern
     (
         0,
-        new PatElmt_(PC_RTab_NF, 1, EOP, getUnsignedInt, &obj)
+        new PatElmt_(PC_RTab_NF, 1, EOP, &obj)
     );
 }
 
@@ -1073,7 +1063,7 @@ Pattern Tab(const UnsignedInterface& obj)
     return Pattern
     (
         0,
-        new PatElmt_(PC_Tab_NF, 1, EOP, getUnsignedInt, &obj)
+        new PatElmt_(PC_Tab_NF, 1, EOP, &obj)
     );
 }
 
