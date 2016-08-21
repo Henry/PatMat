@@ -115,7 +115,7 @@ PatElmt_::PatElmt_(const std::string& str)
     }
 }
 
-void PatElmt_::setStr(const Character* str, const unsigned l)
+void PatElmt_::setStr(const Character* str, const unsigned int l)
 {
     switch (l)
     {
@@ -153,7 +153,7 @@ void PatElmt_::setStr(const Character* str, const unsigned l)
     }
 }
 
-PatElmt_::PatElmt_(const Character* str, const unsigned l)
+PatElmt_::PatElmt_(const Character* str, const unsigned int l)
 :
     pCode_(PC_Null),
     index_(1),

@@ -1008,7 +1008,7 @@ static MatchRet XMatch(MatchState& ms)
         //  stored is negative since stack pointer values are always negative.
         union
         {
-            unsigned cursor;
+            unsigned int cursor;
             int stackPtr;
         };
 
@@ -1055,7 +1055,7 @@ static MatchRet XMatch(MatchState& ms)
         //  section on handling of recursive pattern matches.
         int base;
 
-        Stack(unsigned s)
+        Stack(unsigned int s)
         :
             size(s > stackSize ? s : stackSize),
             entries_(staticEntries_),
@@ -1103,7 +1103,7 @@ static MatchRet XMatch(MatchState& ms)
 
         //- Push an entry onto the pattern matching stack
         //  with current cursor value
-        inline void push(unsigned cursor, const PatElmt_ *node)
+        inline void push(unsigned int cursor, const PatElmt_ *node)
         {
             if (ptr < 1 - size)
             {
@@ -1202,7 +1202,7 @@ static MatchRet XMatch(MatchState& ms)
     const Character* subject = ms.subject.c_str();
 
     // Length of subject string
-    const unsigned len = ms.subject.length();
+    const unsigned int len = ms.subject.length();
 
     // If the value is non-negative, then this value is the index showing
     // the current position of the match in the subject string. The next
@@ -1220,7 +1220,7 @@ static MatchRet XMatch(MatchState& ms)
     // int cursor;
     union
     {
-        unsigned cursor;
+        unsigned int cursor;
         int stackPtr;
     };
 
@@ -1229,7 +1229,7 @@ static MatchRet XMatch(MatchState& ms)
 
     // Keeps track of recursive region level. This is used only for
     // debugging, it is the number of saved history stack base values.
-    unsigned regionLevel = 0;
+    unsigned int regionLevel = 0;
 
     // The pattern matching failure stack for this call to Match
     // Check we have enough stack for this pattern. This check deals with
@@ -1334,8 +1334,8 @@ Match_Succeed:
                 int innerBase = stack(s - 1).cursor;
                 int specialEntry = innerBase + 1;
                 const PatElmt_ *nodeOnM = stack(specialEntry).node;
-                unsigned start = stack(specialEntry).cursor + 1;
-                unsigned stop = stack(s).cursor;
+                unsigned int start = stack(specialEntry).cursor + 1;
+                unsigned int stop = stack(s).cursor;
                 std::string str = slice(subject, start, stop);
 
                 switch (nodeOnM->pCode_)
@@ -1645,7 +1645,7 @@ Match:
             }
             if (subject[cursor] == node->val.open)
             {
-                unsigned Paren_Count = 1;
+                unsigned int Paren_Count = 1;
                 for (;;)
                 {
                     cursor++;
@@ -1937,7 +1937,7 @@ Match:
         case PC_Len_NF:
             // Len (Integer function case)
             {
-                unsigned n =
+                unsigned int n =
                     node->val.NF.func(ms.matchCookie, node->val.NF.cookie);
                 if (Debug)
                 {
@@ -2118,7 +2118,7 @@ Match:
         case PC_Pos_NF:
             // Pos (Integer function case)
             {
-                unsigned n =
+                unsigned int n =
                 node->val.NF.func(ms.matchCookie, node->val.NF.cookie);
                 if (Debug)
                 {
@@ -2260,7 +2260,7 @@ Match:
         case PC_RPos_NF:
             // RPos (integer function case)
             {
-                unsigned n =
+                unsigned int n =
                 node->val.NF.func(ms.matchCookie,
                 node->val.NF.cookie);
                 if (Debug)
@@ -2314,7 +2314,7 @@ Match:
         case PC_RTab_NF:
             // RTab (integer function case)
             {
-                unsigned n =
+                unsigned int n =
                 node->val.NF.func(ms.matchCookie, node->val.NF.cookie);
 
                 if (Debug)
@@ -2378,7 +2378,7 @@ Match:
                     cout<< indent(regionLevel) << node
                         << " matching Span '" << node->val.Char << "'\n";
                 }
-                unsigned cur = cursor;
+                unsigned int cur = cursor;
                 while (cur < len && subject[cur] == node->val.Char)
                 {
                     cur++;
@@ -2402,7 +2402,7 @@ Match:
                     cout<< indent(regionLevel) << node
                         << " matching Span " << *(node->val.set) << endl;
                 }
-                unsigned cur = cursor;
+                unsigned int cur = cursor;
                 while (cur < len && isIn(subject[cur], *(node->val.set)))
                 {
                     cur++;
@@ -2430,7 +2430,7 @@ Match:
                     cout<< indent(regionLevel) << node
                         << " matching Span \"" << str << "\"\n";
                 }
-                unsigned cur = cursor;
+                unsigned int cur = cursor;
                 while (cur < len && isInStr(subject[cur], str))
                 {
                     cur++;
@@ -2456,7 +2456,7 @@ Match:
                     cout<< indent(regionLevel) << node
                         << " matching Span \"" << str << "\"\n";
                 }
-                unsigned cur = cursor;
+                unsigned int cur = cursor;
                 while (cur < len && isInStr(subject[cur], str))
                     cur++;
 
@@ -2639,7 +2639,7 @@ Match:
                 (
                     node->val.VF.func(ms.matchCookie, node->val.VF.cookie)
                 );
-                unsigned l = str.length();
+                unsigned int l = str.length();
 
                 if (Debug)
                 {
@@ -2666,7 +2666,7 @@ Match:
                     cout<< indent(regionLevel) << node
                         << " matching \"" << str << "\"\n";
                 }
-                unsigned l = str.length();
+                unsigned int l = str.length();
                 if (len >= cursor + l && match(&subject[cursor], str))
                 {
                     cursor += l;
@@ -2707,7 +2707,7 @@ Match:
         case PC_Tab_NF:
             // Tab (integer function case)
             {
-                unsigned n =
+                unsigned int n =
                     node->val.NF.func(ms.matchCookie, node->val.NF.cookie);
                 if (Debug)
                 {

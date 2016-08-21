@@ -44,7 +44,7 @@ Pattern Any(Character c);
 Pattern Any(const CharacterSet& set);
 Pattern Any(const std::string& str);
 Pattern Any(const std::string *str);
-Pattern Any(StringInterface *);
+Pattern Any(StringInterface&);
 
 // ----------------------------------------------------------------------------
 /// Arb
@@ -82,7 +82,7 @@ Pattern Arbno(const Pattern& p);
 // C++: binary "%"
 
 Pattern operator%(const Pattern& p, std::string& var);
-Pattern operator%(const Pattern& p, StringInterface *obj);
+Pattern operator%(const Pattern& p, StringInterface& obj);
 
 // ----------------------------------------------------------------------------
 ///  Assignment on match
@@ -96,7 +96,7 @@ Pattern operator%(const Pattern& p, StringInterface *obj);
 // C++: binary "*"
 
 Pattern operator*(const Pattern& p, std::string& var);
-Pattern operator*(const Pattern& p, StringInterface *obj);
+Pattern operator*(const Pattern& p, StringInterface& obj);
 
 // ----------------------------------------------------------------------------
 ///  Bal
@@ -119,7 +119,7 @@ Pattern Break(Character str);
 Pattern Break(const CharacterSet& set);
 Pattern Break(const std::string& str);
 Pattern Break(const std::string *str);
-Pattern Break(StringInterface *);
+Pattern Break(StringInterface&);
 
 // ----------------------------------------------------------------------------
 ///  BreakX
@@ -132,7 +132,7 @@ Pattern BreakX(Character str);
 Pattern BreakX(const CharacterSet& set);
 Pattern BreakX(const std::string& str);
 Pattern BreakX(const std::string *str);
-Pattern BreakX(StringInterface *);
+Pattern BreakX(StringInterface&);
 
 // ----------------------------------------------------------------------------
 ///  Concatenation operators
@@ -228,9 +228,9 @@ Pattern Fence(const Pattern& p);
 // Constructs a pattern that matches exactly the given number of characters. The
 // pattern fails if fewer than this number of characters remain to be matched in
 // the string.
-Pattern Len(unsigned count);
+Pattern Len(unsigned int count);
 Pattern Len(UnsignedInterface *count);
-Pattern Len(const unsigned *count);
+Pattern Len(const unsigned int *count);
 
 // ----------------------------------------------------------------------------
 ///  NotAny
@@ -244,7 +244,7 @@ Pattern NotAny(Character c);
 Pattern NotAny(const CharacterSet& set);
 Pattern NotAny(const std::string& str);
 Pattern NotAny(std::string* str);
-Pattern NotAny(StringInterface *);
+Pattern NotAny(StringInterface&);
 
 // ----------------------------------------------------------------------------
 ///  NSpan
@@ -261,7 +261,7 @@ Pattern NSpan(Character c);
 Pattern NSpan(const CharacterSet& set);
 Pattern NSpan(const std::string& str);
 Pattern NSpan(std::string *str);
-Pattern NSpan(StringInterface *);
+Pattern NSpan(StringInterface&);
 
 // ----------------------------------------------------------------------------
 ///  Pos
@@ -270,9 +270,9 @@ Pattern NSpan(StringInterface *);
 // Constructs a pattern that matches the null string if exactly count characters
 // have already been matched, and otherwise fails.
 
-Pattern Pos(unsigned count);
+Pattern Pos(unsigned int count);
 Pattern Pos(UnsignedInterface *);
-Pattern Pos(const unsigned *ptr);
+Pattern Pos(const unsigned int *ptr);
 
 // ----------------------------------------------------------------------------
 ///  Rem
@@ -293,9 +293,9 @@ Pattern Rem();
 // Constructs a pattern that matches the null string if exactly count characters
 // remain to be matched in the string, and otherwise fails.
 
-Pattern Rpos(unsigned count);
+Pattern Rpos(unsigned int count);
 Pattern Rpos(UnsignedInterface *);
-Pattern Rpos(const unsigned *ptr);
+Pattern Rpos(const unsigned int *ptr);
 
 // ----------------------------------------------------------------------------
 ///  Rtab
@@ -305,9 +305,9 @@ Pattern Rpos(const unsigned *ptr);
 // count characters remain to be matched in the string. The pattern fails if
 // fewer than count characters remain to be matched.
 
-Pattern Rtab(unsigned count);
+Pattern Rtab(unsigned int count);
 Pattern Rtab(UnsignedInterface *);
-Pattern Rtab(const unsigned *ptr);
+Pattern Rtab(const unsigned int *ptr);
 
 // ----------------------------------------------------------------------------
 ///  Setcur
@@ -320,7 +320,7 @@ Pattern Rtab(const unsigned *ptr);
 // SPITBOL: unary "@"
 // C++: Setcur
 
-Pattern Setcur(unsigned &var);
+Pattern Setcur(unsigned int &var);
 
 // ----------------------------------------------------------------------------
 ///  Span
@@ -335,7 +335,7 @@ Pattern Span(Character c);
 Pattern Span(const CharacterSet& set);
 Pattern Span(const std::string& str);
 Pattern Span(const std::string *str);
-Pattern Span(StringInterface *);
+Pattern Span(StringInterface&);
 
 // ----------------------------------------------------------------------------
 ///  Succeed
@@ -355,9 +355,9 @@ Pattern Succeed();
 // have been matched. The pattern fails if more than count characters have
 // already been matched.
 
-Pattern Tab(unsigned count);
+Pattern Tab(unsigned int count);
 Pattern Tab(UnsignedInterface *);
-Pattern Tab(const unsigned *ptr);
+Pattern Tab(const unsigned int *ptr);
 
 // ----------------------------------------------------------------------------
 /// Pattern Matching Operations

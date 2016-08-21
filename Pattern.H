@@ -80,22 +80,22 @@ public:
     virtual ~StringInterface()
     {}
 
-    virtual std::string get() = 0;
+    virtual std::string get() const = 0;
 
-    virtual const Character *get(unsigned&) = 0;
+    virtual const Character* get(unsigned int&) const = 0;
 
     virtual void set(const std::string&) = 0;
 };
 
 
 // -----------------------------------------------------------------------------
-/// UnsignedInterface: unsigned object interface
+/// UnsignedInterface: unsigned int object interface
 // -----------------------------------------------------------------------------
 
 //- Unsigned interface which returns an unsigned.  When this type is used as a
 //  formal parameter type in this package, it indicates a deferred pattern.  The
 //  function will be called when the pattern element is matched to obtain the
-//  currently referenced unsigned value.
+//  currently referenced unsigned int value.
 class UnsignedInterface
 {
 public:
@@ -103,7 +103,7 @@ public:
     virtual ~UnsignedInterface()
     {}
 
-    virtual unsigned get() = 0;
+    virtual unsigned int get() const = 0;
 };
 
 
@@ -122,7 +122,7 @@ public:
     virtual ~BoolInterface()
     {}
 
-    virtual bool get() = 0;
+    virtual bool get() const = 0;
 };
 
 
@@ -134,7 +134,7 @@ class Pattern
 {
     // Private data
 
-        Pattern_ *pat_;
+        Pattern_* pat_;
 
     // Private static functions
 
@@ -156,7 +156,7 @@ class Pattern
             void*
         );
 
-        Pattern(unsigned stackIndex, const PatElmt_ *P);
+        Pattern(unsigned int stackIndex, const PatElmt_* P);
 
 
 public:
@@ -172,9 +172,9 @@ public:
         Pattern(const Pattern&);
         Pattern(const Character);
         Pattern(const std::string&);
-        Pattern(const Character *);
-        Pattern(const Character *ptr, const unsigned len);
-        Pattern(StringInterface *);
+        Pattern(const Character*);
+        Pattern(const Character* ptr, const unsigned int len);
+        Pattern(StringInterface&);
 
     // Destructor
     ~Pattern();
@@ -191,14 +191,14 @@ public:
     // Alternation member operators
 
         Pattern& operator|=(const std::string&);
-        Pattern& operator|=(const Character *);
+        Pattern& operator|=(const Character*);
         Pattern& operator|=(const Character);
         Pattern& operator|=(const Pattern&);
 
     // Concatenation member operators
 
         Pattern& operator&=(const std::string&);
-        Pattern& operator&=(const Character *);
+        Pattern& operator&=(const Character*);
         Pattern& operator&=(const Character);
         Pattern& operator&=(const Pattern&);
 
@@ -210,9 +210,9 @@ public:
     // Alternation
 
         friend Pattern operator|(const std::string& l, const Pattern& r);
-        friend Pattern operator|(const Character *l, const Pattern& r);
+        friend Pattern operator|(const Character* l, const Pattern& r);
         friend Pattern operator|(const Pattern& l, const std::string& r);
-        friend Pattern operator|(const Pattern& l, const Character *r);
+        friend Pattern operator|(const Pattern& l, const Character* r);
         friend Pattern operator|(const Pattern& l, const Pattern& r);
         friend Pattern operator|(const Character l, const Pattern& r);
         friend Pattern operator|(const Pattern& l, const Character r);
@@ -230,7 +230,7 @@ public:
         friend Pattern Any(const CharacterSet&);
         friend Pattern Any(const std::string&);
         friend Pattern Any(std::string*);
-        friend Pattern Any(StringInterface*);
+        friend Pattern Any(StringInterface&);
 
         friend Pattern Arb();
 
@@ -242,10 +242,10 @@ public:
     // Assignment
 
         friend Pattern operator*(const Pattern& p, std::string&);
-        friend Pattern operator*(const Pattern& p, StringInterface *);
+        friend Pattern operator*(const Pattern& p, StringInterface&);
         friend Pattern operator*(const Pattern& p, std::ostream&);
         friend Pattern operator%(const Pattern& p, std::string&);
-        friend Pattern operator%(const Pattern& p, StringInterface *);
+        friend Pattern operator%(const Pattern& p, StringInterface&);
         friend Pattern operator%(const Pattern& p, std::ostream&);
 
         friend Pattern Bal(const Character open, const Character close);
@@ -254,7 +254,7 @@ public:
         friend Pattern Break(const CharacterSet&);
         friend Pattern Break(const std::string&);
         friend Pattern Break(std::string*);
-        friend Pattern Break(StringInterface*);
+        friend Pattern Break(StringInterface&);
 
         friend Pattern BreakXMake(PatElmt_*);
 
@@ -262,14 +262,14 @@ public:
         friend Pattern BreakX(const CharacterSet&);
         friend Pattern BreakX(const std::string&);
         friend Pattern BreakX(std::string*);
-        friend Pattern BreakX(StringInterface*);
+        friend Pattern BreakX(StringInterface&);
 
     // Concatenation
 
         friend Pattern operator&(const std::string& l, const Pattern& r);
-        friend Pattern operator&(const Character *l, const Pattern& r);
+        friend Pattern operator&(const Character* l, const Pattern& r);
         friend Pattern operator&(const Pattern& l, const std::string& r);
-        friend Pattern operator&(const Pattern& l, const Character *r);
+        friend Pattern operator&(const Pattern& l, const Character* r);
         friend Pattern operator&(const Pattern& l, const Pattern& r);
         friend Pattern operator&(const Character l, const Pattern& r);
         friend Pattern operator&(const Pattern& l, const Character r);
@@ -284,34 +284,34 @@ public:
         friend Pattern Fence();
         friend Pattern Fence(const Pattern&);
 
-        friend Pattern Len(unsigned int);
-        friend Pattern Len(UnsignedInterface*);
+        friend Pattern Len(const unsigned int);
+        friend Pattern Len(UnsignedInterface&);
         friend Pattern Len(const unsigned int*);
 
         friend Pattern NotAny(const Character);
         friend Pattern NotAny(const CharacterSet&);
         friend Pattern NotAny(const std::string&);
         friend Pattern NotAny(std::string*);
-        friend Pattern NotAny(StringInterface*);
+        friend Pattern NotAny(StringInterface&);
 
         friend Pattern NSpan(const Character);
         friend Pattern NSpan(const CharacterSet&);
         friend Pattern NSpan(const std::string&);
         friend Pattern NSpan(std::string*);
-        friend Pattern NSpan(StringInterface*);
+        friend Pattern NSpan(StringInterface&);
 
-        friend Pattern Pos(unsigned int);
-        friend Pattern Pos(UnsignedInterface*);
+        friend Pattern Pos(const unsigned int);
+        friend Pattern Pos(UnsignedInterface&);
         friend Pattern Pos(const unsigned int*);
 
         friend Pattern Rem();
 
-        friend Pattern Rpos(unsigned int);
-        friend Pattern Rpos(UnsignedInterface*);
+        friend Pattern Rpos(const unsigned int);
+        friend Pattern Rpos(UnsignedInterface&);
         friend Pattern Rpos(const unsigned int*);
 
-        friend Pattern Rtab(unsigned int);
-        friend Pattern Rtab(UnsignedInterface*);
+        friend Pattern Rtab(const unsigned int);
+        friend Pattern Rtab(UnsignedInterface&);
         friend Pattern Rtab(const unsigned int*);
 
         friend Pattern Setcur(unsigned int&);
@@ -320,16 +320,16 @@ public:
         friend Pattern Span(const CharacterSet&);
         friend Pattern Span(const std::string&);
         friend Pattern Span(std::string*);
-        friend Pattern Span(StringInterface*);
+        friend Pattern Span(StringInterface&);
 
         friend Pattern Succeed();
 
-        friend Pattern Tab(unsigned int);
-        friend Pattern Tab(UnsignedInterface*);
+        friend Pattern Tab(const unsigned int);
+        friend Pattern Tab(UnsignedInterface&);
         friend Pattern Tab(const unsigned int*);
 
-        friend Pattern assignOnmatch(const Pattern& p, std::string *var);
-        friend Pattern assignImmed(const Pattern& p, std::string *var);
+        friend Pattern assignOnmatch(const Pattern& p, std::string& var);
+        friend Pattern assignImmed(const Pattern& p, std::string& var);
 
     // Output
 
@@ -340,7 +340,7 @@ public:
 
         friend bool Match
         (
-            const Character *subject,
+            const Character* subject,
             const Pattern& p,
             int flags
         );
@@ -364,7 +364,7 @@ public:
         (
             std::string& subject,
             const Pattern& p,
-            const Character *replacement,
+            const Character* replacement,
             int flags
         );
 
@@ -430,7 +430,7 @@ public:
         return false;
     }
 
-    bool operator=(const Character *replacement)
+    bool operator=(const Character* replacement)
     {
         // debug output??
         if (matched())

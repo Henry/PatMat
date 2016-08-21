@@ -793,7 +793,7 @@ efficient to preconstruct the pattern as we did in this example.
 
 <p>
 Now let's look at the use of pattern assignment to break a string into
-sections. Suppose that the input string has two unsigned decimal integers,
+sections. Suppose that the input string has two unsigned int decimal integers,
 separated by spaces or a comma, with spaces allowed anywhere. Then we can
 isolate the two numbers with the following pattern:
 </p>
@@ -966,7 +966,7 @@ string of decimal digits in the subject string.
 .
 
 string cur, max;
-unsigned loc;
+unsigned int loc;
 
 MaxLen GtS(cur, max);
 
@@ -1144,7 +1144,7 @@ int main()
     }
     {
         string cur, max;
-        unsigned loc;
+        unsigned int loc;
 
         MaxLen GtS(cur, max);
 
@@ -1405,9 +1405,9 @@ Pattern Fence(const Pattern&amp; p);
 // Constructs a pattern that matches exactly the given number of characters. The
 // pattern fails if fewer than this number of characters remain to be matched in
 // the string.
-Pattern Len(unsigned count);
+Pattern Len(unsigned int count);
 Pattern Len(UnsignedInterface *count);
-Pattern Len(const unsigned *count);
+Pattern Len(const unsigned int *count);
 
 // ----------------------------------------------------------------------------
 ///  NotAny
@@ -1447,9 +1447,9 @@ Pattern NSpan(StringInterface *);
 // Constructs a pattern that matches the null string if exactly count characters
 // have already been matched, and otherwise fails.
 
-Pattern Pos(unsigned count);
+Pattern Pos(unsigned int count);
 Pattern Pos(UnsignedInterface *);
-Pattern Pos(const unsigned *ptr);
+Pattern Pos(const unsigned int *ptr);
 
 // ----------------------------------------------------------------------------
 ///  Rem
@@ -1470,9 +1470,9 @@ Pattern Rem();
 // Constructs a pattern that matches the null string if exactly count characters
 // remain to be matched in the string, and otherwise fails.
 
-Pattern Rpos(unsigned count);
+Pattern Rpos(unsigned int count);
 Pattern Rpos(UnsignedInterface *);
-Pattern Rpos(const unsigned *ptr);
+Pattern Rpos(const unsigned int *ptr);
 
 // ----------------------------------------------------------------------------
 ///  Rtab
@@ -1482,9 +1482,9 @@ Pattern Rpos(const unsigned *ptr);
 // count characters remain to be matched in the string. The pattern fails if
 // fewer than count characters remain to be matched.
 
-Pattern Rtab(unsigned count);
+Pattern Rtab(unsigned int count);
 Pattern Rtab(UnsignedInterface *);
-Pattern Rtab(const unsigned *ptr);
+Pattern Rtab(const unsigned int *ptr);
 
 // ----------------------------------------------------------------------------
 ///  Setcur
@@ -1497,7 +1497,7 @@ Pattern Rtab(const unsigned *ptr);
 // SPITBOL: unary "@"
 // C++: Setcur
 
-Pattern Setcur(unsigned &amp;var);
+Pattern Setcur(unsigned int &amp;var);
 
 // ----------------------------------------------------------------------------
 ///  Span
@@ -1532,9 +1532,9 @@ Pattern Succeed();
 // have been matched. The pattern fails if more than count characters have
 // already been matched.
 
-Pattern Tab(unsigned count);
+Pattern Tab(unsigned int count);
 Pattern Tab(UnsignedInterface *);
-Pattern Tab(const unsigned *ptr);
+Pattern Tab(const unsigned int *ptr);
 
 // ----------------------------------------------------------------------------
 /// Pattern Matching Operations

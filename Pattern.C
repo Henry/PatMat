@@ -52,7 +52,7 @@ Pattern::Pattern()
     pat_(NULL)
 {}
 
-Pattern::Pattern(unsigned stackIndex, const PatElmt_ *p)
+Pattern::Pattern(const unsigned int stackIndex, const PatElmt_* p)
 :
     pat_(new Pattern_(stackIndex, p))
 {}
@@ -75,12 +75,12 @@ Pattern::Pattern(const std::string& str)
     pat_(new Pattern_(0, new PatElmt_(str)))
 {}
 
-Pattern::Pattern(const Character *str)
+Pattern::Pattern(const Character* str)
 :
     pat_(new Pattern_(0, new PatElmt_(str)))
 {}
 
-Pattern::Pattern(const Character *str, const unsigned l)
+Pattern::Pattern(const Character* str, const unsigned int l)
 :
     pat_(new Pattern_(0, new PatElmt_(str, l)))
 {}
@@ -90,10 +90,10 @@ Pattern::Pattern(const Character c)
     pat_(new Pattern_(0, new PatElmt_(c)))
 {}
 
-Pattern::Pattern(StringInterface *obj)
+Pattern::Pattern(StringInterface& obj)
 {
-    unsigned l;
-    const Character *p = obj->get(l);
+    unsigned int l;
+    const Character* p = obj.get(l);
     pat_ = new Pattern_(0, new PatElmt_(p, l));
 }
 
@@ -140,32 +140,39 @@ Pattern& Pattern::operator=(const Pattern& p)
 ///  Helper functions (passed as callbacks)
 // ----------------------------------------------------------------------------
 
-static std::string fetch_string_pointer(void *global_cookie, void *local_cookie)
+static std::string fetch_string_pointer(void* global_cookie, void* local_cookie)
 {
-    std::string s = *static_cast<std::string*>(local_cookie);
+    const std::string s = *static_cast<const std::string*>(local_cookie);
     (void)global_cookie;
     return std::string(s);
 }
 
-static std::string fetch_string_object(void *global_cookie, void *local_cookie)
+static std::string fetch_string_object(void* global_cookie, void* local_cookie)
 {
-    StringInterface *obj = static_cast<StringInterface*>(local_cookie);
-    unsigned l;
-    const Character *p = obj->get(l);
+    const StringInterface* obj =
+        static_cast<const StringInterface*>(local_cookie);
+    unsigned int l;
+    const Character* p = obj->get(l);
     (void)global_cookie;
     return std::string(p, l);
 }
 
-static unsigned fetch_unsigned_object(void *global_cookie, void *local_cookie)
+static unsigned int fetch_unsigned_object
+(
+    void* global_cookie,
+    void* local_cookie
+)
 {
-    UnsignedInterface *obj = static_cast<UnsignedInterface*>(local_cookie);
+    const UnsignedInterface* obj =
+        static_cast<const UnsignedInterface*>(local_cookie);
     (void)global_cookie;
     return obj->get();
 }
 
-static bool fetch_bool_object(void *global_cookie, void *local_cookie)
+static bool fetch_bool_object(void* global_cookie, void* local_cookie)
 {
-    BoolInterface *obj = static_cast<BoolInterface*>(local_cookie);
+    const BoolInterface* obj =
+        static_cast<const BoolInterface*>(local_cookie);
     (void)global_cookie;
     return obj->get();
 }
@@ -180,7 +187,7 @@ Pattern& Pattern::operator|=(const std::string& r)
     return *this = *this | r;
 }
 
-Pattern& Pattern::operator|=(const Character *r)
+Pattern& Pattern::operator|=(const Character* r)
 {
     return *this = *this | r;
 }
@@ -225,7 +232,7 @@ Pattern operator|(const std::string& l, const Pattern& r)
     return Pattern::orStrPat(std::string(l), r);
 }
 
-Pattern operator|(const Character *l, const Pattern& r)
+Pattern operator|(const Character* l, const Pattern& r)
 {
     return Pattern::orStrPat(std::string(l), r);
 }
@@ -235,7 +242,7 @@ Pattern operator|(const Pattern& l, const std::string& r)
     return Pattern::orPatStr(l, std::string(r));
 }
 
-Pattern operator|(const Pattern& l, const Character *r)
+Pattern operator|(const Pattern& l, const Character* r)
 {
     return Pattern::orPatStr(l, std::string(r));
 }
@@ -245,17 +252,17 @@ Pattern operator|(const std::string& l, const std::string& r)
     return Pattern::orStrStr(std::string(l), std::string(r));
 }
 
-Pattern operator|(const Character *l, const std::string& r)
+Pattern operator|(const Character* l, const std::string& r)
 {
     return Pattern::orStrStr(std::string(l), std::string(r));
 }
 
-Pattern operator|(const std::string& l, const Character *r)
+Pattern operator|(const std::string& l, const Character* r)
 {
     return Pattern::orStrStr(std::string(l), std::string(r));
 }
 
-Pattern Or(const Character *l, const Character *r)
+Pattern Or(const Character* l, const Character* r)
 {
     return Pattern::orStrStr(std::string(l), std::string(r));
 }
@@ -290,7 +297,7 @@ Pattern operator|(const std::string& l, const Character r)
     return Pattern(1, alternate(new PatElmt_(l), new PatElmt_(r)));
 }
 
-Pattern Or(const Character *l, const Character r)
+Pattern Or(const Character* l, const Character r)
 {
     return Pattern(1, alternate(new PatElmt_(l), new PatElmt_(r)));
 }
@@ -300,7 +307,7 @@ Pattern operator|(const Character l, const std::string& r)
     return Pattern(1, alternate(new PatElmt_(l), new PatElmt_(r)));
 }
 
-Pattern Or(const Character l, const Character *r)
+Pattern Or(const Character l, const Character* r)
 {
     return Pattern(1, alternate(new PatElmt_(l), new PatElmt_(r)));
 }
@@ -339,12 +346,12 @@ Pattern Any(std::string* str)
     );
 }
 
-Pattern Any(StringInterface *obj)
+Pattern Any(StringInterface& obj)
 {
     return Pattern
     (
         0,
-        new PatElmt_(PC_Any_VF, 1, EOP, fetch_string_object, obj)
+        new PatElmt_(PC_Any_VF, 1, EOP, fetch_string_object, &obj)
     );
 }
 
@@ -377,8 +384,8 @@ static const unsigned char OK_For_Simple_Arbno[] =
 
 Pattern Arb()
 {
-    const PatElmt_ *y = new PatElmt_(PC_Arb_Y, 1, EOP);
-    const PatElmt_ *x = new PatElmt_(PC_Arb_X, 2, EOP, y);
+    const PatElmt_* y = new PatElmt_(PC_Arb_Y, 1, EOP);
+    const PatElmt_* x = new PatElmt_(PC_Arb_X, 2, EOP, y);
     return Pattern(1, x);
 }
 
@@ -423,14 +430,14 @@ Pattern Arbno(const std::string& str)
     }
 }
 
-Pattern Arbno(const Character *s)
+Pattern Arbno(const Character* s)
 {
     return Arbno(std::string(s));
 }
 
 Pattern Arbno(const Pattern& p)
 {
-    PatElmt_ *pe = copy(p.pat_->pe_);
+    PatElmt_* pe = copy(p.pat_->pe_);
 
     if (p.pat_->stackIndex_ == 0 && OK_For_Simple_Arbno[pe->pCode_])
     {
@@ -457,10 +464,10 @@ Pattern Arbno(const Pattern& p)
         // The node numbering of the constituent pattern p is not affected.
         // Where n is the number of nodes in p, the y node is numbered n + 1,
         // the e node is n + 2, and the x node is n + 3.
-        PatElmt_ *e = new PatElmt_(PC_R_Enter, 0, EOP);
-        PatElmt_ *x = new PatElmt_(PC_Arbno_X, 0, EOP, e);
-        PatElmt_ *y = new PatElmt_(PC_Arbno_Y, 0, x, p.pat_->stackIndex_ + 3);
-        PatElmt_ *epy = bracket(e, pe, y);
+        PatElmt_* e = new PatElmt_(PC_R_Enter, 0, EOP);
+        PatElmt_* x = new PatElmt_(PC_Arbno_X, 0, EOP, e);
+        PatElmt_* y = new PatElmt_(PC_Arbno_Y, 0, x, p.pat_->stackIndex_ + 3);
+        PatElmt_* epy = bracket(e, pe, y);
 
         x->val.Alt = epy;
         x->index_ = epy->index_ + 1;
@@ -476,8 +483,8 @@ Pattern Arbno(const Pattern& p)
 static void put_string_pointer
 (
     const std::string& str,
-    void *global_cookie,
-    void *local_cookie
+    void* global_cookie,
+    void* local_cookie
 )
 {
     *static_cast<std::string*>(local_cookie) = str;
@@ -487,8 +494,8 @@ static void put_string_pointer
 static void put_string_object
 (
     const std::string& str,
-    void *global_cookie,
-    void *local_cookie
+    void* global_cookie,
+    void* local_cookie
 )
 {
     StringInterface *obj = static_cast<StringInterface*>(local_cookie);
@@ -499,8 +506,8 @@ static void put_string_object
 static void output_string
 (
     const std::string& str,
-    void *global_cookie,
-    void *local_cookie
+    void* global_cookie,
+    void* local_cookie
 )
 {
     std::ostream *stream = static_cast<std::ostream*>(local_cookie);
@@ -522,11 +529,11 @@ static void output_string
 //  Where n is the number of nodes in p, the a node is numbered n + 1,
 //  and the e node is n + 2.
 
-inline Pattern assignOnmatch(const Pattern& p, std::string *var)
+inline Pattern assignOnmatch(const Pattern& p, std::string& var)
 {
-    PatElmt_ *pe = copy(p.pat_->pe_);
-    PatElmt_ *e = new PatElmt_(PC_R_Enter, 0, EOP);
-    PatElmt_ *a = new PatElmt_(PC_Assign_OnM, 0, EOP, var);
+    PatElmt_* pe = copy(p.pat_->pe_);
+    PatElmt_* e = new PatElmt_(PC_R_Enter, 0, EOP);
+    PatElmt_* a = new PatElmt_(PC_Assign_OnM, 0, EOP, &var);
     return Pattern(p.pat_->stackIndex_ + 3, bracket(e, pe, a));
 }
 
@@ -545,13 +552,13 @@ inline Pattern assignOnmatch(const Pattern& p, std::string *var)
 inline Pattern Pattern::callOnmatch
 (
     const Pattern& p,
-    void (*func) (const std::string&, void *, void *),
-    void *cookie
+    void (*func) (const std::string&, void* , void* ),
+    void* cookie
 )
 {
-    PatElmt_ *pe = copy(p.pat_->pe_);
-    PatElmt_ *e = new PatElmt_(PC_R_Enter, 0, EOP);
-    PatElmt_ *c = new PatElmt_(PC_Call_OnM, 0, EOP, func, cookie);
+    PatElmt_* pe = copy(p.pat_->pe_);
+    PatElmt_* e = new PatElmt_(PC_R_Enter, 0, EOP);
+    PatElmt_* c = new PatElmt_(PC_Call_OnM, 0, EOP, func, cookie);
     return Pattern(p.pat_->stackIndex_ + 3, bracket(e, pe, c));
 }
 
@@ -560,12 +567,12 @@ Pattern operator*(const Pattern& p, std::string& str)
     return Pattern::callOnmatch(p, put_string_pointer, &str);
 }
 
-Pattern operator*(const Pattern& p, StringInterface *obj)
+Pattern operator*(const Pattern& p, StringInterface& obj)
 {
-    return Pattern::callOnmatch(p, put_string_object, obj);
+    return Pattern::callOnmatch(p, put_string_object, &obj);
 }
 
-// Could use a StringObject that does output on "put"!
+// Could use a StringObject that does output on "set"
 Pattern operator*(const Pattern& p, std::ostream& stream)
 {
     return Pattern::callOnmatch(p, output_string, &stream);
@@ -583,11 +590,11 @@ Pattern operator*(const Pattern& p, std::ostream& stream)
 //  Where n is the number of nodes in p, the a node is numbered n + 1,
 //  and the e node is n + 2.
 
-inline Pattern assignImmed(const Pattern& p, std::string *var)
+inline Pattern assignImmed(const Pattern& p, std::string& var)
 {
-    PatElmt_ *pe = copy(p.pat_->pe_);
-    PatElmt_ *e = new PatElmt_(PC_R_Enter, 0, EOP);
-    PatElmt_ *a = new PatElmt_(PC_Assign_Imm, 0, EOP, var);
+    PatElmt_* pe = copy(p.pat_->pe_);
+    PatElmt_* e = new PatElmt_(PC_R_Enter, 0, EOP);
+    PatElmt_* a = new PatElmt_(PC_Assign_Imm, 0, EOP, &var);
     return Pattern(p.pat_->stackIndex_ + 3, bracket(e, pe, a));
 }
 
@@ -606,13 +613,13 @@ inline Pattern assignImmed(const Pattern& p, std::string *var)
 inline Pattern Pattern::callImmed
 (
     const Pattern& p,
-    void (*func) (const std::string&, void *, void *),
-    void *cookie
+    void (*func) (const std::string&, void* , void* ),
+    void* cookie
 )
 {
-    PatElmt_ *Pat = copy(p.pat_->pe_);
-    PatElmt_ *e = new PatElmt_(PC_R_Enter, 0, EOP);
-    PatElmt_ *c = new PatElmt_(PC_Call_Imm, 0, EOP, func, cookie);
+    PatElmt_* Pat = copy(p.pat_->pe_);
+    PatElmt_* e = new PatElmt_(PC_R_Enter, 0, EOP);
+    PatElmt_* c = new PatElmt_(PC_Call_Imm, 0, EOP, func, cookie);
     return Pattern(3, bracket(e, Pat, c));
 }
 
@@ -621,12 +628,12 @@ Pattern operator%(const Pattern& p, std::string& var)
     return Pattern::callImmed(p, put_string_pointer, &var);
 }
 
-Pattern operator%(const Pattern& p, StringInterface *obj)
+Pattern operator%(const Pattern& p, StringInterface& obj)
 {
-    return Pattern::callImmed(p, put_string_object, obj);
+    return Pattern::callImmed(p, put_string_object, &obj);
 }
 
-// could use a StringObject that does output on "put"!
+// Could use a StringObject that does output on "set"
 Pattern operator%(const Pattern& p, std::ostream& stream)
 {
     return Pattern::callImmed(p, output_string, &stream);
@@ -662,7 +669,7 @@ Pattern Break(const std::string& str)
     return Pattern(0, new PatElmt_(PC_Break_Set, 1, EOP, str));
 }
 
-Pattern Break(std::string *str)
+Pattern Break(std::string* str)
 {
     return Pattern
     (
@@ -671,12 +678,12 @@ Pattern Break(std::string *str)
     );
 }
 
-Pattern Break(StringInterface *obj)
+Pattern Break(StringInterface& obj)
 {
     return Pattern
     (
         0,
-        new PatElmt_(PC_Break_VF, 1, EOP, fetch_string_object, obj)
+        new PatElmt_(PC_Break_VF, 1, EOP, fetch_string_object, &obj)
     );
 }
 
@@ -696,10 +703,10 @@ Pattern Break(StringInterface *obj)
 //  The b node is numbered 3, the alternative node is 1, and the x
 //  node is 2.
 
-inline Pattern BreakXMake(PatElmt_ *b)
+inline Pattern BreakXMake(PatElmt_* b)
 {
-    PatElmt_ *x = new PatElmt_(PC_BreakX_X, 2, b);
-    PatElmt_ *a = new PatElmt_(PC_Alt, 1, EOP, x);
+    PatElmt_* x = new PatElmt_(PC_BreakX_X, 2, b);
+    PatElmt_* a = new PatElmt_(PC_Alt, 1, EOP, x);
     b->pNext_ = a;
     return Pattern(2, b);
 }
@@ -719,7 +726,7 @@ Pattern BreakX(const std::string& str)
     return BreakXMake(new PatElmt_(PC_BreakX_Set, 3, NULL, str));
 }
 
-Pattern BreakX(std::string *str)
+Pattern BreakX(std::string* str)
 {
     return BreakXMake
     (
@@ -727,11 +734,11 @@ Pattern BreakX(std::string *str)
     );
 }
 
-Pattern BreakX(StringInterface *obj)
+Pattern BreakX(StringInterface& obj)
 {
     return BreakXMake
     (
-        new PatElmt_(PC_BreakX_VF, 3, NULL, fetch_string_object, obj)
+        new PatElmt_(PC_BreakX_VF, 3, NULL, fetch_string_object, &obj)
     );
 }
 
@@ -816,9 +823,9 @@ Pattern Fence()
 //  and the e node is n + 2.
 Pattern Fence(const Pattern& p)
 {
-    PatElmt_ *pe = copy(p.pat_->pe_);
-    PatElmt_ *e = new PatElmt_(PC_R_Enter, 0, EOP);
-    PatElmt_ *x = new PatElmt_(PC_Fence_X, 0, EOP);
+    PatElmt_* pe = copy(p.pat_->pe_);
+    PatElmt_* e = new PatElmt_(PC_R_Enter, 0, EOP);
+    PatElmt_* x = new PatElmt_(PC_Fence_X, 0, EOP);
     return Pattern(p.pat_->stackIndex_ + 1, bracket(e, pe, x));
 }
 
@@ -826,7 +833,7 @@ Pattern Fence(const Pattern& p)
 // ----------------------------------------------------------------------------
 ///  Len
 // ----------------------------------------------------------------------------
-Pattern Len(unsigned count)
+Pattern Len(const unsigned int count)
 {
     // Note, the following is not just an optimization, it is needed
     // to ensure that Arbno (Len (0)) does not generate an infinite
@@ -841,16 +848,16 @@ Pattern Len(unsigned count)
     }
 }
 
-Pattern Len(UnsignedInterface *obj)
+Pattern Len(UnsignedInterface& obj)
 {
     return Pattern
     (
         0,
-        new PatElmt_(PC_Len_NF, 1, EOP, fetch_unsigned_object, obj)
+        new PatElmt_(PC_Len_NF, 1, EOP, fetch_unsigned_object, &obj)
     );
 }
 
-Pattern Len(const unsigned *count)
+Pattern Len(const unsigned* count)
 {
     return Pattern(0, new PatElmt_(PC_Len_NP, 1, EOP, count));
 }
@@ -884,12 +891,12 @@ Pattern NotAny(std::string* str)
     );
 }
 
-Pattern NotAny(StringInterface *obj)
+Pattern NotAny(StringInterface& obj)
 {
     return Pattern
     (
         0,
-        new PatElmt_(PC_NotAny_VF, 1, EOP, fetch_string_object, obj)
+        new PatElmt_(PC_NotAny_VF, 1, EOP, fetch_string_object, &obj)
     );
 }
 
@@ -913,7 +920,7 @@ Pattern NSpan(const std::string& str)
     return Pattern(0, new PatElmt_(PC_NSpan_Set, 1, EOP, str));
 }
 
-Pattern NSpan(std::string *str)
+Pattern NSpan(std::string* str)
 {
     return Pattern
     (
@@ -922,12 +929,12 @@ Pattern NSpan(std::string *str)
     );
 }
 
-Pattern NSpan(StringInterface *obj)
+Pattern NSpan(StringInterface& obj)
 {
     return Pattern
     (
         0,
-        new PatElmt_(PC_NSpan_VF, 1, EOP, fetch_string_object, obj)
+        new PatElmt_(PC_NSpan_VF, 1, EOP, fetch_string_object, &obj)
     );
 }
 
@@ -936,21 +943,21 @@ Pattern NSpan(StringInterface *obj)
 ///  Pos
 // ----------------------------------------------------------------------------
 
-Pattern Pos(unsigned count)
+Pattern Pos(const unsigned int count)
 {
     return Pattern(0, new PatElmt_(PC_Pos_Nat, 1, EOP, count));
 }
 
-Pattern Pos(UnsignedInterface *obj)
+Pattern Pos(UnsignedInterface& obj)
 {
     return Pattern
     (
         0,
-        new PatElmt_(PC_Pos_NF, 1, EOP, fetch_unsigned_object, obj)
+        new PatElmt_(PC_Pos_NF, 1, EOP, fetch_unsigned_object, &obj)
     );
 }
 
-Pattern Pos(const unsigned *Ptr)
+Pattern Pos(const unsigned* Ptr)
 {
     return Pattern(0, new PatElmt_(PC_Pos_NP, 1, EOP, Ptr));
 }
@@ -970,21 +977,21 @@ Pattern Rem()
 ///  Rpos
 // ----------------------------------------------------------------------------
 
-Pattern Rpos(unsigned count)
+Pattern Rpos(const unsigned int count)
 {
     return Pattern(0, new PatElmt_(PC_RPos_Nat, 1, EOP, count));
 }
 
-Pattern Rpos(UnsignedInterface *obj)
+Pattern Rpos(UnsignedInterface& obj)
 {
     return Pattern
     (
         0,
-        new PatElmt_(PC_RPos_NF, 1, EOP, fetch_unsigned_object, obj)
+        new PatElmt_(PC_RPos_NF, 1, EOP, fetch_unsigned_object, &obj)
     );
 }
 
-Pattern Rpos(const unsigned *count)
+Pattern Rpos(const unsigned* count)
 {
     return Pattern(0, new PatElmt_(PC_RPos_NP, 1, EOP, count));
 }
@@ -994,21 +1001,21 @@ Pattern Rpos(const unsigned *count)
 ///  Rtab
 // ----------------------------------------------------------------------------
 
-Pattern Rtab(unsigned count)
+Pattern Rtab(const unsigned int count)
 {
     return Pattern(0, new PatElmt_(PC_RTab_Nat, 1, EOP, count));
 }
 
-Pattern Rtab(UnsignedInterface *obj)
+Pattern Rtab(UnsignedInterface& obj)
 {
     return Pattern
     (
         0,
-        new PatElmt_(PC_RTab_NF, 1, EOP, fetch_unsigned_object, obj)
+        new PatElmt_(PC_RTab_NF, 1, EOP, fetch_unsigned_object, &obj)
     );
 }
 
-Pattern Rtab(const unsigned *count)
+Pattern Rtab(const unsigned* count)
 {
     return Pattern(0, new PatElmt_(PC_RTab_NP, 1, EOP, count));
 }
@@ -1018,7 +1025,7 @@ Pattern Rtab(const unsigned *count)
 ///  Setcur
 // ----------------------------------------------------------------------------
 
-Pattern Setcur(unsigned &var)
+Pattern Setcur(unsigned int& var)
 {
     // not const; must be a variable!
     return Pattern(0, new PatElmt_(PC_Setcur, 1, EOP, &var));
@@ -1044,7 +1051,7 @@ Pattern Span(const std::string& str)
     return Pattern(0, new PatElmt_(PC_Span_Set, 1, EOP, str));
 }
 
-Pattern Span(std::string *str)
+Pattern Span(std::string* str)
 {
     return Pattern
     (
@@ -1053,12 +1060,12 @@ Pattern Span(std::string *str)
     );
 }
 
-Pattern Span(StringInterface *obj)
+Pattern Span(StringInterface& obj)
 {
     return Pattern
     (
         0,
-        new PatElmt_(PC_Span_VF, 1, EOP, fetch_string_object, obj)
+        new PatElmt_(PC_Span_VF, 1, EOP, fetch_string_object, &obj)
     );
 }
 
@@ -1077,21 +1084,21 @@ Pattern Succeed()
 ///  Tab
 // ----------------------------------------------------------------------------
 
-Pattern Tab(unsigned count)
+Pattern Tab(const unsigned int count)
 {
     return Pattern(0, new PatElmt_(PC_Tab_Nat, 1, EOP, count));
 }
 
-Pattern Tab(UnsignedInterface *obj)
+Pattern Tab(UnsignedInterface& obj)
 {
     return Pattern
     (
         0,
-        new PatElmt_(PC_Tab_NF, 1, EOP, fetch_unsigned_object, obj)
+        new PatElmt_(PC_Tab_NF, 1, EOP, fetch_unsigned_object, &obj)
     );
 }
 
-Pattern Tab(const unsigned *count)
+Pattern Tab(const unsigned* count)
 {
     return Pattern(0, new PatElmt_(PC_Tab_NP, 1, EOP, count));
 }
@@ -1128,7 +1135,7 @@ Pattern& Pattern::operator&=(const std::string& r)
     return *this = *this & r;
 }
 
-Pattern& Pattern::operator&=(const Character *r)
+Pattern& Pattern::operator&=(const Character* r)
 {
     return *this = *this & r;
 }
@@ -1147,7 +1154,7 @@ Pattern operator&(const std::string& l, const Pattern& r)
     );
 }
 
-Pattern operator&(const Character *l, const Pattern& r)
+Pattern operator&(const Character* l, const Pattern& r)
 {
     return Pattern
     (
@@ -1165,7 +1172,7 @@ Pattern operator&(const Pattern& l, const std::string& r)
     );
 }
 
-Pattern operator&(const Pattern& l, const Character *r)
+Pattern operator&(const Pattern& l, const Character* r)
 {
     return Pattern
     (
@@ -1206,7 +1213,7 @@ Pattern operator&(const Pattern& l, const Character r)
 ///  Match
 // ----------------------------------------------------------------------------
 
-bool Match(const Character *subject, const Pattern& p, int flags)
+bool Match(const Character* subject, const Pattern& p, int flags)
 {
     MatchState ma;
     ma.flags = flags;
@@ -1262,7 +1269,7 @@ bool Match
 (
     std::string& subject,
     const Pattern& p,
-    const Character *replacement,
+    const Character* replacement,
     int flags
 )
 {

@@ -78,7 +78,7 @@ int main()
     }
     {
         string cur, max;
-        unsigned loc;
+        unsigned int loc;
 
         MaxLen GtS(cur, max);
 

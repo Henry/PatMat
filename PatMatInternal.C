@@ -45,7 +45,7 @@ namespace PatMat
 ///  Constructors
 // ----------------------------------------------------------------------------
 
-Pattern_::Pattern_(const unsigned stackIndex, const PatElmt_ *p)
+Pattern_::Pattern_(const unsigned int stackIndex, const PatElmt_ *p)
 :
     stackIndex_(stackIndex),
     pe_(p),

@@ -26,7 +26,7 @@ public:
         return value;
     }
 
-    const char *get(unsigned& l)
+    const char* get(unsigned& l) const
     {
         // cout << "get: " << value << '\n';
         l = value.length();
@@ -88,7 +88,7 @@ int main()
 
     // immediate assigment
     string nonv;
-    unsigned pos;
+    unsigned int pos;
     Pattern p3 = Setcur(pos) & 'l' % nonv & Abort();
 
     // dump pattern as table on stdout

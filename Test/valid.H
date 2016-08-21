@@ -47,7 +47,9 @@ public:
 };
 
 
-class MyStringObj:public StringInterface
+class MyStringObj
+:
+    public StringInterface
 {
     std::string value;
 
@@ -59,12 +61,12 @@ public:
     ~MyStringObj()
     {}
 
-    std::string get()
+    std::string get() const
     {
         return value;
     }
 
-    const char *get(unsigned& l)
+    const char* get(unsigned& l) const
     {
         l = value.length();
         return &value[0];

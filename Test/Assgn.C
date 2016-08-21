@@ -12,7 +12,7 @@ int main()
 
     // immediate assigment
     string nonv;
-    unsigned pos;
+    unsigned int pos;
     Pattern p2 = Setcur(pos) & 'l' % nonv & Abort();
     tst.validate(p2, "Hello", false);
     tst.validate_assign(p2, nonv, "l");
