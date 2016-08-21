@@ -59,22 +59,19 @@ public:
     ~MyStringObj()
     {}
 
-    std::string getString()
+    std::string get()
     {
-        // cout << "getString: " << value << '\n';
         return value;
     }
 
-    const char *getString(unsigned *l)
+    const char *get(unsigned& l)
     {
-        // cout << "getString: " << value << '\n';
-        *l = value.length();
+        l = value.length();
         return &value[0];
     }
 
-    void putString(const std::string& str)
+    void set(const std::string& str)
     {
         value = str;
-        // cout << "putString: " << value << '\n';
     }
 };

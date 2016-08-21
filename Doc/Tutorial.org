@@ -78,7 +78,7 @@
     #+begin_src c++
       ("ABC" | "AB") & ("DEF" | "CDE") & ("GH" | "IJ")
     #+end_src
-    would succeed, afer two anchor point moves:
+    would succeed, after two anchor point moves:
     #+begin_src c++
       "ABABCDEIJKL"
          ^^^^^^^
@@ -87,7 +87,7 @@
     #+end_src
     This mode of pattern matching is called the unanchored mode. It is also
     possible to put the pattern matcher into anchored mode by providing the
-    optional flag Pattern::ANCHOR to the =Match= function.  This will cause the
+    optional flag Pattern::anchor to the =Match= function.  This will cause the
     match to be performed in anchored mode, where the match is required to
     start at the first character.
 
@@ -450,7 +450,7 @@
                   max_(max)
               {}
 
-              bool getBool()
+              bool get()
               {
                   return cur_.size() > max_.size();
               }
@@ -484,10 +484,10 @@
     match. Now =BreakX= scans to the next digit. =Arb= would do here, but
     =BreakX= will be more efficient.  Once we have found a digit, we scan out
     the longest string of digits with =Span=, and assign it to =cur=. The
-    deferred call to =GtS.getBool()= tests if the string we assigned to =cur= is
+    deferred call to =GtS.get()= tests if the string we assigned to =cur= is
     the longest so far. If not, then failure is signalled, and we seek
     alternatives (this means that =BreakX= will extend and look for the next
-    digit string).  If the call to =GtS.getBool()= succeeds then the matched
+    digit string).  If the call to =GtS.get()= succeeds then the matched
     string is assigned as the largest string so far into =max= and its location
     is saved in =loc=. Finally =Fail= forces the match to fail and seek
     alternatives, so that the entire string is searched.

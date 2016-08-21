@@ -371,7 +371,7 @@ Pattern Tab(const unsigned *ptr);
 // Note that pattern assignment functions in the pattern may generate side
 // effects, so these functions are not necessarily pure.
 //
-// Pattern::ANCHOR
+// Pattern::anchor
 //
 //   This flag can be set to cause all subsequent pattern matches to operate in
 //   anchored mode. In anchored mode, no attempt is made to move the anchor
@@ -429,10 +429,10 @@ bool Match
 // this section provide some debugging assistance.
 
 // ----------------------------------------------------------------------------
-///  Pattern::DEBUG flag
+///  Pattern::debug flag
 // ----------------------------------------------------------------------------
 //
-// The Pattern::DEBUG flag can be provided to the Match functions to generate
+// The Pattern::debug flag can be provided to the Match functions to generate
 // debugging information. The debugging output is a full trace of the actions of
 // the pattern matcher, written to cout. The level of this information is
 // intended to be comprehensible at the abstract level of this package

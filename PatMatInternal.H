@@ -49,6 +49,7 @@ namespace PatMat
 // -----------------------------------------------------------------------------
 class PatElmt_;
 
+std::ostream& operator<<(std::ostream& os, const PatElmt_& pe);
 
 // -----------------------------------------------------------------------------
 /// Experimental Dynamic function

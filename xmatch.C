@@ -1246,7 +1246,7 @@ static MatchRet XMatch(MatchState& ms)
 
     // Start of processing for XMatch
 
-    if (Debug || ms.flags & Pattern::TRACE)
+    if (Debug || ms.flags & Pattern::trace)
     {
         cout<< endl;
     }
@@ -1265,7 +1265,7 @@ static MatchRet XMatch(MatchState& ms)
     }
 
     // In anchored mode, the bottom entry on the stack is an abort entry
-    if (ms.flags & Pattern::ANCHOR)
+    if (ms.flags & Pattern::anchor)
     {
         stack(stack.init).node = &CP_Abort;
         stack(stack.init).cursor = 0;
@@ -1417,7 +1417,7 @@ Match:
 
     // Processing is NOT allowed to fall through
 
-    if (ms.flags & Pattern::TRACE)
+    if (ms.flags & Pattern::trace)
     {
         matchTrace(node, subject, cursor);
     }
@@ -2875,7 +2875,7 @@ Match:
 
 MatchRet match(MatchState& ms)
 {
-    if (ms.flags & Pattern::DEBUG)
+    if (ms.flags & Pattern::debug)
     {
         return XMatch<1>(ms);
     }

@@ -71,7 +71,7 @@ typedef char Character;
 
 //- String interface which returns a std::string.  When this class is used as a
 //  formal parameter type in this package, it indicates a deferred pattern.  The
-//  getString function will be called when the pattern element is matched to
+//  get function will be called when the pattern element is matched to
 //  obtain the currently referenced string value.
 class StringInterface
 {
@@ -80,11 +80,11 @@ public:
     virtual ~StringInterface()
     {}
 
-    virtual std::string getString() = 0;
+    virtual std::string get() = 0;
 
-    virtual const Character *getString(unsigned *) = 0;
+    virtual const Character *get(unsigned&) = 0;
 
-    virtual void putString(const std::string &) = 0;
+    virtual void set(const std::string&) = 0;
 };
 
 
@@ -103,9 +103,7 @@ public:
     virtual ~UnsignedInterface()
     {}
 
-    virtual unsigned getUnsigned() = 0;
-
-    // virtual void putUnsigned(unsigned) = 0;
+    virtual unsigned get() = 0;
 };
 
 
@@ -124,9 +122,7 @@ public:
     virtual ~BoolInterface()
     {}
 
-    virtual bool getBool() = 0;
-
-    // virtual void putBool(bool) = 0;
+    virtual bool get() = 0;
 };
 
 
@@ -166,9 +162,9 @@ class Pattern
 public:
 
     // Match flags
-    static const int DEBUG = 1;
-    static const int ANCHOR = 2;
-    static const int TRACE = 4;
+    static const int debug = 1;
+    static const int anchor = 2;
+    static const int trace = 4;
 
     // Constructors
 
@@ -183,7 +179,7 @@ public:
     // Destructor
     ~Pattern();
 
-    inline void debug(const Character* fmt)
+    inline void debugMsg(const Character* fmt)
     {
         IDOUT(std::cerr<< fmt << long(pat_) << std::endl;);
     }

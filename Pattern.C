@@ -61,11 +61,11 @@ Pattern::Pattern(const Pattern& p)
 :
     pat_(p.pat_)
 {
-    debug("Pattern::Pattern(const Pattern& p) ");
+    debugMsg("Pattern::Pattern(const Pattern& p) ");
 
     if (pat_)
     {
-        debug("Pattern::Pattern(const Pattern& p): hold ");
+        debugMsg("Pattern::Pattern(const Pattern& p): hold ");
         pat_->refs_++;
     }
 }
@@ -90,10 +90,10 @@ Pattern::Pattern(const Character c)
     pat_(new Pattern_(0, new PatElmt_(c)))
 {}
 
-Pattern::Pattern(StringInterface* obj)
+Pattern::Pattern(StringInterface *obj)
 {
     unsigned l;
-    const Character *p = obj->getString(&l);
+    const Character *p = obj->get(l);
     pat_ = new Pattern_(0, new PatElmt_(p, l));
 }
 
@@ -104,7 +104,7 @@ Pattern::Pattern(StringInterface* obj)
 
 Pattern::~Pattern()
 {
-    debug("Pattern::~Pattern() ");
+    debugMsg("Pattern::~Pattern() ");
     if (pat_)
     {
         Pattern_::free(pat_);
@@ -118,17 +118,17 @@ Pattern::~Pattern()
 
 Pattern& Pattern::operator=(const Pattern& p)
 {
-    debug("Pattern::operator= ");
+    debugMsg("Pattern::operator= ");
     if (pat_)
     {
-        debug("Pattern::operator= delete ");
+        debugMsg("Pattern::operator= delete ");
         Pattern_::free(pat_);
     }
 
     pat_ = p.pat_;
     if (pat_)
     {
-        debug("Pattern::operator= hold ");
+        debugMsg("Pattern::operator= hold ");
         pat_->refs_++;
     }
 
@@ -151,7 +151,7 @@ static std::string fetch_string_object(void *global_cookie, void *local_cookie)
 {
     StringInterface *obj = static_cast<StringInterface*>(local_cookie);
     unsigned l;
-    const Character *p = obj->getString(&l);
+    const Character *p = obj->get(l);
     (void)global_cookie;
     return std::string(p, l);
 }
@@ -160,14 +160,14 @@ static unsigned fetch_unsigned_object(void *global_cookie, void *local_cookie)
 {
     UnsignedInterface *obj = static_cast<UnsignedInterface*>(local_cookie);
     (void)global_cookie;
-    return obj->getUnsigned();
+    return obj->get();
 }
 
 static bool fetch_bool_object(void *global_cookie, void *local_cookie)
 {
     BoolInterface *obj = static_cast<BoolInterface*>(local_cookie);
     (void)global_cookie;
-    return obj->getBool();
+    return obj->get();
 }
 
 
@@ -339,7 +339,7 @@ Pattern Any(std::string* str)
     );
 }
 
-Pattern Any(StringInterface* obj)
+Pattern Any(StringInterface *obj)
 {
     return Pattern
     (
@@ -493,7 +493,7 @@ static void put_string_object
 {
     StringInterface *obj = static_cast<StringInterface*>(local_cookie);
     (void)global_cookie;
-    obj->putString(str);
+    obj->set(str);
 }
 
 static void output_string
@@ -560,12 +560,12 @@ Pattern operator*(const Pattern& p, std::string& str)
     return Pattern::callOnmatch(p, put_string_pointer, &str);
 }
 
-Pattern operator*(const Pattern& p, StringInterface * obj)
+Pattern operator*(const Pattern& p, StringInterface *obj)
 {
     return Pattern::callOnmatch(p, put_string_object, obj);
 }
 
-// Could use a StringObject that does output on "putString"!
+// Could use a StringObject that does output on "put"!
 Pattern operator*(const Pattern& p, std::ostream& stream)
 {
     return Pattern::callOnmatch(p, output_string, &stream);
@@ -621,12 +621,12 @@ Pattern operator%(const Pattern& p, std::string& var)
     return Pattern::callImmed(p, put_string_pointer, &var);
 }
 
-Pattern operator%(const Pattern& p, StringInterface * obj)
+Pattern operator%(const Pattern& p, StringInterface *obj)
 {
     return Pattern::callImmed(p, put_string_object, obj);
 }
 
-// could use a StringObject that does output on "putString"!
+// could use a StringObject that does output on "put"!
 Pattern operator%(const Pattern& p, std::ostream& stream)
 {
     return Pattern::callImmed(p, output_string, &stream);
@@ -671,7 +671,7 @@ Pattern Break(std::string *str)
     );
 }
 
-Pattern Break(StringInterface* obj)
+Pattern Break(StringInterface *obj)
 {
     return Pattern
     (
@@ -727,7 +727,7 @@ Pattern BreakX(std::string *str)
     );
 }
 
-Pattern BreakX(StringInterface* obj)
+Pattern BreakX(StringInterface *obj)
 {
     return BreakXMake
     (
@@ -841,7 +841,7 @@ Pattern Len(unsigned count)
     }
 }
 
-Pattern Len(UnsignedInterface* obj)
+Pattern Len(UnsignedInterface *obj)
 {
     return Pattern
     (
@@ -884,7 +884,7 @@ Pattern NotAny(std::string* str)
     );
 }
 
-Pattern NotAny(StringInterface * obj)
+Pattern NotAny(StringInterface *obj)
 {
     return Pattern
     (
@@ -922,7 +922,7 @@ Pattern NSpan(std::string *str)
     );
 }
 
-Pattern NSpan(StringInterface * obj)
+Pattern NSpan(StringInterface *obj)
 {
     return Pattern
     (

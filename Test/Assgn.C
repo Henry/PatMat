@@ -34,7 +34,7 @@ int main()
     // test "delayed evaluation" of string value
     MyStringObj s;
     Pattern p4 = "H" & vowel & +s;
-    s.putString("ll");  // AFTER p4 creation
+    s.set("ll");  // AFTER p4 creation
     string subject("Hello");
     string r("");
 

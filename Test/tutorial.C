@@ -21,7 +21,7 @@ class MaxLen
             max_(max)
         {}
 
-        bool getBool()
+        bool get()
         {
             return cur_.size() > max_.size();
         }

@@ -17,28 +17,29 @@ public:
     MyStringObj()
     {}
 
-    string getString()
+    ~MyStringObj()
+    {}
+
+    string get()
     {
-        // cout << "getString: " << value << '\n';
+        // cout << "get: " << value << '\n';
         return value;
     }
 
-    const char *getString(unsigned *l)
+    const char *get(unsigned& l)
     {
-        // cout << "getString: " << value << '\n';
-        *l = value.length();
+        // cout << "get: " << value << '\n';
+        l = value.length();
         return &value[0];
     }
 
-    void putString(const string& str)
+    void set(const string& str)
     {
         value = str;
-        // cout << "putString: " << value << '\n';
+        // cout << "set: " << value << '\n';
     }
-
-    ~MyStringObj()
-    {}
 };
+
 
 int main()
 {
@@ -111,7 +112,7 @@ int main()
     // test "delayed evaluation" of string value
     MyStringObj s;
     Pattern p4 = "H" & vowel & +s;
-    s.putString("ll");  // AFTER p4 creation
+    s.set("ll");  // AFTER p4 creation
     subject = "Hello";
     if (Match(subject, p4, ""))
         cout << "remainder: " << subject << '\n';
