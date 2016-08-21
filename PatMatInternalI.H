@@ -86,7 +86,7 @@ inline PatElmt_::PatElmt_
     const PatternCode pc,
     const IndexT index,
     const PatElmt_ *pNext,
-    bool(*func)(void*, const void*),
+    bool(*func)(const void*),
     const void* iPtr
 )
 :
@@ -118,7 +118,7 @@ inline PatElmt_::PatElmt_
     const PatternCode pc,
     const IndexT index,
     const PatElmt_ *pNext,
-    void(*func)(const std::string&, void*, void*),
+    void(*func)(const std::string&, void*),
     void* iPtr
 )
 :
@@ -150,7 +150,7 @@ inline PatElmt_::PatElmt_
     const PatternCode pc,
     const IndexT index,
     const PatElmt_ *pNext,
-    void(*func)(unsigned int, void*, void*),
+    void(*func)(unsigned int, void*),
     void* iPtr
 )
 :
@@ -244,7 +244,7 @@ inline PatElmt_::PatElmt_
     const PatternCode pc,
     const IndexT index,
     const PatElmt_ *pNext,
-    unsigned int(*func)(void*, const void*),
+    unsigned int(*func)(const void*),
     const void* iPtr
 )
 :
@@ -276,7 +276,7 @@ inline PatElmt_::PatElmt_
     const PatternCode pc,
     const IndexT index,
     const PatElmt_ *pNext,
-    std::string(*func)(void*, const void*),
+    std::string(*func)(const void*),
     const void* iPtr
 )
 :
@@ -293,7 +293,7 @@ inline PatElmt_::PatElmt_
     const PatternCode pc,
     const IndexT index,
     const PatElmt_ *pNext,
-    void(*func)(void*, void*, Dynamic *),
+    void(*func)(void*, Dynamic *),
     void* iPtr
 )
 :

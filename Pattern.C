@@ -90,7 +90,7 @@ Pattern::Pattern(const Character c)
     pat_(new Pattern_(0, new PatElmt_(c)))
 {}
 
-Pattern::Pattern(StringInterface& obj)
+Pattern::Pattern(const StringInterface& obj)
 {
     unsigned int l;
     const Character* p = obj.get(l);
@@ -140,30 +140,26 @@ Pattern& Pattern::operator=(const Pattern& p)
 ///  Helper functions (passed as callbacks)
 // ----------------------------------------------------------------------------
 
-static std::string getStringPointer(void* global_cookie, const void* iPtr)
+static std::string getStringPointer(const void* iPtr)
 {
-    (void)global_cookie;
     return std::string(*static_cast<const std::string*>(iPtr));
 }
 
-static std::string getString(void* global_cookie, const void* iPtr)
+static std::string getString(const void* iPtr)
 {
-    (void)global_cookie;
     unsigned int l;
     const Character* p =
         static_cast<const StringInterface*>(iPtr)->get(l);
     return std::string(p, l);
 }
 
-static unsigned int getUnsignedInt(void* global_cookie, const void* iPtr)
+static unsigned int getUnsignedInt(const void* iPtr)
 {
-    (void)global_cookie;
     return static_cast<const UnsignedInterface*>(iPtr)->get();
 }
 
-static bool getBool(void* global_cookie, const void* iPtr)
+static bool getBool(const void* iPtr)
 {
-    (void)global_cookie;
     return static_cast<const BoolInterface*>(iPtr)->get();
 }
 
@@ -327,7 +323,7 @@ Pattern Any(const std::string& str)
     return Pattern(0, new PatElmt_(PC_Any_Set, 1, EOP, str));
 }
 
-Pattern Any(std::string* str)
+Pattern Any(const std::string* str)
 {
     return Pattern
     (
@@ -336,7 +332,7 @@ Pattern Any(std::string* str)
     );
 }
 
-Pattern Any(StringInterface& obj)
+Pattern Any(const StringInterface& obj)
 {
     return Pattern
     (
@@ -473,30 +469,25 @@ Pattern Arbno(const Pattern& p)
 static void setStringPointer
 (
     const std::string& str,
-    void* global_cookie,
     void* iPtr
 )
 {
     *static_cast<std::string*>(iPtr) = str;
-    (void)global_cookie;
 }
 
 static void setString
 (
     const std::string& str,
-    void* global_cookie,
     void* iPtr
 )
 {
     StringInterface *obj = static_cast<StringInterface*>(iPtr);
-    (void)global_cookie;
     obj->set(str);
 }
 
 static void writeString
 (
     const std::string& str,
-    void* global_cookie,
     void* iPtr
 )
 {
@@ -504,7 +495,6 @@ static void writeString
     *stream
         << str
         << '\n'; // SNOBOL doesn't, Ada does
-    (void)global_cookie;
 }
 
 
@@ -542,7 +532,7 @@ inline Pattern assignOnmatch(const Pattern& p, std::string& var)
 inline Pattern Pattern::callOnmatch
 (
     const Pattern& p,
-    void (*func) (const std::string&, void* , void* ),
+    void(*func)(const std::string&, void* ),
     void* iPtr
 )
 {
@@ -603,7 +593,7 @@ inline Pattern assignImmed(const Pattern& p, std::string& var)
 inline Pattern Pattern::callImmed
 (
     const Pattern& p,
-    void (*func) (const std::string&, void* , void* ),
+    void(*func)(const std::string&, void* ),
     void* iPtr
 )
 {
@@ -659,7 +649,7 @@ Pattern Break(const std::string& str)
     return Pattern(0, new PatElmt_(PC_Break_Set, 1, EOP, str));
 }
 
-Pattern Break(std::string* str)
+Pattern Break(const std::string* str)
 {
     return Pattern
     (
@@ -668,7 +658,7 @@ Pattern Break(std::string* str)
     );
 }
 
-Pattern Break(StringInterface& obj)
+Pattern Break(const StringInterface& obj)
 {
     return Pattern
     (
@@ -716,7 +706,7 @@ Pattern BreakX(const std::string& str)
     return BreakXMake(new PatElmt_(PC_BreakX_Set, 3, NULL, str));
 }
 
-Pattern BreakX(std::string* str)
+Pattern BreakX(const std::string* str)
 {
     return BreakXMake
     (
@@ -724,7 +714,7 @@ Pattern BreakX(std::string* str)
     );
 }
 
-Pattern BreakX(StringInterface& obj)
+Pattern BreakX(const StringInterface& obj)
 {
     return BreakXMake
     (
@@ -753,9 +743,8 @@ Pattern Defer(Pattern& p)
     return Pattern(3, new PatElmt_(PC_Rpat, 1, EOP, &p.pat_));
 }
 
-Pattern Defer(std::string& str)
+Pattern Defer(const std::string& str)
 {
-    // NOT const! must be a variable!
     return Pattern
     (
         0,
@@ -763,7 +752,7 @@ Pattern Defer(std::string& str)
     );
 }
 
-Pattern Defer(StringInterface& obj)
+Pattern Defer(const StringInterface& obj)
 {
     return Pattern
     (
@@ -872,7 +861,7 @@ Pattern NotAny(const std::string& str)
     return Pattern(0, new PatElmt_(PC_NotAny_Set, 1, EOP, str));
 }
 
-Pattern NotAny(std::string* str)
+Pattern NotAny(const std::string* str)
 {
     return Pattern
     (
@@ -881,7 +870,7 @@ Pattern NotAny(std::string* str)
     );
 }
 
-Pattern NotAny(StringInterface& obj)
+Pattern NotAny(const StringInterface& obj)
 {
     return Pattern
     (
@@ -910,7 +899,7 @@ Pattern NSpan(const std::string& str)
     return Pattern(0, new PatElmt_(PC_NSpan_Set, 1, EOP, str));
 }
 
-Pattern NSpan(std::string* str)
+Pattern NSpan(const std::string* str)
 {
     return Pattern
     (
@@ -919,7 +908,7 @@ Pattern NSpan(std::string* str)
     );
 }
 
-Pattern NSpan(StringInterface& obj)
+Pattern NSpan(const StringInterface& obj)
 {
     return Pattern
     (
@@ -1041,7 +1030,7 @@ Pattern Span(const std::string& str)
     return Pattern(0, new PatElmt_(PC_Span_Set, 1, EOP, str));
 }
 
-Pattern Span(std::string* str)
+Pattern Span(const std::string* str)
 {
     return Pattern
     (
@@ -1050,7 +1039,7 @@ Pattern Span(std::string* str)
     );
 }
 
-Pattern Span(StringInterface& obj)
+Pattern Span(const StringInterface& obj)
 {
     return Pattern
     (
@@ -1209,7 +1198,6 @@ bool Match(const Character* subject, const Pattern& p, int flags)
     ma.flags = flags;
     ma.subject = subject;
     ma.pattern = p.pat_;
-    ma.matchCookie = 0;
     // XXX check for MATCH_EXCEPTION, throw exception!?
     return match(ma) == MATCH_SUCCESS;
 }
@@ -1220,7 +1208,6 @@ bool Match(const std::string& subject, const Pattern& p, int flags)
     ma.flags = flags;
     ma.subject = subject;
     ma.pattern = p.pat_;
-    ma.matchCookie = 0;
     // XXX check for MATCH_EXCEPTION, throw exception!?
     return match(ma) == MATCH_SUCCESS;
 }
@@ -1242,7 +1229,6 @@ bool Match
     ma.flags = flags;
     ma.subject = subject;
     ma.pattern = p.pat_;
-    ma.matchCookie = 0;
 
     // XXX check for MATCH_EXCEPTION, throw exception!?
     if (match(ma) != MATCH_SUCCESS)
@@ -1267,7 +1253,6 @@ bool Match
     ma.flags = flags;
     ma.subject = subject;
     ma.pattern = p.pat_;
-    ma.matchCookie = 0;
 
     // XXX check for MATCH_EXCEPTION, throw exception!?
     if (match(ma) != MATCH_SUCCESS)
@@ -1291,7 +1276,6 @@ bool Match
     ma.flags = flags;
     ma.subject = result;
     ma.pattern = p.pat_;
-    ma.matchCookie = 0;
 
     // XXX check for MATCH_EXCEPTION, throw exception!?
     if (match(ma) == MATCH_SUCCESS)

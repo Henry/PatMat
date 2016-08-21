@@ -1353,7 +1353,6 @@ Match_Succeed:
                         nodeOnM->val.MF.func
                         (
                             str,
-                            ms.matchCookie,
                             nodeOnM->val.MF.iPtr
                         );
                         if (Debug)
@@ -1479,7 +1478,7 @@ Match:
             {
                 std::string str
                 (
-                    node->val.VF.func(ms.matchCookie, node->val.VF.iPtr)
+                    node->val.VF.func(node->val.VF.iPtr)
                 );
                 if (Debug)
                 {
@@ -1709,7 +1708,7 @@ Match:
             {
                 std::string str
                 (
-                    node->val.VF.func(ms.matchCookie, node->val.VF.iPtr)
+                    node->val.VF.func(node->val.VF.iPtr)
                 );
                 if (Debug)
                 {
@@ -1786,7 +1785,7 @@ Match:
             {
                 std::string str
                 (
-                    node->val.VF.func(ms.matchCookie, node->val.VF.iPtr)
+                    node->val.VF.func(node->val.VF.iPtr)
                 );
                 if (Debug)
                 {
@@ -1938,7 +1937,7 @@ Match:
             // Len (Integer function case)
             {
                 unsigned int n =
-                    node->val.NF.func(ms.matchCookie, node->val.NF.iPtr);
+                    node->val.NF.func(node->val.NF.iPtr);
                 if (Debug)
                 {
                     cout<< indent(regionLevel) << node
@@ -1999,7 +1998,7 @@ Match:
             {
                 std::string str
                 (
-                    node->val.VF.func(ms.matchCookie, node->val.VF.iPtr)
+                    node->val.VF.func(node->val.VF.iPtr)
                 );
                 if (Debug)
                 {
@@ -2062,7 +2061,7 @@ Match:
             {
                 std::string str
                 (
-                    node->val.VF.func(ms.matchCookie, node->val.VF.iPtr)
+                    node->val.VF.func(node->val.VF.iPtr)
                 );
                 if (Debug)
                 {
@@ -2119,7 +2118,7 @@ Match:
             // Pos (Integer function case)
             {
                 unsigned int n =
-                node->val.NF.func(ms.matchCookie, node->val.NF.iPtr);
+                node->val.NF.func(node->val.NF.iPtr);
                 if (Debug)
                 {
                     cout<< indent(regionLevel) << node
@@ -2160,7 +2159,7 @@ Match:
             }
             if
             (
-                node->val.BF.func(ms.matchCookie, node->val.BF.iPtr)
+                node->val.BF.func(node->val.BF.iPtr)
             )
             {
                 goto Succeed;
@@ -2261,8 +2260,7 @@ Match:
             // RPos (integer function case)
             {
                 unsigned int n =
-                node->val.NF.func(ms.matchCookie,
-                node->val.NF.iPtr);
+                node->val.NF.func(node->val.NF.iPtr);
                 if (Debug)
                 {
                     cout<< indent(regionLevel) << node
@@ -2315,7 +2313,7 @@ Match:
             // RTab (integer function case)
             {
                 unsigned int n =
-                node->val.NF.func(ms.matchCookie, node->val.NF.iPtr);
+                node->val.NF.func(node->val.NF.iPtr);
 
                 if (Debug)
                 {
@@ -2367,7 +2365,7 @@ Match:
                 cout<< indent(regionLevel) << node
                     << " matching Setcur_Func\n";
             }
-            (node->val.CF.func)(cursor, ms.matchCookie, node->val.CF.iPtr);
+            (node->val.CF.func)(cursor, node->val.CF.iPtr);
             goto Succeed;
 
         case PC_Span_CH:
@@ -2423,7 +2421,7 @@ Match:
             {
                 std::string str
                 (
-                    node->val.VF.func(ms.matchCookie, node->val.VF.iPtr)
+                    node->val.VF.func(node->val.VF.iPtr)
                 );
                 if (Debug)
                 {
@@ -2637,7 +2635,7 @@ Match:
             {
                 std::string str
                 (
-                    node->val.VF.func(ms.matchCookie, node->val.VF.iPtr)
+                    node->val.VF.func(node->val.VF.iPtr)
                 );
                 unsigned int l = str.length();
 
@@ -2708,7 +2706,7 @@ Match:
             // Tab (integer function case)
             {
                 unsigned int n =
-                    node->val.NF.func(ms.matchCookie, node->val.NF.iPtr);
+                    node->val.NF.func(node->val.NF.iPtr);
                 if (Debug)
                 {
                     cout<< indent(regionLevel) << node
@@ -2772,7 +2770,7 @@ Match:
                     cout<< indent(regionLevel) << node
                         << " executing immediate write of \"" << str << "\"\n";
                 }
-                node->val.MF.func(str, ms.matchCookie, node->val.MF.iPtr);
+                node->val.MF.func(str, node->val.MF.iPtr);
                 stack.popRegion();
                 regionLevel--;
                 goto Succeed;
@@ -2800,7 +2798,7 @@ Match:
                     cout<< indent(regionLevel) << node
                         << " calling dynamic function" << endl;
                 }
-                node->val.DF.func(ms.matchCookie, node->val.DF.iPtr, &d);
+                node->val.DF.func(node->val.DF.iPtr, &d);
                 switch (d.type)
                 {
                     case Dynamic::DY_BOOL:

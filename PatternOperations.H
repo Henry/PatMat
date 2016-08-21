@@ -168,34 +168,34 @@ Pattern Defer(Pattern& p);
 //  characters.
 //
 //  Here str must be a std::string variable.
-Pattern Defer(std::string& str);
+Pattern Defer(const std::string& str);
 
 //- Constructs a pattern which at pattern matching time calls the given
 //  function, and then matches against the string or character value that is
 //  returned by the call.
-Pattern Defer(StringInterface& obj);
+Pattern Defer(const StringInterface& obj);
 
 //- Constructs a predicate pattern function that at pattern matching time calls
 //  the given function. If True is returned, then the pattern matches.  If False
 //  is returned, then failure is signalled.
-Pattern Defer(BoolInterface& obj);
+Pattern Defer(const BoolInterface& obj);
 
 inline Pattern operator+(Pattern& p)
 {
     return Defer(p);
 }
 
-inline Pattern operator+(std::string& s)
+inline Pattern operator+(const std::string& s)
 {
     return Defer(s);
 }
 
-inline Pattern operator+(StringInterface& obj)
+inline Pattern operator+(const StringInterface& obj)
 {
     return Defer(obj);
 }
 
-inline Pattern operator+(BoolInterface& obj)
+inline Pattern operator+(const BoolInterface& obj)
 {
     return Defer(obj);
 }

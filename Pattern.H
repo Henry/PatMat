@@ -145,14 +145,14 @@ class Pattern
         static Pattern inline callOnmatch
         (
             const Pattern&,
-            void (*)(const std::string&, void*, void*),
+            void (*)(const std::string&, void*),
             void*
         );
 
         static Pattern inline callImmed
         (
             const Pattern&,
-            void (*)(const std::string&, void*, void*),
+            void (*)(const std::string&, void*),
             void*
         );
 
@@ -174,7 +174,7 @@ public:
         Pattern(const std::string&);
         Pattern(const Character*);
         Pattern(const Character* ptr, const unsigned int len);
-        Pattern(StringInterface&);
+        Pattern(const StringInterface&);
 
     // Destructor
     ~Pattern();
@@ -229,8 +229,8 @@ public:
         friend Pattern Any(const Character);
         friend Pattern Any(const CharacterSet&);
         friend Pattern Any(const std::string&);
-        friend Pattern Any(std::string*);
-        friend Pattern Any(StringInterface&);
+        friend Pattern Any(const std::string*);
+        friend Pattern Any(const StringInterface&);
 
         friend Pattern Arb();
 
@@ -253,16 +253,16 @@ public:
         friend Pattern Break(const Character);
         friend Pattern Break(const CharacterSet&);
         friend Pattern Break(const std::string&);
-        friend Pattern Break(std::string*);
-        friend Pattern Break(StringInterface&);
+        friend Pattern Break(const std::string*);
+        friend Pattern Break(const StringInterface&);
 
         friend Pattern BreakXMake(PatElmt_*);
 
         friend Pattern BreakX(const Character);
         friend Pattern BreakX(const CharacterSet&);
         friend Pattern BreakX(const std::string&);
-        friend Pattern BreakX(std::string*);
-        friend Pattern BreakX(StringInterface&);
+        friend Pattern BreakX(const std::string*);
+        friend Pattern BreakX(const StringInterface&);
 
     // Concatenation
 
@@ -275,8 +275,8 @@ public:
         friend Pattern operator&(const Pattern& l, const Character r);
 
         friend Pattern Defer(Pattern&);
-        friend Pattern Defer(std::string&);
-        friend Pattern Defer(StringInterface&);
+        friend Pattern Defer(const std::string&);
+        friend Pattern Defer(const StringInterface&);
         friend Pattern Defer(const BoolInterface&);
 
         friend Pattern Fail();
@@ -291,14 +291,14 @@ public:
         friend Pattern NotAny(const Character);
         friend Pattern NotAny(const CharacterSet&);
         friend Pattern NotAny(const std::string&);
-        friend Pattern NotAny(std::string*);
-        friend Pattern NotAny(StringInterface&);
+        friend Pattern NotAny(const std::string*);
+        friend Pattern NotAny(const StringInterface&);
 
         friend Pattern NSpan(const Character);
         friend Pattern NSpan(const CharacterSet&);
         friend Pattern NSpan(const std::string&);
-        friend Pattern NSpan(std::string*);
-        friend Pattern NSpan(StringInterface&);
+        friend Pattern NSpan(const std::string*);
+        friend Pattern NSpan(const StringInterface&);
 
         friend Pattern Pos(const unsigned int);
         friend Pattern Pos(const UnsignedInterface&);
@@ -319,8 +319,8 @@ public:
         friend Pattern Span(const Character);
         friend Pattern Span(const CharacterSet&);
         friend Pattern Span(const std::string&);
-        friend Pattern Span(std::string*);
-        friend Pattern Span(StringInterface&);
+        friend Pattern Span(const std::string*);
+        friend Pattern Span(const StringInterface&);
 
         friend Pattern Succeed();
 
