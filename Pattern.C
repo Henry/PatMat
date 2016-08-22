@@ -85,7 +85,7 @@ PatMat::Pattern::Pattern(const Character c)
     pat_(new Pattern_(0, new PatElmt_(c)))
 {}
 
-PatMat::Pattern::Pattern(const StringInterface& obj)
+PatMat::Pattern::Pattern(const StringGetter& obj)
 {
     unsigned int l;
     const Character* p = obj.get(l);
@@ -311,7 +311,7 @@ PatMat::Pattern PatMat::Any(const std::string* strPtr)
     );
 }
 
-PatMat::Pattern PatMat::Any(const StringInterface& obj)
+PatMat::Pattern PatMat::Any(const StringGetter& obj)
 {
     return Pattern
     (
@@ -460,20 +460,8 @@ static void setString
     void* iPtr
 )
 {
-    PatMat::StringInterface *obj = static_cast<PatMat::StringInterface*>(iPtr);
+    PatMat::StringSetter *obj = static_cast<PatMat::StringSetter*>(iPtr);
     obj->set(str);
-}
-
-static void writeString
-(
-    const std::string& str,
-    void* iPtr
-)
-{
-    std::ostream *stream = static_cast<std::ostream*>(iPtr);
-    *stream
-        << str
-        << '\n'; // SNOBOL doesn't, Ada does
 }
 
 
@@ -526,15 +514,9 @@ PatMat::Pattern PatMat::operator*(const Pattern& p, std::string& str)
     return Pattern::callOnmatch(p, setStringPointer, &str);
 }
 
-PatMat::Pattern PatMat::operator*(const Pattern& p, StringInterface& obj)
+PatMat::Pattern PatMat::operator*(const Pattern& p, StringSetter& obj)
 {
     return Pattern::callOnmatch(p, setString, &obj);
-}
-
-// Could use a StringObject that does output on "set"
-PatMat::Pattern PatMat::operator*(const Pattern& p, std::ostream& stream)
-{
-    return Pattern::callOnmatch(p, writeString, &stream);
 }
 
 
@@ -576,10 +558,10 @@ inline PatMat::Pattern PatMat::Pattern::callImmed
     void* iPtr
 )
 {
-    PatElmt_* Pat = copy(p.pat_->pe_);
+    PatElmt_* pe = copy(p.pat_->pe_);
     PatElmt_* e = new PatElmt_(PC_R_Enter, 0, EOP);
     PatElmt_* c = new PatElmt_(PC_Call_Imm, 0, EOP, func, iPtr);
-    return Pattern(3, bracket(e, Pat, c));
+    return Pattern(3, bracket(e, pe, c));
 }
 
 PatMat::Pattern PatMat::operator%(const Pattern& p, std::string& var)
@@ -587,15 +569,9 @@ PatMat::Pattern PatMat::operator%(const Pattern& p, std::string& var)
     return Pattern::callImmed(p, setStringPointer, &var);
 }
 
-PatMat::Pattern PatMat::operator%(const Pattern& p, StringInterface& obj)
+PatMat::Pattern PatMat::operator%(const Pattern& p, StringSetter& obj)
 {
     return Pattern::callImmed(p, setString, &obj);
-}
-
-// Could use a StringObject that does output on "set"
-PatMat::Pattern PatMat::operator%(const Pattern& p, std::ostream& stream)
-{
-    return Pattern::callImmed(p, writeString, &stream);
 }
 
 
@@ -637,7 +613,7 @@ PatMat::Pattern PatMat::Break(const std::string* str)
     );
 }
 
-PatMat::Pattern PatMat::Break(const StringInterface& obj)
+PatMat::Pattern PatMat::Break(const StringGetter& obj)
 {
     return Pattern
     (
@@ -693,7 +669,7 @@ PatMat::Pattern PatMat::BreakX(const std::string* str)
     );
 }
 
-PatMat::Pattern PatMat::BreakX(const StringInterface& obj)
+PatMat::Pattern PatMat::BreakX(const StringGetter& obj)
 {
     return BreakXMake
     (
@@ -731,7 +707,7 @@ PatMat::Pattern PatMat::Defer(const std::string& str)
     );
 }
 
-PatMat::Pattern PatMat::Defer(const StringInterface& obj)
+PatMat::Pattern PatMat::Defer(const StringGetter& obj)
 {
     return Pattern
     (
@@ -740,7 +716,7 @@ PatMat::Pattern PatMat::Defer(const StringInterface& obj)
     );
 }
 
-PatMat::Pattern PatMat::Defer(const BoolInterface& obj)
+PatMat::Pattern PatMat::Defer(const BoolGetter& obj)
 {
     return Pattern
     (
@@ -806,7 +782,7 @@ PatMat::Pattern PatMat::Len(const unsigned int count)
     }
 }
 
-PatMat::Pattern PatMat::Len(const UnsignedInterface& obj)
+PatMat::Pattern PatMat::Len(const UnsignedGetter& obj)
 {
     return Pattern
     (
@@ -849,7 +825,7 @@ PatMat::Pattern PatMat::NotAny(const std::string* str)
     );
 }
 
-PatMat::Pattern PatMat::NotAny(const StringInterface& obj)
+PatMat::Pattern PatMat::NotAny(const StringGetter& obj)
 {
     return Pattern
     (
@@ -887,7 +863,7 @@ PatMat::Pattern PatMat::NSpan(const std::string* str)
     );
 }
 
-PatMat::Pattern PatMat::NSpan(const StringInterface& obj)
+PatMat::Pattern PatMat::NSpan(const StringGetter& obj)
 {
     return Pattern
     (
@@ -906,7 +882,7 @@ PatMat::Pattern PatMat::Pos(const unsigned int count)
     return Pattern(0, new PatElmt_(PC_Pos_Nat, 1, EOP, count));
 }
 
-PatMat::Pattern PatMat::Pos(const UnsignedInterface& obj)
+PatMat::Pattern PatMat::Pos(const UnsignedGetter& obj)
 {
     return Pattern
     (
@@ -940,7 +916,7 @@ PatMat::Pattern PatMat::Rpos(const unsigned int count)
     return Pattern(0, new PatElmt_(PC_RPos_Nat, 1, EOP, count));
 }
 
-PatMat::Pattern PatMat::Rpos(const UnsignedInterface& obj)
+PatMat::Pattern PatMat::Rpos(const UnsignedGetter& obj)
 {
     return Pattern
     (
@@ -964,7 +940,7 @@ PatMat::Pattern PatMat::Rtab(const unsigned int count)
     return Pattern(0, new PatElmt_(PC_RTab_Nat, 1, EOP, count));
 }
 
-PatMat::Pattern PatMat::Rtab(const UnsignedInterface& obj)
+PatMat::Pattern PatMat::Rtab(const UnsignedGetter& obj)
 {
     return Pattern
     (
@@ -1018,7 +994,7 @@ PatMat::Pattern PatMat::Span(const std::string* str)
     );
 }
 
-PatMat::Pattern PatMat::Span(const StringInterface& obj)
+PatMat::Pattern PatMat::Span(const StringGetter& obj)
 {
     return Pattern
     (
@@ -1047,7 +1023,7 @@ PatMat::Pattern PatMat::Tab(const unsigned int count)
     return Pattern(0, new PatElmt_(PC_Tab_Nat, 1, EOP, count));
 }
 
-PatMat::Pattern PatMat::Tab(const UnsignedInterface& obj)
+PatMat::Pattern PatMat::Tab(const UnsignedGetter& obj)
 {
     return Pattern
     (

@@ -49,7 +49,7 @@ public:
 
 class MyStringObj
 :
-    public StringInterface
+    public StringGetter
 {
     std::string value;
 

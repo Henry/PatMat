@@ -8,7 +8,7 @@ using namespace std;
 
 class MyStringObj
 :
-    public StringInterface
+    public StringGetter
 {
     string value;
 

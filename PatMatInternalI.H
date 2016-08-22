@@ -86,7 +86,7 @@ inline PatElmt_::PatElmt_
     const PatternCode pc,
     const IndexT index,
     const PatElmt_* pNext,
-    const BoolInterface* iPtr
+    const BoolGetter* iPtr
 )
 :
     pCode_(pc),
@@ -163,7 +163,7 @@ inline PatElmt_::PatElmt_
     const PatternCode pc,
     const IndexT index,
     const PatElmt_* pNext,
-    UnsignedInterface* iPtr
+    UnsignedSetter* iPtr
 )
 :
     pCode_(pc),
@@ -255,7 +255,7 @@ inline PatElmt_::PatElmt_
     const PatternCode pc,
     const IndexT index,
     const PatElmt_* pNext,
-    const UnsignedInterface* iPtr
+    const UnsignedGetter* iPtr
 )
 :
     pCode_(pc),
@@ -285,7 +285,7 @@ inline PatElmt_::PatElmt_
     const PatternCode pc,
     const IndexT index,
     const PatElmt_* pNext,
-    const StringInterface* iPtr
+    const StringGetter* iPtr
 )
 :
     pCode_(pc),

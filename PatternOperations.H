@@ -44,7 +44,7 @@ Pattern Any(const Character c);
 Pattern Any(const CharacterSet& set);
 Pattern Any(const std::string& str);
 Pattern Any(const std::string *str);
-Pattern Any(const StringInterface&);
+Pattern Any(const StringGetter&);
 
 // ----------------------------------------------------------------------------
 /// Arb
@@ -82,7 +82,7 @@ Pattern Arbno(const Pattern& p);
 // C++: binary "%"
 
 Pattern operator%(const Pattern& p, std::string& var);
-Pattern operator%(const Pattern& p, StringInterface& obj);
+Pattern operator%(const Pattern& p, StringGetter& obj);
 
 // ----------------------------------------------------------------------------
 ///  Assignment on match
@@ -96,7 +96,7 @@ Pattern operator%(const Pattern& p, StringInterface& obj);
 // C++: binary "*"
 
 Pattern operator*(const Pattern& p, std::string& var);
-Pattern operator*(const Pattern& p, StringInterface& obj);
+Pattern operator*(const Pattern& p, StringGetter& obj);
 
 // ----------------------------------------------------------------------------
 ///  Bal
@@ -119,7 +119,7 @@ Pattern Break(const Character c);
 Pattern Break(const CharacterSet& set);
 Pattern Break(const std::string& str);
 Pattern Break(const std::string *str);
-Pattern Break(const StringInterface&);
+Pattern Break(const StringGetter&);
 
 // ----------------------------------------------------------------------------
 ///  BreakX
@@ -132,7 +132,7 @@ Pattern BreakX(const Character c);
 Pattern BreakX(const CharacterSet& set);
 Pattern BreakX(const std::string& str);
 Pattern BreakX(const std::string *str);
-Pattern BreakX(const StringInterface&);
+Pattern BreakX(const StringGetter&);
 
 // ----------------------------------------------------------------------------
 ///  Concatenation operators
@@ -173,12 +173,12 @@ Pattern Defer(const std::string& str);
 //- Constructs a pattern which at pattern matching time calls the given
 //  function, and then matches against the string or character value that is
 //  returned by the call.
-Pattern Defer(const StringInterface& obj);
+Pattern Defer(const StringGetter& obj);
 
 //- Constructs a predicate pattern function that at pattern matching time calls
 //  the given function. If True is returned, then the pattern matches.  If False
 //  is returned, then failure is signalled.
-Pattern Defer(const BoolInterface& obj);
+Pattern Defer(const BoolGetter& obj);
 
 inline Pattern operator+(Pattern& p)
 {
@@ -190,12 +190,12 @@ inline Pattern operator+(const std::string& s)
     return Defer(s);
 }
 
-inline Pattern operator+(const StringInterface& obj)
+inline Pattern operator+(const StringGetter& obj)
 {
     return Defer(obj);
 }
 
-inline Pattern operator+(const BoolInterface& obj)
+inline Pattern operator+(const BoolGetter& obj)
 {
     return Defer(obj);
 }
@@ -229,7 +229,7 @@ Pattern Fence(const Pattern& p);
 // pattern fails if fewer than this number of characters remain to be matched in
 // the string.
 Pattern Len(const unsigned int count);
-Pattern Len(const UnsignedInterface& count);
+Pattern Len(const UnsignedGetter& count);
 Pattern Len(const unsigned int *count);
 
 // ----------------------------------------------------------------------------
@@ -244,7 +244,7 @@ Pattern NotAny(const Character c);
 Pattern NotAny(const CharacterSet& set);
 Pattern NotAny(const std::string& str);
 Pattern NotAny(const std::string* str);
-Pattern NotAny(const StringInterface&);
+Pattern NotAny(const StringGetter&);
 
 // ----------------------------------------------------------------------------
 ///  NSpan
@@ -261,7 +261,7 @@ Pattern NSpan(const Character c);
 Pattern NSpan(const CharacterSet& set);
 Pattern NSpan(const std::string& str);
 Pattern NSpan(const std::string *str);
-Pattern NSpan(const StringInterface&);
+Pattern NSpan(const StringGetter&);
 
 // ----------------------------------------------------------------------------
 ///  Pos
@@ -271,7 +271,7 @@ Pattern NSpan(const StringInterface&);
 // have already been matched, and otherwise fails.
 
 Pattern Pos(unsigned int count);
-Pattern Pos(const UnsignedInterface&);
+Pattern Pos(const UnsignedGetter&);
 Pattern Pos(const unsigned int *ptr);
 
 // ----------------------------------------------------------------------------
@@ -294,7 +294,7 @@ Pattern Rem();
 // remain to be matched in the string, and otherwise fails.
 
 Pattern Rpos(unsigned int count);
-Pattern Rpos(const UnsignedInterface&);
+Pattern Rpos(const UnsignedGetter&);
 Pattern Rpos(const unsigned int *ptr);
 
 // ----------------------------------------------------------------------------
@@ -306,7 +306,7 @@ Pattern Rpos(const unsigned int *ptr);
 // fewer than count characters remain to be matched.
 
 Pattern Rtab(unsigned int count);
-Pattern Rtab(const UnsignedInterface&);
+Pattern Rtab(const UnsignedGetter&);
 Pattern Rtab(const unsigned int *ptr);
 
 // ----------------------------------------------------------------------------
@@ -335,7 +335,7 @@ Pattern Span(const Character c);
 Pattern Span(const CharacterSet& set);
 Pattern Span(const std::string& str);
 Pattern Span(const std::string *str);
-Pattern Span(const StringInterface&);
+Pattern Span(const StringGetter&);
 
 // ----------------------------------------------------------------------------
 ///  Succeed
@@ -356,7 +356,7 @@ Pattern Succeed();
 // already been matched.
 
 Pattern Tab(const unsigned int count);
-Pattern Tab(const UnsignedInterface&);
+Pattern Tab(const UnsignedGetter&);
 Pattern Tab(const unsigned int *ptr);
 
 // ----------------------------------------------------------------------------

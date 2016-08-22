@@ -208,7 +208,7 @@ class PatElmt_
         Pattern_** PP;
 
         // PC_Pred_Func
-        const BoolInterface* BF;
+        const BoolGetter* BF;
 
         // PC_Assign_Imm_SP | PC_Assign_OnM_SP
         std::string* SP;
@@ -246,7 +246,7 @@ class PatElmt_
         unsigned int* Var;
 
         // PC_Setcur_Func
-        UnsignedInterface* CF;
+        UnsignedSetter* CF;
 
         // PC_Any_CH | PC_Break_CH | PC_BreakX_CH | PC_Char | PC_NotAny_CH |
         // PC_NSpan_CH | PC_Span_CH
@@ -268,14 +268,14 @@ class PatElmt_
         unsigned int Nat;
 
         // PC_Pos_NF | PC_Len_NF | PC_RPos_NF | PC_RTab_NF |
-        const UnsignedInterface* NF;
+        const UnsignedGetter* NF;
 
         // PC_Pos_NP | PC_Len_NP | PC_RPos_NP | PC_RTab_NP | PC_Tab_NP
         const unsigned int* NP;
 
         // PC_Any_VF | PC_Break_VF | PC_BreakX_VF | PC_NotAny_VF | PC_NSpan_VF
         // | PC_Span_VF | PC_String_VF
-        const StringInterface* VF;
+        const StringGetter* VF;
 
     } val;
 
@@ -336,7 +336,7 @@ class PatElmt_
             const PatternCode pc,
             const IndexT index,
             const PatElmt_* pNext,
-            const BoolInterface* iPtr
+            const BoolGetter* iPtr
         );
 
         inline PatElmt_
@@ -377,7 +377,7 @@ class PatElmt_
             const PatternCode pc,
             const IndexT index,
             const PatElmt_* pNext,
-            UnsignedInterface* iPtr
+            UnsignedSetter* iPtr
         );
 
         inline PatElmt_
@@ -409,7 +409,7 @@ class PatElmt_
             const PatternCode pc,
             const IndexT index,
             const PatElmt_* pNext,
-            const UnsignedInterface* iPtr
+            const UnsignedGetter* iPtr
         );
 
         inline PatElmt_
@@ -425,7 +425,7 @@ class PatElmt_
             const PatternCode pc,
             const IndexT index,
             const PatElmt_* pNext,
-            const StringInterface* iPtr
+            const StringGetter* iPtr
         );
 
 

@@ -8,7 +8,7 @@ using namespace std;
 
 class MaxLen
 :
-    public BoolInterface
+    public BoolGetter
 {
     const string& cur_;
     const string& max_;

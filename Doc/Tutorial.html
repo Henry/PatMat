@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
 <title><b>PatMat: SPITBOL-like pattern construction and matching in C++</b></title>
-<!-- 2016-08-21 Sun 14:48 -->
+<!-- 2016-08-22 Mon 14:14 -->
 <meta  http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta  name="generator" content="Org-mode" />
 <style type="text/css">
@@ -942,7 +942,7 @@ string of decimal digits in the subject string.
 
 <pre class="src src-c++">class MaxLen
 :
-    public BoolInterface
+    public BoolGetter
 {
     const string&amp; cur_;
     const string&amp; max_;
@@ -1074,7 +1074,7 @@ using namespace std;
 
 class MaxLen
 :
-    public BoolInterface
+    public BoolGetter
 {
     const string&amp; cur_;
     const string&amp; max_;
@@ -1203,12 +1203,12 @@ Pattern operator|(const Character *l, const std::string&amp; r);
 Pattern operator|(const std::string&amp; l, const Character *r);
 Pattern Or(const Character *l, const Character *r);
 Pattern operator|(const Pattern&amp; l, const Pattern&amp; r);
-Pattern operator|(Character l, const Pattern&amp; r);
-Pattern operator|(const Pattern&amp; l, Character r);
-Pattern operator|(const std::string&amp; l, Character r);
-Pattern Or(const Character *l, Character r);
-Pattern operator|(Character l, const std::string&amp; r);
-Pattern Or(Character l, const Character *r);
+Pattern operator|(const Character l, const Pattern&amp; r);
+Pattern operator|(const Pattern&amp; l, const Character r);
+Pattern operator|(const std::string&amp; l, const Character r);
+Pattern Or(const Character *l, const Character r);
+Pattern operator|(const Character l, const std::string&amp; r);
+Pattern Or(const Character l, const Character *r);
 
 // ----------------------------------------------------------------------------
 /// Any
@@ -1217,11 +1217,11 @@ Pattern Or(Character l, const Character *r);
 // characters in the given argument. The pattern fails if the current character
 // is not in str.
 
-Pattern Any(Character c);
+Pattern Any(const Character c);
 Pattern Any(const CharacterSet&amp; set);
 Pattern Any(const std::string&amp; str);
 Pattern Any(const std::string *str);
-Pattern Any(StringInterface *);
+Pattern Any(const StringGetter&amp;);
 
 // ----------------------------------------------------------------------------
 /// Arb
@@ -1241,7 +1241,7 @@ Pattern Arb();
 // to match an additional instance of the given pattern.  Equivalent to (but
 // more efficient than) P &amp; ("" | (P &amp; ("" | ...
 
-Pattern Arbno(Character c);
+Pattern Arbno(const Character c);
 Pattern Arbno(const std::string&amp; str);
 Pattern Arbno(const Character *str);
 Pattern Arbno(const Pattern&amp; p);
@@ -1259,7 +1259,7 @@ Pattern Arbno(const Pattern&amp; p);
 // C++: binary "%"
 
 Pattern operator%(const Pattern&amp; p, std::string&amp; var);
-Pattern operator%(const Pattern&amp; p, StringInterface *obj);
+Pattern operator%(const Pattern&amp; p, StringGetter&amp; obj);
 
 // ----------------------------------------------------------------------------
 ///  Assignment on match
@@ -1273,7 +1273,7 @@ Pattern operator%(const Pattern&amp; p, StringInterface *obj);
 // C++: binary "*"
 
 Pattern operator*(const Pattern&amp; p, std::string&amp; var);
-Pattern operator*(const Pattern&amp; p, StringInterface *obj);
+Pattern operator*(const Pattern&amp; p, StringGetter&amp; obj);
 
 // ----------------------------------------------------------------------------
 ///  Bal
@@ -1292,11 +1292,11 @@ Pattern Bal(const Character open, const Character close);
 // immediately followed by a character in the given argument. This character is
 // not part of the matched string. The pattern fails if the remaining characters
 // to be matched do not include any of the characters in str.
-Pattern Break(Character str);
+Pattern Break(const Character c);
 Pattern Break(const CharacterSet&amp; set);
 Pattern Break(const std::string&amp; str);
 Pattern Break(const std::string *str);
-Pattern Break(StringInterface *);
+Pattern Break(const StringGetter&amp;);
 
 // ----------------------------------------------------------------------------
 ///  BreakX
@@ -1305,11 +1305,11 @@ Pattern Break(StringInterface *);
 // Like Break, but the pattern attempts to extend on a failure to find the next
 // occurrence of a character in str, and only fails when the last such instance
 // causes a failure.
-Pattern BreakX(Character str);
+Pattern BreakX(const Character c);
 Pattern BreakX(const CharacterSet&amp; set);
 Pattern BreakX(const std::string&amp; str);
 Pattern BreakX(const std::string *str);
-Pattern BreakX(StringInterface *);
+Pattern BreakX(const StringGetter&amp;);
 
 // ----------------------------------------------------------------------------
 ///  Concatenation operators
@@ -1322,8 +1322,8 @@ Pattern BreakX(StringInterface *);
 Pattern operator&amp;(const std::string&amp; l, const Pattern&amp; r);
 Pattern operator&amp;(const Pattern&amp; l, const std::string&amp; r);
 Pattern operator&amp;(const Pattern&amp; l, const Pattern&amp; r);
-Pattern operator&amp;(Character l, const Pattern&amp; r);
-Pattern operator&amp;(const Pattern&amp; l, Character r);
+Pattern operator&amp;(const Character l, const Pattern&amp; r);
+Pattern operator&amp;(const Pattern&amp; l, const Character r);
 
 // ----------------------------------------------------------------------------
 ///  Deferred Matching
@@ -1345,34 +1345,34 @@ Pattern Defer(Pattern&amp; p);
 //  characters.
 //
 //  Here str must be a std::string variable.
-Pattern Defer(std::string&amp; str);
+Pattern Defer(const std::string&amp; str);
 
 //- Constructs a pattern which at pattern matching time calls the given
 //  function, and then matches against the string or character value that is
 //  returned by the call.
-Pattern Defer(StringInterface&amp; obj);
+Pattern Defer(const StringGetter&amp; obj);
 
 //- Constructs a predicate pattern function that at pattern matching time calls
 //  the given function. If True is returned, then the pattern matches.  If False
 //  is returned, then failure is signalled.
-Pattern Defer(BoolInterface&amp; obj);
+Pattern Defer(const BoolGetter&amp; obj);
 
 inline Pattern operator+(Pattern&amp; p)
 {
     return Defer(p);
 }
 
-inline Pattern operator+(std::string&amp; s)
+inline Pattern operator+(const std::string&amp; s)
 {
     return Defer(s);
 }
 
-inline Pattern operator+(StringInterface&amp; obj)
+inline Pattern operator+(const StringGetter&amp; obj)
 {
     return Defer(obj);
 }
 
-inline Pattern operator+(BoolInterface&amp; obj)
+inline Pattern operator+(const BoolGetter&amp; obj)
 {
     return Defer(obj);
 }
@@ -1405,8 +1405,8 @@ Pattern Fence(const Pattern&amp; p);
 // Constructs a pattern that matches exactly the given number of characters. The
 // pattern fails if fewer than this number of characters remain to be matched in
 // the string.
-Pattern Len(unsigned int count);
-Pattern Len(UnsignedInterface *count);
+Pattern Len(const unsigned int count);
+Pattern Len(const UnsignedGetter&amp; count);
 Pattern Len(const unsigned int *count);
 
 // ----------------------------------------------------------------------------
@@ -1417,11 +1417,11 @@ Pattern Len(const unsigned int *count);
 // characters in the given argument. The pattern Fails if the current character
 // is in str.
 
-Pattern NotAny(Character c);
+Pattern NotAny(const Character c);
 Pattern NotAny(const CharacterSet&amp; set);
 Pattern NotAny(const std::string&amp; str);
-Pattern NotAny(std::string* str);
-Pattern NotAny(StringInterface *);
+Pattern NotAny(const std::string* str);
+Pattern NotAny(const StringGetter&amp;);
 
 // ----------------------------------------------------------------------------
 ///  NSpan
@@ -1434,11 +1434,11 @@ Pattern NotAny(StringInterface *);
 // Null or Span (always succeeds)
 // [NOT in SPITBOL]
 
-Pattern NSpan(Character c);
+Pattern NSpan(const Character c);
 Pattern NSpan(const CharacterSet&amp; set);
 Pattern NSpan(const std::string&amp; str);
-Pattern NSpan(std::string *str);
-Pattern NSpan(StringInterface *);
+Pattern NSpan(const std::string *str);
+Pattern NSpan(const StringGetter&amp;);
 
 // ----------------------------------------------------------------------------
 ///  Pos
@@ -1448,7 +1448,7 @@ Pattern NSpan(StringInterface *);
 // have already been matched, and otherwise fails.
 
 Pattern Pos(unsigned int count);
-Pattern Pos(UnsignedInterface *);
+Pattern Pos(const UnsignedGetter&amp;);
 Pattern Pos(const unsigned int *ptr);
 
 // ----------------------------------------------------------------------------
@@ -1471,7 +1471,7 @@ Pattern Rem();
 // remain to be matched in the string, and otherwise fails.
 
 Pattern Rpos(unsigned int count);
-Pattern Rpos(UnsignedInterface *);
+Pattern Rpos(const UnsignedGetter&amp;);
 Pattern Rpos(const unsigned int *ptr);
 
 // ----------------------------------------------------------------------------
@@ -1483,7 +1483,7 @@ Pattern Rpos(const unsigned int *ptr);
 // fewer than count characters remain to be matched.
 
 Pattern Rtab(unsigned int count);
-Pattern Rtab(UnsignedInterface *);
+Pattern Rtab(const UnsignedGetter&amp;);
 Pattern Rtab(const unsigned int *ptr);
 
 // ----------------------------------------------------------------------------
@@ -1508,11 +1508,11 @@ Pattern Setcur(unsigned int &amp;var);
 // so the pattern fails if the current character is not one of the characters in
 // str.
 
-Pattern Span(Character c);
+Pattern Span(const Character c);
 Pattern Span(const CharacterSet&amp; set);
 Pattern Span(const std::string&amp; str);
 Pattern Span(const std::string *str);
-Pattern Span(StringInterface *);
+Pattern Span(const StringGetter&amp;);
 
 // ----------------------------------------------------------------------------
 ///  Succeed
@@ -1532,8 +1532,8 @@ Pattern Succeed();
 // have been matched. The pattern fails if more than count characters have
 // already been matched.
 
-Pattern Tab(unsigned int count);
-Pattern Tab(UnsignedInterface *);
+Pattern Tab(const unsigned int count);
+Pattern Tab(const UnsignedGetter&amp;);
 Pattern Tab(const unsigned int *ptr);
 
 // ----------------------------------------------------------------------------
@@ -1659,7 +1659,7 @@ std::ostream&amp; operator&lt;&lt;(std::ostream &amp;, const Pattern&amp; p);
 </div>
 </div>
 <div id="postamble" class="status">
-<p class="date">Created: 2016-08-21 Sun 14:48</p>
+<p class="date">Created: 2016-08-22 Mon 14:14</p>
 <p class="creator"><a href="http://www.gnu.org/software/emacs/">Emacs</a> 24.5 (<a href="http://orgmode.org">Org</a> mode 8.2.10)</p>
 <p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
 </div>

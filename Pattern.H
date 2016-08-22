@@ -66,18 +66,18 @@ typedef char Character;
 
 
 // -----------------------------------------------------------------------------
-/// StringInterface: string object interface
+/// StringGetter: string getter
 // -----------------------------------------------------------------------------
 
 //- String interface which returns a std::string.  When this class is used as a
 //  formal parameter type in this package, it indicates a deferred pattern.  The
 //  get function will be called when the pattern element is matched to
 //  obtain the currently referenced string value.
-class StringInterface
+class StringGetter
 {
 public:
 
-    virtual ~StringInterface()
+    virtual ~StringGetter()
     {}
 
     virtual std::string get() const
@@ -88,45 +88,73 @@ public:
     }
 
     virtual const Character* get(unsigned int&) const = 0;
+};
+
+
+// -----------------------------------------------------------------------------
+/// StringSetter: string setter
+// -----------------------------------------------------------------------------
+
+//- String interface which sets a std::string.
+class StringSetter
+{
+public:
+
+    virtual ~StringSetter()
+    {}
 
     virtual void set(const std::string&) = 0;
 };
 
 
 // -----------------------------------------------------------------------------
-/// UnsignedInterface: unsigned int object interface
+/// UnsignedGetter: unsigned int getter
 // -----------------------------------------------------------------------------
 
-//- Unsigned interface which returns an unsigned.  When this type is used as a
-//  formal parameter type in this package, it indicates a deferred pattern.  The
-//  function will be called when the pattern element is matched to obtain the
-//  currently referenced unsigned int value.
-class UnsignedInterface
+//- Unsigned interface which returns an unsigned int.
+//  When this type is used as a formal parameter type in this package, it
+//  indicates a deferred pattern.  The function will be called when the pattern
+//  element is matched to obtain the currently referenced unsigned int value.
+class UnsignedGetter
 {
 public:
 
-    virtual ~UnsignedInterface()
+    virtual ~UnsignedGetter()
     {}
 
     virtual unsigned int get() const = 0;
+};
+
+
+// -----------------------------------------------------------------------------
+/// UnsignedSetter: unsigned int setter
+// -----------------------------------------------------------------------------
+
+//- Unsigned interface which sets an unsigned int.
+class UnsignedSetter
+{
+public:
+
+    virtual ~UnsignedSetter()
+    {}
 
     virtual void set(const unsigned int) = 0;
 };
 
 
 // -----------------------------------------------------------------------------
-/// BoolInterface: boolean object interface
+/// BoolGetter: boolean getter
 // -----------------------------------------------------------------------------
 
 //- Bool interface which returns a bool. When this class is used as a formal
 //  parameter type in this package, it indicates a deferred predicate
 //  pattern. The function will be called when the pattern element is matched and
 //  failure signalled if false is returned.
-class BoolInterface
+class BoolGetter
 {
 public:
 
-    virtual ~BoolInterface()
+    virtual ~BoolGetter()
     {}
 
     virtual bool get() const = 0;
@@ -181,7 +209,7 @@ public:
         Pattern(const std::string&);
         Pattern(const Character*);
         Pattern(const Character* ptr, const unsigned int len);
-        Pattern(const StringInterface&);
+        Pattern(const StringGetter&);
 
     // Destructor
     ~Pattern();
@@ -237,7 +265,7 @@ public:
         friend Pattern Any(const CharacterSet&);
         friend Pattern Any(const std::string&);
         friend Pattern Any(const std::string*);
-        friend Pattern Any(const StringInterface&);
+        friend Pattern Any(const StringGetter&);
 
         friend Pattern Arb();
 
@@ -249,11 +277,9 @@ public:
     // Assignment
 
         friend Pattern operator*(const Pattern& p, std::string&);
-        friend Pattern operator*(const Pattern& p, StringInterface&);
-        friend Pattern operator*(const Pattern& p, std::ostream&);
+        friend Pattern operator*(const Pattern& p, StringSetter&);
         friend Pattern operator%(const Pattern& p, std::string&);
-        friend Pattern operator%(const Pattern& p, StringInterface&);
-        friend Pattern operator%(const Pattern& p, std::ostream&);
+        friend Pattern operator%(const Pattern& p, StringSetter&);
 
         friend Pattern Bal(const Character open, const Character close);
 
@@ -261,7 +287,7 @@ public:
         friend Pattern Break(const CharacterSet&);
         friend Pattern Break(const std::string&);
         friend Pattern Break(const std::string*);
-        friend Pattern Break(const StringInterface&);
+        friend Pattern Break(const StringGetter&);
 
         friend Pattern BreakXMake(PatElmt_*);
 
@@ -269,7 +295,7 @@ public:
         friend Pattern BreakX(const CharacterSet&);
         friend Pattern BreakX(const std::string&);
         friend Pattern BreakX(const std::string*);
-        friend Pattern BreakX(const StringInterface&);
+        friend Pattern BreakX(const StringGetter&);
 
     // Concatenation
 
@@ -283,8 +309,8 @@ public:
 
         friend Pattern Defer(Pattern&);
         friend Pattern Defer(const std::string&);
-        friend Pattern Defer(const StringInterface&);
-        friend Pattern Defer(const BoolInterface&);
+        friend Pattern Defer(const StringGetter&);
+        friend Pattern Defer(const BoolGetter&);
 
         friend Pattern Fail();
 
@@ -292,33 +318,33 @@ public:
         friend Pattern Fence(const Pattern&);
 
         friend Pattern Len(const unsigned int);
-        friend Pattern Len(const UnsignedInterface&);
+        friend Pattern Len(const UnsignedGetter&);
         friend Pattern Len(const unsigned int*);
 
         friend Pattern NotAny(const Character);
         friend Pattern NotAny(const CharacterSet&);
         friend Pattern NotAny(const std::string&);
         friend Pattern NotAny(const std::string*);
-        friend Pattern NotAny(const StringInterface&);
+        friend Pattern NotAny(const StringGetter&);
 
         friend Pattern NSpan(const Character);
         friend Pattern NSpan(const CharacterSet&);
         friend Pattern NSpan(const std::string&);
         friend Pattern NSpan(const std::string*);
-        friend Pattern NSpan(const StringInterface&);
+        friend Pattern NSpan(const StringGetter&);
 
         friend Pattern Pos(const unsigned int);
-        friend Pattern Pos(const UnsignedInterface&);
+        friend Pattern Pos(const UnsignedGetter&);
         friend Pattern Pos(const unsigned int*);
 
         friend Pattern Rem();
 
         friend Pattern Rpos(const unsigned int);
-        friend Pattern Rpos(const UnsignedInterface&);
+        friend Pattern Rpos(const UnsignedGetter&);
         friend Pattern Rpos(const unsigned int*);
 
         friend Pattern Rtab(const unsigned int);
-        friend Pattern Rtab(const UnsignedInterface&);
+        friend Pattern Rtab(const UnsignedGetter&);
         friend Pattern Rtab(const unsigned int*);
 
         friend Pattern Setcur(unsigned int&);
@@ -327,12 +353,12 @@ public:
         friend Pattern Span(const CharacterSet&);
         friend Pattern Span(const std::string&);
         friend Pattern Span(const std::string*);
-        friend Pattern Span(const StringInterface&);
+        friend Pattern Span(const StringGetter&);
 
         friend Pattern Succeed();
 
         friend Pattern Tab(const unsigned int);
-        friend Pattern Tab(const UnsignedInterface&);
+        friend Pattern Tab(const UnsignedGetter&);
         friend Pattern Tab(const unsigned int*);
 
         friend Pattern assignOnmatch(const Pattern& p, std::string& var);

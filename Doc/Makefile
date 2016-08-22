@@ -28,6 +28,8 @@ include $(PM_DIR)/Make/Makefile.config
 ###-----------------------------------------------------------------------------
 TARGETS = Tutorial.html TODO.html
 
+Tutorial.html: ../Test/tutorial.C
+
 .PHONY: all
 all: $(TARGETS)
 
