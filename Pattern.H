@@ -1,4 +1,4 @@
-/// Copyright 2013 Henry G. Weller
+/// Copyright 2013-2016 Henry G. Weller
 /// Copyright 2007-2010 Philip L. Budne
 // -----------------------------------------------------------------------------
 //  This file is part of
@@ -80,7 +80,12 @@ public:
     virtual ~StringInterface()
     {}
 
-    virtual std::string get() const = 0;
+    virtual std::string get() const
+    {
+        unsigned int l;
+        const Character* p = get(l);
+        return std::string(p, l);
+    }
 
     virtual const Character* get(unsigned int&) const = 0;
 

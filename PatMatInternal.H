@@ -275,11 +275,7 @@ class PatElmt_
 
         // PC_Any_VF | PC_Break_VF | PC_BreakX_VF | PC_NotAny_VF | PC_NSpan_VF
         // | PC_Span_VF | PC_String_VF
-        struct
-        {
-            std::string(*func)(const void*);
-            const void* iPtr;
-        } VF;
+        const StringInterface* VF;
 
     } val;
 
@@ -429,8 +425,7 @@ class PatElmt_
             const PatternCode pc,
             const IndexT index,
             const PatElmt_* pNext,
-            std::string(*func)(const void*),
-            const void* iPtr
+            const StringInterface* iPtr
         );
 
 

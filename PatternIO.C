@@ -185,7 +185,7 @@ static const PatElmt_ *writePattern
         case PC_Span_VF:
         case PC_String_VF:
             os  << patternCodeNames[e.pCode_]
-                << '(' << e.val.VF.func << '(' << e.val.VF.iPtr << "))";
+                << '(' << e.val.VF << ')';
             break;
 
         case PC_Any_VP:
@@ -593,7 +593,7 @@ void PatMat::Pattern::dump(std::ostream& os) const
             case PC_NSpan_VF:
             case PC_Span_VF:
             case PC_String_VF:
-                os  << e.val.VF.func << '(' << e.val.VF.iPtr << ')';
+                os  << e.val.VF;
                 break;
 
             default:

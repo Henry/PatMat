@@ -1431,10 +1431,7 @@ Match:
         case PC_Any_VF:
             // Any (string function case)
             {
-                std::string str
-                (
-                    node->val.VF.func(node->val.VF.iPtr)
-                );
+                std::string str(node->val.VF->get());
                 if (Debug)
                 {
                     cout<< indent(regionLevel) << node
@@ -1661,10 +1658,7 @@ Match:
         case PC_Break_VF:
             // Break (string function case)
             {
-                std::string str
-                (
-                    node->val.VF.func(node->val.VF.iPtr)
-                );
+                std::string str(node->val.VF->get());
                 if (Debug)
                 {
                     cout<< indent(regionLevel) << node << " matching Break '"
@@ -1738,10 +1732,7 @@ Match:
         case PC_BreakX_VF:
             // BreakX (string function case)
             {
-                std::string str
-                (
-                    node->val.VF.func(node->val.VF.iPtr)
-                );
+                std::string str(node->val.VF->get());
                 if (Debug)
                 {
                     cout<< indent(regionLevel) << node << " matching BreakX '"
@@ -1950,10 +1941,7 @@ Match:
         case PC_NotAny_VF:
             // NotAny (string function case)
             {
-                std::string str
-                (
-                    node->val.VF.func(node->val.VF.iPtr)
-                );
+                std::string str(node->val.VF->get());
                 if (Debug)
                 {
                     cout<< indent(regionLevel) << node
@@ -2013,10 +2001,7 @@ Match:
         case PC_NSpan_VF:
             // NSpan (string function case)
             {
-                std::string str
-                (
-                    node->val.VF.func(node->val.VF.iPtr)
-                );
+                std::string str(node->val.VF->get());
                 if (Debug)
                 {
                     cout<< indent(regionLevel) << node
@@ -2366,10 +2351,7 @@ Match:
         case PC_Span_VF:
             // Span (string function case)
             {
-                std::string str
-                (
-                    node->val.VF.func(node->val.VF.iPtr)
-                );
+                std::string str(node->val.VF->get());
                 if (Debug)
                 {
                     cout<< indent(regionLevel) << node
@@ -2580,10 +2562,7 @@ Match:
         case PC_String_VF:
             // String (function case)
             {
-                std::string str
-                (
-                    node->val.VF.func(node->val.VF.iPtr)
-                );
+                std::string str(node->val.VF->get());
                 unsigned int l = str.length();
 
                 if (Debug)

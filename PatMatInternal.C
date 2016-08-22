@@ -106,7 +106,7 @@ PatMat::Pattern_::~Pattern_()
             case PC_NSpan_VF:
             case PC_Span_VF:
             case PC_String_VF:
-                (void)refs[j]->val.VF.iPtr;
+                (void)refs[j]->val.VF;
                 break;
             default:
                 break;

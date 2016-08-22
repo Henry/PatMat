@@ -132,19 +132,6 @@ PatMat::Pattern& PatMat::Pattern::operator=(const Pattern& p)
 
 
 // ----------------------------------------------------------------------------
-///  Helper functions (passed as callbacks)
-// ----------------------------------------------------------------------------
-
-static std::string getString(const void* iPtr)
-{
-    unsigned int l;
-    const PatMat::Character* p =
-        static_cast<const PatMat::StringInterface*>(iPtr)->get(l);
-    return std::string(p, l);
-}
-
-
-// ----------------------------------------------------------------------------
 ///  Alternation
 // ----------------------------------------------------------------------------
 
@@ -329,7 +316,7 @@ PatMat::Pattern PatMat::Any(const StringInterface& obj)
     return Pattern
     (
         0,
-        new PatElmt_(PC_Any_VF, 1, EOP, getString, &obj)
+        new PatElmt_(PC_Any_VF, 1, EOP, &obj)
     );
 }
 
@@ -655,7 +642,7 @@ PatMat::Pattern PatMat::Break(const StringInterface& obj)
     return Pattern
     (
         0,
-        new PatElmt_(PC_Break_VF, 1, EOP, getString, &obj)
+        new PatElmt_(PC_Break_VF, 1, EOP, &obj)
     );
 }
 
@@ -710,7 +697,7 @@ PatMat::Pattern PatMat::BreakX(const StringInterface& obj)
 {
     return BreakXMake
     (
-        new PatElmt_(PC_BreakX_VF, 3, NULL, getString, &obj)
+        new PatElmt_(PC_BreakX_VF, 3, NULL, &obj)
     );
 }
 
@@ -749,7 +736,7 @@ PatMat::Pattern PatMat::Defer(const StringInterface& obj)
     return Pattern
     (
         0,
-        new PatElmt_(PC_String_VF, 1, EOP, getString, &obj)
+        new PatElmt_(PC_String_VF, 1, EOP, &obj)
     );
 }
 
@@ -867,7 +854,7 @@ PatMat::Pattern PatMat::NotAny(const StringInterface& obj)
     return Pattern
     (
         0,
-        new PatElmt_(PC_NotAny_VF, 1, EOP, getString, &obj)
+        new PatElmt_(PC_NotAny_VF, 1, EOP, &obj)
     );
 }
 
@@ -905,7 +892,7 @@ PatMat::Pattern PatMat::NSpan(const StringInterface& obj)
     return Pattern
     (
         0,
-        new PatElmt_(PC_NSpan_VF, 1, EOP, getString, &obj)
+        new PatElmt_(PC_NSpan_VF, 1, EOP, &obj)
     );
 }
 
@@ -1036,7 +1023,7 @@ PatMat::Pattern PatMat::Span(const StringInterface& obj)
     return Pattern
     (
         0,
-        new PatElmt_(PC_Span_VF, 1, EOP, getString, &obj)
+        new PatElmt_(PC_Span_VF, 1, EOP, &obj)
     );
 }
 

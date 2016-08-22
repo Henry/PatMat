@@ -285,16 +285,14 @@ inline PatElmt_::PatElmt_
     const PatternCode pc,
     const IndexT index,
     const PatElmt_* pNext,
-    std::string(*func)(const void*),
-    const void* iPtr
+    const StringInterface* iPtr
 )
 :
     pCode_(pc),
     index_(index),
     pNext_(pNext)
 {
-    val.VF.func = func;
-    val.VF.iPtr = iPtr;
+    val.VF = iPtr;
 }
 
 
