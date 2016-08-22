@@ -135,11 +135,6 @@ PatMat::Pattern& PatMat::Pattern::operator=(const Pattern& p)
 ///  Helper functions (passed as callbacks)
 // ----------------------------------------------------------------------------
 
-static std::string getStringPointer(const void* iPtr)
-{
-    return std::string(*static_cast<const std::string*>(iPtr));
-}
-
 static std::string getString(const void* iPtr)
 {
     unsigned int l;
@@ -320,12 +315,12 @@ PatMat::Pattern PatMat::Any(const std::string& str)
     return Pattern(0, new PatElmt_(PC_Any_Set, 1, EOP, str));
 }
 
-PatMat::Pattern PatMat::Any(const std::string* str)
+PatMat::Pattern PatMat::Any(const std::string* strPtr)
 {
     return Pattern
     (
         0,
-        new PatElmt_(PC_Any_VF, 1, EOP, getStringPointer, str)
+        new PatElmt_(PC_Any_VP, 1, EOP, strPtr)
     );
 }
 
@@ -651,7 +646,7 @@ PatMat::Pattern PatMat::Break(const std::string* str)
     return Pattern
     (
         0,
-        new PatElmt_(PC_Break_VF, 1, EOP, getStringPointer, str)
+        new PatElmt_(PC_Break_VP, 1, EOP, str)
     );
 }
 
@@ -707,7 +702,7 @@ PatMat::Pattern PatMat::BreakX(const std::string* str)
 {
     return BreakXMake
     (
-        new PatElmt_(PC_BreakX_VF, 3, NULL, getStringPointer, str)
+        new PatElmt_(PC_BreakX_VP, 3, NULL, str)
     );
 }
 
@@ -745,7 +740,7 @@ PatMat::Pattern PatMat::Defer(const std::string& str)
     return Pattern
     (
         0,
-        new PatElmt_(PC_String_VF, 1, EOP, getStringPointer, &str)
+        new PatElmt_(PC_String_VP, 1, EOP, &str)
     );
 }
 
@@ -833,7 +828,7 @@ PatMat::Pattern PatMat::Len(const UnsignedInterface& obj)
     );
 }
 
-PatMat::Pattern PatMat::Len(const unsigned* count)
+PatMat::Pattern PatMat::Len(const unsigned int* count)
 {
     return Pattern(0, new PatElmt_(PC_Len_NP, 1, EOP, count));
 }
@@ -863,7 +858,7 @@ PatMat::Pattern PatMat::NotAny(const std::string* str)
     return Pattern
     (
         0,
-        new PatElmt_(PC_NotAny_VF, 1, EOP, getStringPointer, str)
+        new PatElmt_(PC_NotAny_VP, 1, EOP, str)
     );
 }
 
@@ -901,7 +896,7 @@ PatMat::Pattern PatMat::NSpan(const std::string* str)
     return Pattern
     (
         0,
-        new PatElmt_(PC_NSpan_VF, 1, EOP, getStringPointer, str)
+        new PatElmt_(PC_NSpan_VP, 1, EOP, str)
     );
 }
 
@@ -933,7 +928,7 @@ PatMat::Pattern PatMat::Pos(const UnsignedInterface& obj)
     );
 }
 
-PatMat::Pattern PatMat::Pos(const unsigned* Ptr)
+PatMat::Pattern PatMat::Pos(const unsigned int* Ptr)
 {
     return Pattern(0, new PatElmt_(PC_Pos_NP, 1, EOP, Ptr));
 }
@@ -967,7 +962,7 @@ PatMat::Pattern PatMat::Rpos(const UnsignedInterface& obj)
     );
 }
 
-PatMat::Pattern PatMat::Rpos(const unsigned* count)
+PatMat::Pattern PatMat::Rpos(const unsigned int* count)
 {
     return Pattern(0, new PatElmt_(PC_RPos_NP, 1, EOP, count));
 }
@@ -991,7 +986,7 @@ PatMat::Pattern PatMat::Rtab(const UnsignedInterface& obj)
     );
 }
 
-PatMat::Pattern PatMat::Rtab(const unsigned* count)
+PatMat::Pattern PatMat::Rtab(const unsigned int* count)
 {
     return Pattern(0, new PatElmt_(PC_RTab_NP, 1, EOP, count));
 }
@@ -1032,7 +1027,7 @@ PatMat::Pattern PatMat::Span(const std::string* str)
     return Pattern
     (
         0,
-        new PatElmt_(PC_Span_VF, 1, EOP, getStringPointer, str)
+        new PatElmt_(PC_Span_VP, 1, EOP, str)
     );
 }
 
@@ -1074,7 +1069,7 @@ PatMat::Pattern PatMat::Tab(const UnsignedInterface& obj)
     );
 }
 
-PatMat::Pattern PatMat::Tab(const unsigned* count)
+PatMat::Pattern PatMat::Tab(const unsigned int* count)
 {
     return Pattern(0, new PatElmt_(PC_Tab_NP, 1, EOP, count));
 }

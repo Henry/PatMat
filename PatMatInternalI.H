@@ -101,7 +101,22 @@ inline PatElmt_::PatElmt_
     const PatternCode pc,
     const IndexT index,
     const PatElmt_* pNext,
-    std::string* vp
+    std::string* sp
+)
+:
+    pCode_(pc),
+    index_(index),
+    pNext_(pNext)
+{
+    val.SP = sp;
+}
+
+inline PatElmt_::PatElmt_
+(
+    const PatternCode pc,
+    const IndexT index,
+    const PatElmt_* pNext,
+    const std::string* vp
 )
 :
     pCode_(pc),

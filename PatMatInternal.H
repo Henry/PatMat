@@ -210,10 +210,12 @@ class PatElmt_
         // PC_Pred_Func
         const BoolInterface* BF;
 
-        // PC_Assign_Imm_VP | PC_Assign_OnM_VP | PC_Any_VP | PC_Break_VP |
-        // PC_BreakX_VP | PC_NotAny_VP | PC_NSpan_VP | PC_Span_VP |
-        // PC_String_VP
-        std::string* VP;
+        // PC_Assign_Imm_SP | PC_Assign_OnM_SP
+        std::string* SP;
+
+        // PC_Any_VP | PC_Break_VP | PC_BreakX_VP | PC_NotAny_VP | PC_NSpan_VP |
+        // PC_Span_VP | PC_String_VP
+        const std::string* VP;
 
         // PC_Call_Imm PC_Call_OnM
         struct
@@ -346,7 +348,15 @@ class PatElmt_
             const PatternCode pc,
             const IndexT index,
             const PatElmt_* pNext,
-            std::string* vp
+            std::string* sp
+        );
+
+        inline PatElmt_
+        (
+            const PatternCode pc,
+            const IndexT index,
+            const PatElmt_* pNext,
+            const std::string* vp
         );
 
         inline PatElmt_

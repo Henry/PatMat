@@ -1297,7 +1297,7 @@ Match_Succeed:
                 switch (nodeOnM->pCode_)
                 {
                     case PC_Assign_OnM:
-                        *nodeOnM->val.VP = str;
+                        *nodeOnM->val.SP = str;
                         if (Debug)
                         {
                             cout<< indent(regionLevel) << stack(s).node
@@ -1566,7 +1566,7 @@ Match:
                         <<" executing immediate assignment of \""
                         << str << "\"\n";
                 }
-                *node->val.VP = str;
+                *node->val.SP = str;
                 stack.popRegion();
                 regionLevel--;
                 goto Succeed;
