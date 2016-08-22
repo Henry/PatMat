@@ -1,4 +1,4 @@
-/// Copyright 2013 Henry G. Weller
+/// Copyright 2013-2016 Henry G. Weller
 /// Copyright 2007-2010 Philip L. Budne
 /// Copyright 1998-2005 AdaCore
 // -----------------------------------------------------------------------------
@@ -100,191 +100,6 @@ static void writeNodeId(std::ostream& os, const PatElmt_ *e)
     {
         os  << "#" << std::left << std::setw(5) << e->index_;
     }
-}
-
-
-// -----------------------------------------------------------------------------
-/// Dump
-// -----------------------------------------------------------------------------
-
-void PatMat::Pattern::dump(std::ostream& os) const
-{
-    const Pattern_ *pat = pat_;
-    const PatElmt_ *p = pat->pe_;
-
-    os  << endl
-        << "Pattern Dump Output (pattern at "
-        << pat << " stack index = " << pat->stackIndex_ << ")\n";
-
-    // If uninitialized pattern, dump line and we are done
-    if (p == NULL)
-    {
-        os  << "Uninitialized pattern value" << endl;
-        return;
-    }
-
-    // If (null pattern, just dump it and we are all done
-    if (p->pCode_ == PC_EOP)
-    {
-        os  << "EOP (null pattern)" << endl;
-        return;
-    }
-
-    // We build a reference array whose N'th element points to the
-    // pattern element whose index_ value is N.
-    PatElmt_ *refs[p->index_];
-    buildRefArray(p, refs);
-
-    // Now dump the nodes in reverse sequence. We output them in reverse
-    // sequence since this corresponds to the natural order used to
-    // construct the patterns.
-    for (int j = p->index_ - 1; j >= 0; j--)
-    {
-        const PatElmt_ *ePtr = refs[j];
-        const PatElmt_& e = *ePtr;
-        writeNodeId(os, ePtr);
-        os  << ePtr << "\t"
-            << std::left << std::setw(10) << patternCodeSymbols[e.pCode_];
-        writeNodeId(os, e.pNext_);
-
-        switch (e.pCode_)
-        {
-            case PC_Alt:
-            case PC_Arb_X:
-            case PC_Arbno_S:
-            case PC_Arbno_X:
-                writeNodeId(os, e.val.Alt);
-                break;
-
-            case PC_Bal:
-                os  << "('" << e.val.open << "', '" << e.val.close << "')";
-                break;
-
-            case PC_Rpat:
-                os  << e.val.PP;
-                break;
-
-            case PC_Pred_Func:
-                os  << e.val.BF;
-                break;
-
-            case PC_Assign_Imm:
-            case PC_Assign_OnM:
-            case PC_Any_VP:
-            case PC_Break_VP:
-            case PC_BreakX_VP:
-            case PC_NotAny_VP:
-            case PC_NSpan_VP:
-            case PC_Span_VP:
-            case PC_String_VP:
-                os  << e.val.VP;
-                break;
-
-            case PC_Call_Imm:
-            case PC_Call_OnM:
-                os  << e.val.MF.func << '(' << e.val.MF.iPtr << ')';
-                break;
-
-            case PC_String:
-                os  << "\"" << std::setw(e.val.Str->length())
-                    << *(e.val.Str)
-                    << "\"";
-                break;
-
-            case PC_String_2:
-                os  << "\"" << std::setw(2);
-                os.write(e.val.Str2, 2);
-                os  << "\"";
-                break;
-
-            case PC_String_3:
-                os  << "\"" << std::setw(3);
-                os.write(e.val.Str3, 3);
-                os  << "\"";
-                break;
-
-            case PC_String_4:
-                os  << "\"" << std::setw(4);
-                os.write(e.val.Str4, 4);
-                os  << "\"";
-                break;
-
-            case PC_String_5:
-                os  << "\"" << std::setw(5);
-                os.write(e.val.Str5, 5);
-                os  << "\"";
-                break;
-
-            case PC_String_6:
-                os  << "\"" << std::setw(6);
-                os.write(e.val.Str6, 6);
-                os  << "\"";
-                break;
-
-            case PC_Setcur:
-                os  << e.val.NP;
-                break;
-
-            case PC_Any_CH:
-            case PC_Break_CH:
-            case PC_BreakX_CH:
-            case PC_Char:
-            case PC_NotAny_CH:
-            case PC_NSpan_CH:
-            case PC_Span_CH:
-                os  << '\'' << e.val.Char << '\'';
-                break;
-
-            case PC_Any_Set:
-            case PC_Break_Set:
-            case PC_BreakX_Set:
-            case PC_NotAny_Set:
-            case PC_NSpan_Set:
-            case PC_Span_Set:
-                os  << "\"" << e.val.set << "\"";
-                break;
-
-            case PC_Arbno_Y:
-            case PC_Len_Nat:
-            case PC_Pos_Nat:
-            case PC_RPos_Nat:
-            case PC_RTab_Nat:
-            case PC_Tab_Nat:
-                os  << e.val.Nat;
-                break;
-
-            case PC_Pos_NF:
-            case PC_Len_NF:
-            case PC_RPos_NF:
-            case PC_RTab_NF:
-            case PC_Tab_NF:
-                os  << e.val.NF;
-                break;
-
-            case PC_Pos_NP:
-            case PC_Len_NP:
-            case PC_RPos_NP:
-            case PC_RTab_NP:
-            case PC_Tab_NP:
-                os  << e.val.NP;
-                break;
-
-            case PC_Any_VF:
-            case PC_Break_VF:
-            case PC_BreakX_VF:
-            case PC_NotAny_VF:
-            case PC_NSpan_VF:
-            case PC_Span_VF:
-            case PC_String_VF:
-                os  << e.val.VF.func << '(' << e.val.VF.iPtr << ')';
-                break;
-
-            default:
-                break;
-        }
-        os  << endl;
-    }
-    os  << endl;
 }
 
 
@@ -473,11 +288,6 @@ static const PatElmt_ *writePattern
                 << '(' << e.val.BF << ')';
             break;
 
-        case PC_Dynamic_Func:
-            os  << patternCodeNames[e.pCode_]
-                << '(' << e.val.DF.func << '(' << e.val.DF.iPtr << "))";
-            break;
-
         case PC_Setcur_Func:
             os  << patternCodeNames[e.pCode_]
                 << '(' << e.val.CF << ')';
@@ -608,6 +418,192 @@ static void writePatternSequence
 // -----------------------------------------------------------------------------
 } // End namespace PatMat
 // -----------------------------------------------------------------------------
+
+
+// -----------------------------------------------------------------------------
+/// Dump
+// -----------------------------------------------------------------------------
+
+void PatMat::Pattern::dump(std::ostream& os) const
+{
+    const Pattern_ *pat = pat_;
+    const PatElmt_ *p = pat->pe_;
+
+    os  << endl
+        << "Pattern Dump Output (pattern at "
+        << pat << " stack index = " << pat->stackIndex_ << ")\n";
+
+    // If uninitialized pattern, dump line and we are done
+    if (p == NULL)
+    {
+        os  << "Uninitialized pattern value" << endl;
+        return;
+    }
+
+    // If (null pattern, just dump it and we are all done
+    if (p->pCode_ == PC_EOP)
+    {
+        os  << "EOP (null pattern)" << endl;
+        return;
+    }
+
+    // We build a reference array whose N'th element points to the
+    // pattern element whose index_ value is N.
+    PatElmt_ *refs[p->index_];
+    buildRefArray(p, refs);
+
+    // Now dump the nodes in reverse sequence. We output them in reverse
+    // sequence since this corresponds to the natural order used to
+    // construct the patterns.
+    for (int j = p->index_ - 1; j >= 0; j--)
+    {
+        const PatElmt_ *ePtr = refs[j];
+        const PatElmt_& e = *ePtr;
+        writeNodeId(os, ePtr);
+        os  << ePtr << "\t"
+            << std::left << std::setw(10) << patternCodeSymbols[e.pCode_];
+        writeNodeId(os, e.pNext_);
+
+        switch (e.pCode_)
+        {
+            case PC_Alt:
+            case PC_Arb_X:
+            case PC_Arbno_S:
+            case PC_Arbno_X:
+                writeNodeId(os, e.val.Alt);
+                break;
+
+            case PC_Bal:
+                os  << "('" << e.val.open << "', '" << e.val.close << "')";
+                break;
+
+            case PC_Rpat:
+                os  << e.val.PP;
+                break;
+
+            case PC_Pred_Func:
+                os  << e.val.BF;
+                break;
+
+            case PC_Assign_Imm:
+            case PC_Assign_OnM:
+            case PC_Any_VP:
+            case PC_Break_VP:
+            case PC_BreakX_VP:
+            case PC_NotAny_VP:
+            case PC_NSpan_VP:
+            case PC_Span_VP:
+            case PC_String_VP:
+                os  << e.val.VP;
+                break;
+
+            case PC_Call_Imm:
+            case PC_Call_OnM:
+                os  << e.val.MF.func << '(' << e.val.MF.iPtr << ')';
+                break;
+
+            case PC_String:
+                os  << "\"" << std::setw(e.val.Str->length())
+                    << *(e.val.Str)
+                    << "\"";
+                break;
+
+            case PC_String_2:
+                os  << "\"" << std::setw(2);
+                os.write(e.val.Str2, 2);
+                os  << "\"";
+                break;
+
+            case PC_String_3:
+                os  << "\"" << std::setw(3);
+                os.write(e.val.Str3, 3);
+                os  << "\"";
+                break;
+
+            case PC_String_4:
+                os  << "\"" << std::setw(4);
+                os.write(e.val.Str4, 4);
+                os  << "\"";
+                break;
+
+            case PC_String_5:
+                os  << "\"" << std::setw(5);
+                os.write(e.val.Str5, 5);
+                os  << "\"";
+                break;
+
+            case PC_String_6:
+                os  << "\"" << std::setw(6);
+                os.write(e.val.Str6, 6);
+                os  << "\"";
+                break;
+
+            case PC_Setcur:
+                os  << e.val.NP;
+                break;
+
+            case PC_Any_CH:
+            case PC_Break_CH:
+            case PC_BreakX_CH:
+            case PC_Char:
+            case PC_NotAny_CH:
+            case PC_NSpan_CH:
+            case PC_Span_CH:
+                os  << '\'' << e.val.Char << '\'';
+                break;
+
+            case PC_Any_Set:
+            case PC_Break_Set:
+            case PC_BreakX_Set:
+            case PC_NotAny_Set:
+            case PC_NSpan_Set:
+            case PC_Span_Set:
+                os  << "\"" << e.val.set << "\"";
+                break;
+
+            case PC_Arbno_Y:
+            case PC_Len_Nat:
+            case PC_Pos_Nat:
+            case PC_RPos_Nat:
+            case PC_RTab_Nat:
+            case PC_Tab_Nat:
+                os  << e.val.Nat;
+                break;
+
+            case PC_Pos_NF:
+            case PC_Len_NF:
+            case PC_RPos_NF:
+            case PC_RTab_NF:
+            case PC_Tab_NF:
+                os  << e.val.NF;
+                break;
+
+            case PC_Pos_NP:
+            case PC_Len_NP:
+            case PC_RPos_NP:
+            case PC_RTab_NP:
+            case PC_Tab_NP:
+                os  << e.val.NP;
+                break;
+
+            case PC_Any_VF:
+            case PC_Break_VF:
+            case PC_BreakX_VF:
+            case PC_NotAny_VF:
+            case PC_NSpan_VF:
+            case PC_Span_VF:
+            case PC_String_VF:
+                os  << e.val.VF.func << '(' << e.val.VF.iPtr << ')';
+                break;
+
+            default:
+                break;
+        }
+        os  << endl;
+    }
+    os  << endl;
+}
+
 
 // ----------------------------------------------------------------------------
 /// std::ostream& operator<<(std::ostream& os, const PatElmt_& pe)

@@ -1,4 +1,4 @@
- /// Copyright 2013 Henry G. Weller
+ /// Copyright 2013-2016 Henry G. Weller
 /// Copyright 2007-2010 Philip L. Budne
 // -----------------------------------------------------------------------------
 //  This file is part of
@@ -36,16 +36,11 @@
 #include "PatMatInternal.H"
 #include "PatMatInternalI.H"
 
-// -----------------------------------------------------------------------------
-
-namespace PatMat
-{
-
 // ----------------------------------------------------------------------------
 ///  Constructors
 // ----------------------------------------------------------------------------
 
-Pattern_::Pattern_(const unsigned int stackIndex, const PatElmt_ *p)
+PatMat::Pattern_::Pattern_(const unsigned int stackIndex, const PatElmt_ *p)
 :
     stackIndex_(stackIndex),
     pe_(p),
@@ -57,7 +52,7 @@ Pattern_::Pattern_(const unsigned int stackIndex, const PatElmt_ *p)
 ///  Destructor
 // ----------------------------------------------------------------------------
 
-void Pattern_::free(Pattern_ *p)
+void PatMat::Pattern_::free(Pattern_ *p)
 {
     // Check the pattern is no longer referenced
     if (p->refs_ == 0 || --p->refs_ == 0)
@@ -67,7 +62,7 @@ void Pattern_::free(Pattern_ *p)
 }
 
 
-Pattern_::~Pattern_()
+PatMat::Pattern_::~Pattern_()
 {
     // Otherwise we must free all elements
     int n = pe_->index_;
@@ -113,9 +108,6 @@ Pattern_::~Pattern_()
             case PC_String_VF:
                 (void)refs[j]->val.VF.iPtr;
                 break;
-            case PC_Dynamic_Func:
-                (void)refs[j]->val.DF.iPtr;
-                break;
             default:
                 break;
         }
@@ -130,6 +122,8 @@ Pattern_::~Pattern_()
 // -----------------------------------------------------------------------------
 // Record given pattern element if not already recorded in ra,
 // and also record any referenced pattern elements recursively.
+namespace PatMat
+{
 static void recordPE(const PatElmt_ *e, PatElmt_ **ra)
 {
     IDOUT(cout<< "  recordPE called with const PatElmt_ *= " << e;)
@@ -150,6 +144,7 @@ static void recordPE(const PatElmt_ *e, PatElmt_ **ra)
             recordPE(e->val.Alt, ra);
     }
 }
+}
 
 
 // -----------------------------------------------------------------------------
@@ -159,7 +154,7 @@ static void recordPE(const PatElmt_ *e, PatElmt_ **ra)
 // structure, and a Ref_Array with bounds 1 .. E.Index, fills in the
 // Ref_Array so that its N'th entry references the element of the referenced
 // pattern whose Index value is N.
-void buildRefArray(const PatElmt_ *e, PatElmt_ **ra)
+void PatMat::buildRefArray(const PatElmt_ *e, PatElmt_ **ra)
 {
     IDOUT(cout<< "Entering buildRefArray\n";)
     for (int i = 0; i < e->index_; i++)
@@ -171,6 +166,4 @@ void buildRefArray(const PatElmt_ *e, PatElmt_ **ra)
 }
 
 
-// -----------------------------------------------------------------------------
-} // End namespace PatMat
 // -----------------------------------------------------------------------------

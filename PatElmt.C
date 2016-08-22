@@ -1,4 +1,4 @@
-/// Copyright 2013 Henry G. Weller
+/// Copyright 2013-2016 Henry G. Weller
 /// Copyright 2007-2010 Philip L. Budne
 // -----------------------------------------------------------------------------
 //  This file is part of
@@ -40,13 +40,11 @@
 #include <cstdlib>
 
 // -----------------------------------------------------------------------------
+/// Exceptions
+// -----------------------------------------------------------------------------
 
 namespace PatMat
 {
-
-// -----------------------------------------------------------------------------
-/// Exceptions
-// -----------------------------------------------------------------------------
 
 void __dead patMatException(const char* msg)
 {
@@ -59,12 +57,14 @@ void __dead uninitializedPattern()
     patMatException("uninitializedPattern");
 }
 
+}
+
 
 // ----------------------------------------------------------------------------
 /// PatElmt: Pattern Element functions
 // ----------------------------------------------------------------------------
 
-PatElmt_::PatElmt_(Character c)
+PatMat::PatElmt_::PatElmt_(Character c)
 :
     pCode_(PC_Char),
     index_(1),
@@ -73,7 +73,7 @@ PatElmt_::PatElmt_(Character c)
     val.Char = c;
 }
 
-PatElmt_::PatElmt_(const std::string& str)
+PatMat::PatElmt_::PatElmt_(const std::string& str)
 :
     pCode_(PC_Null),
     index_(1),
@@ -115,7 +115,7 @@ PatElmt_::PatElmt_(const std::string& str)
     }
 }
 
-void PatElmt_::setStr(const Character* str, const unsigned int l)
+void PatMat::PatElmt_::setStr(const Character* str, const unsigned int l)
 {
     switch (l)
     {
@@ -153,7 +153,7 @@ void PatElmt_::setStr(const Character* str, const unsigned int l)
     }
 }
 
-PatElmt_::PatElmt_(const Character* str, const unsigned int l)
+PatMat::PatElmt_::PatElmt_(const Character* str, const unsigned int l)
 :
     pCode_(PC_Null),
     index_(1),
@@ -162,7 +162,7 @@ PatElmt_::PatElmt_(const Character* str, const unsigned int l)
     setStr(str, l);
 }
 
-PatElmt_::PatElmt_(const Character* str)
+PatMat::PatElmt_::PatElmt_(const Character* str)
 :
     pCode_(PC_Null),
     index_(1),
@@ -176,7 +176,7 @@ PatElmt_::PatElmt_(const Character* str)
 ///  Copy
 // ----------------------------------------------------------------------------
 
-PatElmt_* copy(const PatElmt_* P)
+PatMat::PatElmt_* PatMat::copy(const PatElmt_* P)
 {
     if (P == NULL)
     {
@@ -244,7 +244,7 @@ PatElmt_* copy(const PatElmt_* P)
 // since other fixups are required on the left operand in this case, and
 // they might as well be done all together.
 
-void setSuccessor(const PatElmt_* pe, const PatElmt_* succ)
+void PatMat::setSuccessor(const PatElmt_* pe, const PatElmt_* succ)
 {
     if (pe == NULL)
     {
@@ -282,7 +282,7 @@ void setSuccessor(const PatElmt_* pe, const PatElmt_* succ)
 ///  Alternation
 // ----------------------------------------------------------------------------
 
-PatElmt_* alternate(const PatElmt_* l, const PatElmt_* r)
+PatMat::PatElmt_* PatMat::alternate(const PatElmt_* l, const PatElmt_* r)
 {
     // If the left pattern is null, then we just add the alternation
     // node with an index one greater than the right hand pattern.
@@ -312,7 +312,7 @@ PatElmt_* alternate(const PatElmt_* l, const PatElmt_* r)
 // ----------------------------------------------------------------------------
 ///  Arbno
 // ----------------------------------------------------------------------------
-PatElmt_* arbnoSimple(const PatElmt_* p)
+PatMat::PatElmt_* PatMat::arbnoSimple(const PatElmt_* p)
 {
     PatElmt_* s = new PatElmt_(PC_Arbno_S, p->index_ + 1, EOP, p);
     setSuccessor(p, s);
@@ -323,7 +323,7 @@ PatElmt_* arbnoSimple(const PatElmt_* p)
 // ----------------------------------------------------------------------------
 ///  Bracket
 // ----------------------------------------------------------------------------
-PatElmt_* bracket(PatElmt_* e, PatElmt_* p, PatElmt_* a)
+PatMat::PatElmt_* PatMat::bracket(PatElmt_* e, PatElmt_* p, PatElmt_* a)
 {
     if (p == EOP)
     {
@@ -346,7 +346,12 @@ PatElmt_* bracket(PatElmt_* e, PatElmt_* p, PatElmt_* a)
 // ----------------------------------------------------------------------------
 ///  Concatenation
 // ----------------------------------------------------------------------------
-const PatElmt_* concat(const PatElmt_* l, const PatElmt_* r, unsigned incr)
+const PatMat::PatElmt_* PatMat::concat
+(
+    const PatElmt_* l,
+    const PatElmt_* r,
+    unsigned incr
+)
 {
     if (l == EOP)
     {
@@ -385,6 +390,4 @@ const PatElmt_* concat(const PatElmt_* l, const PatElmt_* r, unsigned incr)
 }
 
 
-// -----------------------------------------------------------------------------
-} // End namespace PatMat
 // -----------------------------------------------------------------------------

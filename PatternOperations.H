@@ -26,12 +26,12 @@ Pattern operator|(const Character *l, const std::string& r);
 Pattern operator|(const std::string& l, const Character *r);
 Pattern Or(const Character *l, const Character *r);
 Pattern operator|(const Pattern& l, const Pattern& r);
-Pattern operator|(Character l, const Pattern& r);
-Pattern operator|(const Pattern& l, Character r);
-Pattern operator|(const std::string& l, Character r);
-Pattern Or(const Character *l, Character r);
-Pattern operator|(Character l, const std::string& r);
-Pattern Or(Character l, const Character *r);
+Pattern operator|(const Character l, const Pattern& r);
+Pattern operator|(const Pattern& l, const Character r);
+Pattern operator|(const std::string& l, const Character r);
+Pattern Or(const Character *l, const Character r);
+Pattern operator|(const Character l, const std::string& r);
+Pattern Or(const Character l, const Character *r);
 
 // ----------------------------------------------------------------------------
 /// Any
@@ -64,7 +64,7 @@ Pattern Arb();
 // to match an additional instance of the given pattern.  Equivalent to (but
 // more efficient than) P & ("" | (P & ("" | ...
 
-Pattern Arbno(Character c);
+Pattern Arbno(const Character c);
 Pattern Arbno(const std::string& str);
 Pattern Arbno(const Character *str);
 Pattern Arbno(const Pattern& p);
@@ -145,8 +145,8 @@ Pattern BreakX(const StringInterface&);
 Pattern operator&(const std::string& l, const Pattern& r);
 Pattern operator&(const Pattern& l, const std::string& r);
 Pattern operator&(const Pattern& l, const Pattern& r);
-Pattern operator&(Character l, const Pattern& r);
-Pattern operator&(const Pattern& l, Character r);
+Pattern operator&(const Character l, const Pattern& r);
+Pattern operator&(const Pattern& l, const Character r);
 
 // ----------------------------------------------------------------------------
 ///  Deferred Matching

@@ -1,4 +1,4 @@
-/// Copyright 2013 Henry G. Weller
+/// Copyright 2013-2016 Henry G. Weller
 /// Copyright 2007-2010 Philip L. Budne
 // -----------------------------------------------------------------------------
 //  This file is part of
@@ -280,23 +280,6 @@ inline PatElmt_::PatElmt_
 {
     val.VF.func = func;
     val.VF.iPtr = iPtr;
-}
-
-inline PatElmt_::PatElmt_
-(
-    const PatternCode pc,
-    const IndexT index,
-    const PatElmt_* pNext,
-    void(*func)(void*, Dynamic*),
-    void* iPtr
-)
-:
-    pCode_(pc),
-    index_(index),
-    pNext_(pNext)
-{
-    val.DF.func = func;
-    val.DF.iPtr = iPtr;
 }
 
 

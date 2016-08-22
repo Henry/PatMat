@@ -1,4 +1,4 @@
-/// Copyright 2013 Henry G. Weller
+/// Copyright 2013-2016 Henry G. Weller
 // -----------------------------------------------------------------------------
 //  This file is part of
 /// ---     The PatMat Pattern Matcher
@@ -31,13 +31,10 @@
 #include "CharacterSet.H"
 #include <ctype.h>
 
-namespace PatMat
-{
-
 // ----------------------------------------------------------------------------
 ///  Write to ostream
 // ----------------------------------------------------------------------------
-std::ostream& operator<<(std::ostream& os, const CharacterSet& cs)
+std::ostream& PatMat::operator<<(std::ostream& os, const CharacterSet& cs)
 {
     for (char c=0; c<127; c++)
     {
@@ -54,6 +51,8 @@ std::ostream& operator<<(std::ostream& os, const CharacterSet& cs)
 /// CharacterSets
 // -----------------------------------------------------------------------------
 
+namespace PatMat
+{
 namespace CharacterSets
 {
     const CharacterSet alnum(isalnum);
@@ -70,9 +69,7 @@ namespace CharacterSets
     const CharacterSet upper(isupper);
     const CharacterSet xdigit(isxdigit);
 }
+}
 
-// -----------------------------------------------------------------------------
-} // End namespace PatMat
-// -----------------------------------------------------------------------------
 
 // -----------------------------------------------------------------------------

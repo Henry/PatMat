@@ -1,4 +1,4 @@
-/// Copyright 2013 Henry G. Weller
+/// Copyright 2013-2016 Henry G. Weller
 /// Copyright 2007-2010 Philip L. Budne
 /// Copyright 1998-2005 AdaCore
 // -----------------------------------------------------------------------------
@@ -50,39 +50,6 @@ namespace PatMat
 class PatElmt_;
 
 std::ostream& operator<<(std::ostream& os, const PatElmt_& pe);
-
-// -----------------------------------------------------------------------------
-/// Experimental Dynamic function
-// -----------------------------------------------------------------------------
-
-struct Dynamic
-{
-    enum
-    {
-        DY_VSTR,
-        DY_BOOL,
-        DY_PAT,
-        DY_UNK
-    } type;
-
-    union Val
-    {
-        std::string* str;       // type == DY_VSTR
-        bool pred;              // type == DY_BOOL
-        struct
-        {                       // type == DY_PAT
-            Pattern_* p;
-            void (*release) (void* cookie);
-            void* cookie;
-        } pat;
-    } val;
-};
-
-Pattern_* dynamicFunc
-(
-    void(*func)(void*, Dynamic* ),
-    void* cookie
-);
 
 
 // -----------------------------------------------------------------------------
@@ -204,9 +171,7 @@ public:
     PATTERN_CODE(NotAny_VF, "NotAny", 1),                                      \
     PATTERN_CODE(NSpan_VF, "NSpan", 0),                                        \
     PATTERN_CODE(Span_VF, "Span", 1),                                          \
-    PATTERN_CODE(String_VF, "String", 0),                                      \
-                                                                               \
-    PATTERN_CODE(Dynamic_Func, "Dynamic", 0)
+    PATTERN_CODE(String_VF, "String", 0),
 
 #define PATTERN_CODE(X, S, O) PC_##X
 enum PatternCode
@@ -314,12 +279,6 @@ class PatElmt_
             const void* iPtr;
         } VF;
 
-        // PC_Dynamic_Func
-        struct
-        {
-            void(*func)(void*, Dynamic*);
-            void* iPtr;
-        } DF;
     } val;
 
     // Constructors
@@ -462,15 +421,6 @@ class PatElmt_
             const PatElmt_* pNext,
             std::string(*func)(const void*),
             const void* iPtr
-        );
-
-        inline PatElmt_
-        (
-            const PatternCode pc,
-            const IndexT index,
-            const PatElmt_* pNext,
-            void(*func)(void*, Dynamic*),
-            void* iPtr
         );
 
 

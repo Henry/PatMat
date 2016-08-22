@@ -1,4 +1,4 @@
-/// Copyright 2013 Henry G. Weller
+/// Copyright 2013-2016 Henry G. Weller
 /// Copyright 2007-2010 Philip L. Budne
 /// Copyright 1998-2005 AdaCore
 // -----------------------------------------------------------------------------
@@ -917,46 +917,6 @@ static const char* logicError()
 
 
 // -----------------------------------------------------------------------------
-/// DynamicObject
-// -----------------------------------------------------------------------------
-
-struct DynamicObject_
-{
-    DynamicObject_* next;
-    void (*release) (void* obj);
-    void* obj;
-};
-
-static int saveDynamicObject
-(
-    DynamicObject_** list,
-    void (*release) (void* obj), void* obj
-)
-{
-    DynamicObject_* dop = new DynamicObject_;
-    if (!dop) return 0;
-
-    dop->release = release;
-    dop->obj = obj;
-    dop->next =* list;
-    *list = dop;
-    return 1;
-}
-
-static void freeDynamicObjects(DynamicObject_* dop)
-{
-    while (dop)
-    {
-        DynamicObject_* next = dop->next;
-        IDOUT(cout<< "Releasing " <<  dop->obj << endl;)
-        (dop->release) (dop->obj);
-        delete dop;
-        dop = next;
-    }
-}
-
-
-// -----------------------------------------------------------------------------
 /// matchTrace
 // -----------------------------------------------------------------------------
 static void matchTrace
@@ -1242,8 +1202,6 @@ static MatchRet XMatch(MatchState& ms)
     // successful match.
     bool assignOnM = false;
 
-    DynamicObject_* dynamicList = NULL;
-
     // Start of processing for XMatch
 
     if (Debug || ms.flags & Pattern::trace)
@@ -1299,7 +1257,6 @@ Match_Fail:
     if (Debug) cout<< indent(regionLevel) << "match fails\n";
     ms.start = 0;
     ms.stop = 0;
-    freeDynamicObjects(dynamicList);
     return MATCH_FAILURE;
 
 Match_Exception:
@@ -1307,7 +1264,6 @@ Match_Exception:
     if (Debug) cout<< indent(regionLevel) << "match fails\n";
     ms.start = 0;
     ms.stop = 0;
-    freeDynamicObjects(dynamicList);
     return MATCH_EXCEPTION;
 
 Match_Succeed:
@@ -1370,7 +1326,6 @@ Match_Succeed:
     }   // assignOnM
 
     if (Debug) cout<< endl;
-    freeDynamicObjects(dynamicList);
     return MATCH_SUCCESS;
 
 Fail:
@@ -2781,75 +2736,6 @@ Match:
             assignOnM = true;
             goto Succeed;
 
-        case PC_Dynamic_Func:
-            {
-                Dynamic d;
-                if (Debug)
-                {
-                    cout<< indent(regionLevel) << node
-                        << " calling dynamic function" << endl;
-                }
-                node->val.DF.func(node->val.DF.iPtr, &d);
-                switch (d.type)
-                {
-                    case Dynamic::DY_BOOL:
-                        if (d.val.pred)
-                            goto Succeed;
-                        goto Fail;
-
-                    case Dynamic::DY_VSTR:
-                        if (Debug)
-                        {
-                            cout<< indent(regionLevel) << node
-                                << " matching \"" << d.val.str << "\"" << endl;
-                        }
-                        if
-                        (
-                            len >= cursor + d.val.str->length()
-                         && match(&subject[cursor], *(d.val.str))
-                        )
-                        {
-                            cursor += d.val.str->length();
-                            goto Succeed;
-                        }
-                        goto Fail;
-
-                    case Dynamic::DY_PAT:
-                        stack(stack.ptr - 1).node = node->pNext_;
-                        stack.pushRegion();
-                        regionLevel++;
-                        if (Debug)
-                        {
-                            cout<< indent(regionLevel) << node
-                                << " initiating recursive match" << endl;
-                        }
-
-                        // CROCK: keep list of objects to release when match
-                        // done
-                        if
-                        (
-                            !saveDynamicObject
-                            (
-                                &dynamicList,
-                                d.val.pat.release,
-                                d.val.pat.cookie
-                            )
-                        )
-                        {
-                            ms.exception = "saveDynamicObject failed";
-                            goto Match_Exception;
-                        }
-                        node = d.val.pat.p->pe_;
-                        goto Match;
-
-                    case Dynamic::DY_UNK:
-                        goto Fail;
-
-                    default:
-                        ms.exception = logicError();
-                        goto Match_Exception;
-                }
-            }
     }   // switch (node->pCode_)
 
     // We are NOT allowed to fall though this case statement, since every
@@ -2862,7 +2748,11 @@ Match:
 }
 
 
-MatchRet match(MatchState& ms)
+// -----------------------------------------------------------------------------
+} // End namespace PatMat
+// -----------------------------------------------------------------------------
+
+PatMat::MatchRet PatMat::match(MatchState& ms)
 {
     if (ms.flags & Pattern::debug)
     {
@@ -2875,6 +2765,4 @@ MatchRet match(MatchState& ms)
 }
 
 
-// -----------------------------------------------------------------------------
-} // End namespace PatMat
 // -----------------------------------------------------------------------------
