@@ -1,4 +1,4 @@
-### Copyright 2013 Henry G. Weller
+### Copyright 2013-2016 Henry G. Weller
 ###-----------------------------------------------------------------------------
 ##  This file is part of
 ### ---     The PatMat Pattern Matcher
