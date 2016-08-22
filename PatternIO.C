@@ -177,25 +177,25 @@ static const PatElmt_ *writePattern
                 << "(\"" << *e.val.set << "\")";
             break;
 
-        case PC_Any_VF:
-        case PC_Break_VF:
-        case PC_BreakX_VF:
-        case PC_NotAny_VF:
-        case PC_NSpan_VF:
-        case PC_Span_VF:
-        case PC_String_VF:
+        case PC_Any_SG:
+        case PC_Break_SG:
+        case PC_BreakX_SG:
+        case PC_NotAny_SG:
+        case PC_NSpan_SG:
+        case PC_Span_SG:
+        case PC_String_SG:
             os  << patternCodeNames[e.pCode_]
-                << '(' << e.val.VF << ')';
+                << '(' << e.val.SG << ')';
             break;
 
-        case PC_Any_VP:
-        case PC_Break_VP:
-        case PC_BreakX_VP:
-        case PC_NotAny_VP:
-        case PC_NSpan_VP:
-        case PC_Span_VP:
-        case PC_String_VP:
-            os  << patternCodeNames[e.pCode_] << '(' << e.val.VP << ')';
+        case PC_Any_SP:
+        case PC_Break_SP:
+        case PC_BreakX_SP:
+        case PC_NotAny_SP:
+        case PC_NSpan_SP:
+        case PC_Span_SP:
+        case PC_String_SP:
+            os  << patternCodeNames[e.pCode_] << '(' << e.val.SP << ')';
             break;
 
         case PC_Arbno_S:
@@ -219,7 +219,7 @@ static const PatElmt_ *writePattern
 
         case PC_Assign_Imm:
         case PC_Assign_OnM:
-            os  << ' ' << patternCodeNames[e.pCode_] << refs[e.index_]->val.VP;
+            os  << ' ' << patternCodeNames[e.pCode_] << refs[e.index_]->val.SP;
             break;
 
         case PC_Any_CH:
@@ -250,13 +250,13 @@ static const PatElmt_ *writePattern
             os  << patternCodeNames[e.pCode_] << '(' << e.val.Nat << ')';
             break;
 
-        case PC_Len_NF:
-        case PC_Pos_NF:
-        case PC_RPos_NF:
-        case PC_RTab_NF:
-        case PC_Tab_NF:
+        case PC_Len_NG:
+        case PC_Pos_NG:
+        case PC_RPos_NG:
+        case PC_RTab_NG:
+        case PC_Tab_NG:
             os  << patternCodeNames[e.pCode_]
-                << '(' <<  e.val.NF << ')';
+                << '(' <<  e.val.NG << ')';
             break;
 
         case PC_Len_NP:
@@ -285,12 +285,12 @@ static const PatElmt_ *writePattern
 
         case PC_Pred_Func:
             os  << patternCodeNames[e.pCode_]
-                << '(' << e.val.BF << ')';
+                << '(' << e.val.BG << ')';
             break;
 
         case PC_Setcur_Func:
             os  << patternCodeNames[e.pCode_]
-                << '(' << e.val.CF << ')';
+                << '(' << e.val.NS << ')';
             break;
 
         case PC_String:
@@ -327,12 +327,20 @@ static const PatElmt_ *writePattern
             os<< "\"";
             break;
 
-        case PC_Call_Imm:
-        case PC_Call_OnM:
+        case PC_Call_Imm_SV:
+        case PC_Call_OnM_SV:
             os  << '(';
             writePatternSequence(os, refs[e.index_]->pNext_, &e, refs, true);
             os  << patternCodeNames[e.pCode_];
-            os  << e.val.MF.func << '(' << e.val.MF.iPtr << "))";
+            os  << e.val.SV;
+            break;
+
+        case PC_Call_Imm_SS:
+        case PC_Call_OnM_SS:
+            os  << '(';
+            writePatternSequence(os, refs[e.index_]->pNext_, &e, refs, true);
+            os  << patternCodeNames[e.pCode_];
+            os  << e.val.SS;
             break;
 
         case PC_Arb_Y:
@@ -482,24 +490,29 @@ void PatMat::Pattern::dump(std::ostream& os) const
                 break;
 
             case PC_Pred_Func:
-                os  << e.val.BF;
+                os  << e.val.BG;
                 break;
 
             case PC_Assign_Imm:
             case PC_Assign_OnM:
-            case PC_Any_VP:
-            case PC_Break_VP:
-            case PC_BreakX_VP:
-            case PC_NotAny_VP:
-            case PC_NSpan_VP:
-            case PC_Span_VP:
-            case PC_String_VP:
-                os  << e.val.VP;
+            case PC_Any_SP:
+            case PC_Break_SP:
+            case PC_BreakX_SP:
+            case PC_NotAny_SP:
+            case PC_NSpan_SP:
+            case PC_Span_SP:
+            case PC_String_SP:
+                os  << e.val.SP;
                 break;
 
-            case PC_Call_Imm:
-            case PC_Call_OnM:
-                os  << e.val.MF.func << '(' << e.val.MF.iPtr << ')';
+            case PC_Call_Imm_SV:
+            case PC_Call_OnM_SV:
+                os  << e.val.SV;
+                break;
+
+            case PC_Call_Imm_SS:
+            case PC_Call_OnM_SS:
+                os  << e.val.SS;
                 break;
 
             case PC_String:
@@ -539,7 +552,7 @@ void PatMat::Pattern::dump(std::ostream& os) const
                 break;
 
             case PC_Setcur:
-                os  << e.val.NP;
+                os  << e.val.NV;
                 break;
 
             case PC_Any_CH:
@@ -570,12 +583,12 @@ void PatMat::Pattern::dump(std::ostream& os) const
                 os  << e.val.Nat;
                 break;
 
-            case PC_Pos_NF:
-            case PC_Len_NF:
-            case PC_RPos_NF:
-            case PC_RTab_NF:
-            case PC_Tab_NF:
-                os  << e.val.NF;
+            case PC_Pos_NG:
+            case PC_Len_NG:
+            case PC_RPos_NG:
+            case PC_RTab_NG:
+            case PC_Tab_NG:
+                os  << e.val.NG;
                 break;
 
             case PC_Pos_NP:
@@ -586,14 +599,14 @@ void PatMat::Pattern::dump(std::ostream& os) const
                 os  << e.val.NP;
                 break;
 
-            case PC_Any_VF:
-            case PC_Break_VF:
-            case PC_BreakX_VF:
-            case PC_NotAny_VF:
-            case PC_NSpan_VF:
-            case PC_Span_VF:
-            case PC_String_VF:
-                os  << e.val.VF;
+            case PC_Any_SG:
+            case PC_Break_SG:
+            case PC_BreakX_SG:
+            case PC_NotAny_SG:
+            case PC_NSpan_SG:
+            case PC_Span_SG:
+            case PC_String_SG:
+                os  << e.val.SG;
                 break;
 
             default:

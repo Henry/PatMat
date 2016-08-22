@@ -1297,7 +1297,7 @@ Match_Succeed:
                 switch (nodeOnM->pCode_)
                 {
                     case PC_Assign_OnM:
-                        *nodeOnM->val.SP = str;
+                        *nodeOnM->val.SV = str;
                         if (Debug)
                         {
                             cout<< indent(regionLevel) << stack(s).node
@@ -1305,12 +1305,16 @@ Match_Succeed:
                                 << str << "\"\n";
                         }
                         break;
-                    case PC_Call_OnM:
-                        nodeOnM->val.MF.func
-                        (
-                            str,
-                            nodeOnM->val.MF.iPtr
-                        );
+                    case PC_Call_OnM_SS:
+                        nodeOnM->val.SS->set(str);
+                        if (Debug)
+                        {
+                            cout<< indent(regionLevel) << stack(s).node
+                                << " deferred call of \"" << str << "\"\n";
+                        }
+                        break;
+                    case PC_Call_OnM_SV:
+                        *nodeOnM->val.SV = str;
                         if (Debug)
                         {
                             cout<< indent(regionLevel) << stack(s).node
@@ -1428,10 +1432,10 @@ Match:
                 goto Fail;
             }
 
-        case PC_Any_VF:
+        case PC_Any_SG:
             // Any (string function case)
             {
-                std::string str(node->val.VF->get());
+                std::string str(node->val.SG->get());
                 if (Debug)
                 {
                     cout<< indent(regionLevel) << node
@@ -1445,10 +1449,10 @@ Match:
                 goto Fail;
             }
 
-        case PC_Any_VP:
+        case PC_Any_SP:
             // Any (string pointer case)
             {
-                std::string str(*node->val.VP);
+                std::string str(*node->val.SP);
                 if (Debug)
                 {
                     cout<< indent(regionLevel) << node
@@ -1563,7 +1567,7 @@ Match:
                         <<" executing immediate assignment of \""
                         << str << "\"\n";
                 }
-                *node->val.SP = str;
+                *node->val.SV = str;
                 stack.popRegion();
                 regionLevel--;
                 goto Succeed;
@@ -1655,10 +1659,10 @@ Match:
             }
             goto Fail;
 
-        case PC_Break_VF:
+        case PC_Break_SG:
             // Break (string function case)
             {
-                std::string str(node->val.VF->get());
+                std::string str(node->val.SG->get());
                 if (Debug)
                 {
                     cout<< indent(regionLevel) << node << " matching Break '"
@@ -1675,10 +1679,10 @@ Match:
                 goto Fail;
             }
 
-        case PC_Break_VP:
+        case PC_Break_SP:
             // Break (string pointer case)
             {
-                std::string str(*node->val.VP);
+                std::string str(*node->val.SP);
                 if (Debug)
                 {
                     cout<< indent(regionLevel) << node << " matching Break '"
@@ -1729,10 +1733,10 @@ Match:
             }
             goto Fail;
 
-        case PC_BreakX_VF:
+        case PC_BreakX_SG:
             // BreakX (string function case)
             {
-                std::string str(node->val.VF->get());
+                std::string str(node->val.SG->get());
                 if (Debug)
                 {
                     cout<< indent(regionLevel) << node << " matching BreakX '"
@@ -1750,10 +1754,10 @@ Match:
             }
 
 
-        case PC_BreakX_VP:
+        case PC_BreakX_SP:
             // BreakX (string pointer case)
             {
-                std::string str(*node->val.VP);
+                std::string str(*node->val.SP);
                 if (Debug)
                 {
                     cout<< indent(regionLevel) << node << " matching BreakX '"
@@ -1879,10 +1883,10 @@ Match:
             cursor += node->val.Nat;
             goto Succeed;
 
-        case PC_Len_NF:
+        case PC_Len_NG:
             // Len (Integer function case)
             {
-                const unsigned int n = node->val.NF->get();
+                const unsigned int n = node->val.NG->get();
                 if (Debug)
                 {
                     cout<< indent(regionLevel) << node
@@ -1938,10 +1942,10 @@ Match:
             }
             goto Fail;
 
-        case PC_NotAny_VF:
+        case PC_NotAny_SG:
             // NotAny (string function case)
             {
-                std::string str(node->val.VF->get());
+                std::string str(node->val.SG->get());
                 if (Debug)
                 {
                     cout<< indent(regionLevel) << node
@@ -1955,10 +1959,10 @@ Match:
                 goto Fail;
             }
 
-        case PC_NotAny_VP:
+        case PC_NotAny_SP:
             // NotAny (string pointer case)
             {
-                std::string str(*node->val.VP);
+                std::string str(*node->val.SP);
                 if (Debug)
                 {
                     cout<< indent(regionLevel) << node
@@ -1998,10 +2002,10 @@ Match:
             }
             goto Succeed;
 
-        case PC_NSpan_VF:
+        case PC_NSpan_SG:
             // NSpan (string function case)
             {
-                std::string str(node->val.VF->get());
+                std::string str(node->val.SG->get());
                 if (Debug)
                 {
                     cout<< indent(regionLevel) << node
@@ -2014,10 +2018,10 @@ Match:
                 goto Succeed;
             }
 
-        case PC_NSpan_VP:
+        case PC_NSpan_SP:
             // NSpan (string pointer case)
             {
-                std::string str(*node->val.VP);
+                std::string str(*node->val.SP);
                 if (Debug)
                 {
                     cout<< indent(regionLevel) << node
@@ -2053,10 +2057,10 @@ Match:
                 goto Fail;
             }
 
-        case PC_Pos_NF:
+        case PC_Pos_NG:
             // Pos (Integer function case)
             {
-                const unsigned int n = node->val.NF->get();
+                const unsigned int n = node->val.NG->get();
                 if (Debug)
                 {
                     cout<< indent(regionLevel) << node
@@ -2095,7 +2099,7 @@ Match:
                 cout<< indent(regionLevel) << node
                     << " matching predicate function\n";
             }
-            if (node->val.BF->get())
+            if (node->val.BG->get())
             {
                 goto Succeed;
             }
@@ -2191,10 +2195,10 @@ Match:
                 goto Fail;
             }
 
-        case PC_RPos_NF:
+        case PC_RPos_NG:
             // RPos (integer function case)
             {
-                const unsigned int n = node->val.NF->get();
+                const unsigned int n = node->val.NG->get();
                 if (Debug)
                 {
                     cout<< indent(regionLevel) << node
@@ -2243,10 +2247,10 @@ Match:
                 goto Fail;
             }
 
-        case PC_RTab_NF:
+        case PC_RTab_NG:
             // RTab (integer function case)
             {
-                const unsigned int n = node->val.NF->get();
+                const unsigned int n = node->val.NG->get();
                 if (Debug)
                 {
                     cout<< indent(regionLevel) << node
@@ -2287,7 +2291,7 @@ Match:
                 cout<< indent(regionLevel) << node
                     << " matching Setcur\n";
             }
-            *node->val.Var = cursor;
+            *node->val.NV = cursor;
             goto Succeed;
 
         case PC_Setcur_Func:
@@ -2297,7 +2301,7 @@ Match:
                 cout<< indent(regionLevel) << node
                     << " matching Setcur_Func\n";
             }
-            node->val.CF->set(cursor);
+            node->val.NS->set(cursor);
             goto Succeed;
 
         case PC_Span_CH:
@@ -2348,10 +2352,10 @@ Match:
                 }
             }
 
-        case PC_Span_VF:
+        case PC_Span_SG:
             // Span (string function case)
             {
-                std::string str(node->val.VF->get());
+                std::string str(node->val.SG->get());
                 if (Debug)
                 {
                     cout<< indent(regionLevel) << node
@@ -2374,10 +2378,10 @@ Match:
                 }
             }
 
-        case PC_Span_VP:
+        case PC_Span_SP:
             // Span (string pointer case)
             {
-                std::string str(*node->val.VP);
+                std::string str(*node->val.SP);
                 if (Debug)
                 {
                     cout<< indent(regionLevel) << node
@@ -2559,10 +2563,10 @@ Match:
                 goto Fail;
             }
 
-        case PC_String_VF:
+        case PC_String_SG:
             // String (function case)
             {
-                std::string str(node->val.VF->get());
+                std::string str(node->val.SG->get());
                 unsigned int l = str.length();
 
                 if (Debug)
@@ -2581,10 +2585,10 @@ Match:
                 }
             }
 
-        case PC_String_VP:
+        case PC_String_SP:
             // String (vstring pointer case)
             {
-                std::string str(*node->val.VP);
+                std::string str(*node->val.SP);
                 if (Debug)
                 {
                     cout<< indent(regionLevel) << node
@@ -2628,10 +2632,10 @@ Match:
                 goto Fail;
             }
 
-        case PC_Tab_NF:
+        case PC_Tab_NG:
             // Tab (integer function case)
             {
-                const unsigned int n = node->val.NF->get();
+                const unsigned int n = node->val.NG->get();
                 if (Debug)
                 {
                     cout<< indent(regionLevel) << node
@@ -2683,7 +2687,7 @@ Match:
             stack.push(cursor, node);
             goto Succeed;
 
-        case PC_Call_Imm:
+        case PC_Call_Imm_SS:
             // Call immediate. This node performs the call
             {
                 std::string str
@@ -2695,13 +2699,45 @@ Match:
                     cout<< indent(regionLevel) << node
                         << " executing immediate write of \"" << str << "\"\n";
                 }
-                node->val.MF.func(str, node->val.MF.iPtr);
+                node->val.SS->set(str);
                 stack.popRegion();
                 regionLevel--;
                 goto Succeed;
             }
 
-        case PC_Call_OnM:
+        case PC_Call_Imm_SV:
+            // Call immediate. This node performs the call
+            {
+                std::string str
+                (
+                    slice(ms.subject, stack(stack.base + 1).cursor + 1, cursor)
+                );
+                if (Debug)
+                {
+                    cout<< indent(regionLevel) << node
+                        << " executing immediate write of \"" << str << "\"\n";
+                }
+                *node->val.SV = str;
+                stack.popRegion();
+                regionLevel--;
+                goto Succeed;
+            }
+
+        case PC_Call_OnM_SS:
+            // Write on match. This node sets up for the eventual write
+            if (Debug)
+            {
+                cout<< indent(regionLevel) << node
+                    << " registering deferred call" << endl;
+            }
+            stack(stack.base + 1).node = node;
+            stack.push(cursor, &CP_Assign);
+            stack.popRegion();
+            regionLevel--;
+            assignOnM = true;
+            goto Succeed;
+
+        case PC_Call_OnM_SV:
             // Write on match. This node sets up for the eventual write
             if (Debug)
             {

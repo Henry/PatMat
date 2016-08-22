@@ -87,26 +87,26 @@ PatMat::Pattern_::~Pattern_()
                 delete refs[j]->val.set;
                 break;
             case PC_Pred_Func:
-                (void)refs[j]->val.BF;
+                (void)refs[j]->val.BG;
                 break;
-            case PC_Call_Imm:
-            case PC_Call_OnM:
-                (void)refs[j]->val.MF.iPtr;
+            case PC_Call_Imm_SS:
+            case PC_Call_OnM_SS:
+                (void)refs[j]->val.SS;
                 break;
-            case PC_Pos_NF:
-            case PC_Len_NF:
-            case PC_RPos_NF:
-            case PC_RTab_NF:
-                (void)refs[j]->val.NF;
+            case PC_Pos_NG:
+            case PC_Len_NG:
+            case PC_RPos_NG:
+            case PC_RTab_NG:
+                (void)refs[j]->val.NG;
                 break;
-            case PC_Any_VF:
-            case PC_Break_VF:
-            case PC_BreakX_VF:
-            case PC_NotAny_VF:
-            case PC_NSpan_VF:
-            case PC_Span_VF:
-            case PC_String_VF:
-                (void)refs[j]->val.VF;
+            case PC_Any_SG:
+            case PC_Break_SG:
+            case PC_BreakX_SG:
+            case PC_NotAny_SG:
+            case PC_NSpan_SG:
+            case PC_Span_SG:
+            case PC_String_SG:
+                (void)refs[j]->val.SG;
                 break;
             default:
                 break;

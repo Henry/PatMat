@@ -108,16 +108,19 @@ public:
                                                                                \
     PATTERN_CODE(Assign_Imm, " . ", 0),                                        \
     PATTERN_CODE(Assign_OnM, " $ ", 0),                                        \
-    PATTERN_CODE(Any_VP, "Any", 1),                                            \
-    PATTERN_CODE(Break_VP, "Break", 0),                                        \
-    PATTERN_CODE(BreakX_VP, "BreakX", 0),                                      \
-    PATTERN_CODE(NotAny_VP, "NotAny", 1),                                      \
-    PATTERN_CODE(NSpan_VP, "NSpan", 0),                                        \
-    PATTERN_CODE(Span_VP, "Span", 1),                                          \
-    PATTERN_CODE(String_VP, "String", 0),                                      \
+    PATTERN_CODE(Any_SP, "Any", 1),                                            \
+    PATTERN_CODE(Break_SP, "Break", 0),                                        \
+    PATTERN_CODE(BreakX_SP, "BreakX", 0),                                      \
+    PATTERN_CODE(NotAny_SP, "NotAny", 1),                                      \
+    PATTERN_CODE(NSpan_SP, "NSpan", 0),                                        \
+    PATTERN_CODE(Span_SP, "Span", 1),                                          \
+    PATTERN_CODE(String_SP, "String", 0),                                      \
                                                                                \
-    PATTERN_CODE(Call_Imm, " * ", 0),                                          \
-    PATTERN_CODE(Call_OnM, " % ", 0),                                          \
+    PATTERN_CODE(Call_Imm_SS, " * ", 0),                                       \
+    PATTERN_CODE(Call_OnM_SS, " % ", 0),                                       \
+                                                                               \
+    PATTERN_CODE(Call_Imm_SV, " * ", 0),                                       \
+    PATTERN_CODE(Call_OnM_SV, " % ", 0),                                       \
                                                                                \
     PATTERN_CODE(Null, "\"\"", 0),                                             \
                                                                                \
@@ -153,11 +156,11 @@ public:
     PATTERN_CODE(RTab_Nat, "RTab", 0),                                         \
     PATTERN_CODE(Tab_Nat, "Tab", 0),                                           \
                                                                                \
-    PATTERN_CODE(Pos_NF, "Pos", 0),                                            \
-    PATTERN_CODE(Len_NF, "Len", 0),                                            \
-    PATTERN_CODE(RPos_NF, "RPos", 0),                                          \
-    PATTERN_CODE(RTab_NF, "RTab", 0),                                          \
-    PATTERN_CODE(Tab_NF, "Tab", 0),                                            \
+    PATTERN_CODE(Pos_NG, "Pos", 0),                                            \
+    PATTERN_CODE(Len_NG, "Len", 0),                                            \
+    PATTERN_CODE(RPos_NG, "RPos", 0),                                          \
+    PATTERN_CODE(RTab_NG, "RTab", 0),                                          \
+    PATTERN_CODE(Tab_NG, "Tab", 0),                                            \
                                                                                \
     PATTERN_CODE(Pos_NP, "Pos", 0),                                            \
     PATTERN_CODE(Len_NP, "Len", 0),                                            \
@@ -165,13 +168,13 @@ public:
     PATTERN_CODE(RTab_NP, "RTab", 0),                                          \
     PATTERN_CODE(Tab_NP, "Tab", 0),                                            \
                                                                                \
-    PATTERN_CODE(Any_VF, "Any", 1),                                            \
-    PATTERN_CODE(Break_VF, "Break", 0),                                        \
-    PATTERN_CODE(BreakX_VF, "BreakX", 0),                                      \
-    PATTERN_CODE(NotAny_VF, "NotAny", 1),                                      \
-    PATTERN_CODE(NSpan_VF, "NSpan", 0),                                        \
-    PATTERN_CODE(Span_VF, "Span", 1),                                          \
-    PATTERN_CODE(String_VF, "String", 0),
+    PATTERN_CODE(Any_SG, "Any", 1),                                            \
+    PATTERN_CODE(Break_SG, "Break", 0),                                        \
+    PATTERN_CODE(BreakX_SG, "BreakX", 0),                                      \
+    PATTERN_CODE(NotAny_SG, "NotAny", 1),                                      \
+    PATTERN_CODE(NSpan_SG, "NSpan", 0),                                        \
+    PATTERN_CODE(Span_SG, "Span", 1),                                          \
+    PATTERN_CODE(String_SG, "String", 0),
 
 #define PATTERN_CODE(X, S, O) PC_##X
 enum PatternCode
@@ -205,24 +208,20 @@ class PatElmt_
         const PatElmt_* Alt;
 
         // PC_Rpat
-        Pattern_** PP;
+        Pattern_*const* PP;
 
         // PC_Pred_Func
-        const BoolGetter* BF;
+        const BoolGetter* BG;
 
-        // PC_Assign_Imm_SP | PC_Assign_OnM_SP
-        std::string* SP;
+        // PC_Assign_Imm | PC_Assign_OnM | PC_Call_Imm_SV | PC_Call_OnM_SV
+        std::string* SV;
 
-        // PC_Any_VP | PC_Break_VP | PC_BreakX_VP | PC_NotAny_VP | PC_NSpan_VP |
-        // PC_Span_VP | PC_String_VP
-        const std::string* VP;
+        // PC_Any_SP | PC_Break_SP | PC_BreakX_SP | PC_NotAny_SP | PC_NSpan_SP |
+        // PC_Span_SP | PC_String_SP
+        const std::string* SP;
 
-        // PC_Call_Imm PC_Call_OnM
-        struct
-        {
-            void(*func)(const std::string&, void*);
-            void* iPtr;
-        } MF;
+        // PC_Call_Imm_SS PC_Call_OnM_SS
+        StringSetter* SS;
 
         // PC_String
         std::string* Str;
@@ -243,10 +242,10 @@ class PatElmt_
         Character Str6[6];
 
         // PC_Setcur
-        unsigned int* Var;
+        unsigned int* NV;
 
         // PC_Setcur_Func
-        UnsignedSetter* CF;
+        UnsignedSetter* NS;
 
         // PC_Any_CH | PC_Break_CH | PC_BreakX_CH | PC_Char | PC_NotAny_CH |
         // PC_NSpan_CH | PC_Span_CH
@@ -267,15 +266,15 @@ class PatElmt_
         // PC_Tab_Nat
         unsigned int Nat;
 
-        // PC_Pos_NF | PC_Len_NF | PC_RPos_NF | PC_RTab_NF |
-        const UnsignedGetter* NF;
+        // PC_Pos_NG | PC_Len_NG | PC_RPos_NG | PC_RTab_NG |
+        const UnsignedGetter* NG;
 
         // PC_Pos_NP | PC_Len_NP | PC_RPos_NP | PC_RTab_NP | PC_Tab_NP
         const unsigned int* NP;
 
-        // PC_Any_VF | PC_Break_VF | PC_BreakX_VF | PC_NotAny_VF | PC_NSpan_VF
-        // | PC_Span_VF | PC_String_VF
-        const StringGetter* VF;
+        // PC_Any_SG | PC_Break_SG | PC_BreakX_SG | PC_NotAny_SG | PC_NSpan_SG
+        // | PC_Span_SG | PC_String_SG
+        const StringGetter* SG;
 
     } val;
 
@@ -328,7 +327,7 @@ class PatElmt_
             const PatternCode pc,
             const IndexT index,
             const PatElmt_* pNext,
-            Pattern_** pat
+            Pattern_*const* pat
         );
 
         inline PatElmt_
@@ -360,8 +359,7 @@ class PatElmt_
             const PatternCode pc,
             const IndexT index,
             const PatElmt_* pNext,
-            void(*func)(const std::string&, void*),
-            void* iPtr
+            StringSetter* ss
         );
 
         inline PatElmt_
@@ -369,7 +367,7 @@ class PatElmt_
             const PatternCode pc,
             const IndexT index,
             const PatElmt_* pNext,
-            unsigned int* Var
+            unsigned int* var
         );
 
         inline PatElmt_
@@ -401,7 +399,7 @@ class PatElmt_
             const PatternCode pc,
             const IndexT index,
             const PatElmt_* pNext,
-            const unsigned int Nat
+            const unsigned int n
         );
 
         inline PatElmt_
@@ -417,7 +415,7 @@ class PatElmt_
             const PatternCode pc,
             const IndexT index,
             const PatElmt_* pNext,
-            const unsigned int* NP
+            const unsigned int* nPtr
         );
 
         inline PatElmt_

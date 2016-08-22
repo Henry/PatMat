@@ -177,20 +177,6 @@ class Pattern
         static Pattern inline orPatStr(const Pattern&, const std::string&);
         static Pattern inline orStrStr(const std::string&, const std::string&);
 
-        static Pattern inline callOnmatch
-        (
-            const Pattern&,
-            void (*)(const std::string&, void*),
-            void*
-        );
-
-        static Pattern inline callImmed
-        (
-            const Pattern&,
-            void (*)(const std::string&, void*),
-            void*
-        );
-
         Pattern(unsigned int stackIndex, const PatElmt_* P);
 
 
@@ -307,7 +293,7 @@ public:
         friend Pattern operator&(const Character l, const Pattern& r);
         friend Pattern operator&(const Pattern& l, const Character r);
 
-        friend Pattern Defer(Pattern&);
+        friend Pattern Defer(const Pattern&);
         friend Pattern Defer(const std::string&);
         friend Pattern Defer(const StringGetter&);
         friend Pattern Defer(const BoolGetter&);

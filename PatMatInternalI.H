@@ -71,7 +71,7 @@ inline PatElmt_::PatElmt_
     const PatternCode pc,
     const IndexT index,
     const PatElmt_* pNext,
-    Pattern_** pat
+    Pattern_*const* pat
 )
 :
     pCode_(pc),
@@ -93,7 +93,7 @@ inline PatElmt_::PatElmt_
     index_(index),
     pNext_(pNext)
 {
-    val.BF = iPtr;
+    val.BG = iPtr;
 }
 
 inline PatElmt_::PatElmt_
@@ -123,7 +123,7 @@ inline PatElmt_::PatElmt_
     index_(index),
     pNext_(pNext)
 {
-    val.VP = vp;
+    val.SP = vp;
 }
 
 inline PatElmt_::PatElmt_
@@ -131,16 +131,14 @@ inline PatElmt_::PatElmt_
     const PatternCode pc,
     const IndexT index,
     const PatElmt_* pNext,
-    void(*func)(const std::string&, void*),
-    void* iPtr
+    StringSetter* ss
 )
 :
     pCode_(pc),
     index_(index),
     pNext_(pNext)
 {
-    val.MF.func = func;
-    val.MF.iPtr = iPtr;
+    val.SS = ss;
 }
 
 inline PatElmt_::PatElmt_
@@ -148,14 +146,14 @@ inline PatElmt_::PatElmt_
     const PatternCode pc,
     const IndexT index,
     const PatElmt_* pNext,
-    unsigned int* Var
+    unsigned int* nv
 )
 :
     pCode_(pc),
     index_(index),
     pNext_(pNext)
 {
-    val.Var = Var;
+    val.NV = nv;
 }
 
 inline PatElmt_::PatElmt_
@@ -170,7 +168,7 @@ inline PatElmt_::PatElmt_
     index_(index),
     pNext_(pNext)
 {
-    val.CF = iPtr;
+    val.NS = iPtr;
 }
 
 inline PatElmt_::PatElmt_
@@ -262,7 +260,7 @@ inline PatElmt_::PatElmt_
     index_(index),
     pNext_(pNext)
 {
-    val.NF = iPtr;
+    val.NG = iPtr;
 }
 
 inline PatElmt_::PatElmt_
@@ -292,7 +290,7 @@ inline PatElmt_::PatElmt_
     index_(index),
     pNext_(pNext)
 {
-    val.VF = iPtr;
+    val.SG = iPtr;
 }
 
 

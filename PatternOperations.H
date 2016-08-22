@@ -161,7 +161,7 @@ Pattern operator&(const Pattern& l, const Character r);
 //  Here p must be a Pattern variable.
 //
 //  DANGEROUS if Pattern lifetime longer than referenced variable!!
-Pattern Defer(Pattern& p);
+Pattern Defer(const Pattern& p);
 
 //- This function constructs a pattern which at pattern matching time will
 //  access the current value of this variable, and match against these
@@ -180,7 +180,7 @@ Pattern Defer(const StringGetter& obj);
 //  is returned, then failure is signalled.
 Pattern Defer(const BoolGetter& obj);
 
-inline Pattern operator+(Pattern& p)
+inline Pattern operator+(const Pattern& p)
 {
     return Defer(p);
 }
