@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
 <title><b>PatMat: SPITBOL-like pattern construction and matching in C++</b></title>
-<!-- 2016-08-23 Tue 18:55 -->
+<!-- 2016-08-23 Tue 22:01 -->
 <meta  http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta  name="generator" content="Org-mode" />
 <style type="text/css">
@@ -1065,21 +1065,6 @@ and pattern failure is indicated by returning a <code>bool</code> result from th
 };
 
 
-<span style="color: #0000cd; font-weight: bold;">class</span> <span style="color: #0000ff;">Sout</span>
-:
-    <span style="color: #0000cd; font-weight: bold;">public</span> <span style="color: #0000ff;">StringSetter</span>
-{
-<span style="color: #0000cd; font-weight: bold;">public</span>:
-
-    <span style="color: #0000ff;">void</span> <span style="color: #00008b; font-weight: bold;">set</span>(<span style="color: #0000cd; font-weight: bold;">const</span> <span style="font-weight: bold; text-decoration: underline;">std</span>::<span style="color: #0000ff;">string</span>&amp; <span style="color: #000000;">str</span>)
-    {
-        cout &lt;&lt; str;
-    }
-};
-
-<span style="color: #0000ff;">Sout</span> <span style="color: #000000;">sout</span>;
-
-
 <span style="color: #0000ff;">int</span> <span style="color: #00008b; font-weight: bold;">main</span>()
 {
     {
@@ -1089,7 +1074,6 @@ and pattern failure is indicated by returning a <code>bool</code> result from th
         cout &lt;&lt; s &lt;&lt; endl;
     }
     {
-        <span style="color: #912cee; font-weight: bold;">//</span><span style="color: #912cee;">const Pattern digs = Span("0123456789");</span>
         <span style="color: #0000cd; font-weight: bold;">const</span> <span style="color: #0000ff;">Pattern</span> <span style="color: #000000;">digs</span> = Span(<span style="font-weight: bold; text-decoration: underline;">CharacterSets</span>::digit);
         <span style="color: #0000cd; font-weight: bold;">const</span> <span style="color: #0000ff;">Pattern</span> <span style="color: #000000;">lNum</span> = Pos(0U) &amp; digs &amp; <span style="color: #008b00;">'.'</span> &amp; Span(<span style="color: #008b00;">' '</span>);
         <span style="color: #0000ff;">string</span> <span style="color: #000000;">line</span>(<span style="color: #008b00;">"258. Words etc."</span>);
@@ -1125,7 +1109,7 @@ and pattern failure is indicated by returning a <code>bool</code> result from th
 
         balancedString = element &amp; Arbno(element);
 
-        cout &lt;&lt; (balancedString % sout &amp; Fail())(<span style="color: #008b00;">"xy[ab{cd}]"</span>) &lt;&lt; endl;
+        cout &lt;&lt; (balancedString % output &amp; Fail())(<span style="color: #008b00;">"xy[ab{cd}]"</span>) &lt;&lt; endl;
     }
     {
         <span style="color: #0000ff;">string</span> <span style="color: #000000;">cur</span>, <span style="color: #000000;">max</span>;
@@ -1137,13 +1121,13 @@ and pattern failure is indicated by returning a <code>bool</code> result from th
         <span style="color: #0000cd; font-weight: bold;">const</span> <span style="color: #0000ff;">Pattern</span> <span style="color: #000000;">digits</span> = Span(digit);
 
         <span style="color: #0000cd; font-weight: bold;">const</span> <span style="color: #0000ff;">Pattern</span> <span style="color: #000000;">find</span> =
-            <span style="color: #008b00;">""</span> % max &amp; Fence()         &amp; <span style="color: #912cee; font-weight: bold;">// </span><span style="color: #912cee;">initialize max to null</span>
-            BreakX(digit)              &amp; <span style="color: #912cee; font-weight: bold;">// </span><span style="color: #912cee;">scan looking for digits</span>
-            ((digits % cur             &amp; <span style="color: #912cee; font-weight: bold;">// </span><span style="color: #912cee;">assign next string to cur</span>
-             (+GtS)                    &amp; <span style="color: #912cee; font-weight: bold;">// </span><span style="color: #912cee;">check cur.size() &gt; max.size()</span>
-             Setcur(loc))                <span style="color: #912cee; font-weight: bold;">// </span><span style="color: #912cee;">if so, save location</span>
-                     % max)            &amp; <span style="color: #912cee; font-weight: bold;">// </span><span style="color: #912cee;">and assign to max</span>
-            Fail();                      <span style="color: #912cee; font-weight: bold;">// </span><span style="color: #912cee;">seek all alternatives</span>
+            <span style="color: #008b00;">""</span> % max &amp; Fence()  &amp;   <span style="color: #912cee; font-weight: bold;">// </span><span style="color: #912cee;">initialize max to null</span>
+            BreakX(digit)       &amp;   <span style="color: #912cee; font-weight: bold;">// </span><span style="color: #912cee;">scan looking for digits</span>
+            ((digits % cur      &amp;   <span style="color: #912cee; font-weight: bold;">// </span><span style="color: #912cee;">assign next string to cur</span>
+              +GtS              &amp;   <span style="color: #912cee; font-weight: bold;">// </span><span style="color: #912cee;">check cur.size() &gt; max.size()</span>
+             Setcur(loc))           <span style="color: #912cee; font-weight: bold;">// </span><span style="color: #912cee;">if so, save location</span>
+                     % max)     &amp;   <span style="color: #912cee; font-weight: bold;">// </span><span style="color: #912cee;">and assign to max</span>
+            Fail();                 <span style="color: #912cee; font-weight: bold;">// </span><span style="color: #912cee;">seek all alternatives</span>
 
         find(<span style="color: #008b00;">"ab123cd4657ef23"</span>);
         cout&lt;&lt; <span style="color: #008b00;">"max = "</span> &lt;&lt; max &lt;&lt; <span style="color: #008b00;">"; loc = "</span> &lt;&lt; loc &lt;&lt; endl;
@@ -1566,19 +1550,6 @@ and pattern failure is indicated by returning a <code>bool</code> result from th
 <span style="color: #912cee; font-weight: bold;">// </span><span style="color: #912cee;">amounts of output.</span>
 
 <span style="color: #912cee; font-weight: bold;">// </span><span style="color: #912cee;">----------------------------------------------------------------------------</span>
-<span style="color: #912cee; font-weight: bold;">///  </span><span style="color: #912cee;">Dump pattern (as table) to std::ostream</span>
-<span style="color: #912cee; font-weight: bold;">// </span><span style="color: #912cee;">----------------------------------------------------------------------------</span>
-<span style="color: #912cee; font-weight: bold;">//</span>
-<span style="color: #912cee; font-weight: bold;">// </span><span style="color: #912cee;">This procedure writes information about the pattern to the std::ostream</span>
-<span style="color: #912cee; font-weight: bold;">// </span><span style="color: #912cee;">provided.  The format of this information is keyed to the internal data</span>
-<span style="color: #912cee; font-weight: bold;">// </span><span style="color: #912cee;">structures used to implement patterns. The information provided by Dump is</span>
-<span style="color: #912cee; font-weight: bold;">// </span><span style="color: #912cee;">thus more precise than that yielded by Image, but is also a bit more obscure</span>
-<span style="color: #912cee; font-weight: bold;">// </span><span style="color: #912cee;">(i.e. it cannot be interpreted solely in terms of this spec, you have to know</span>
-<span style="color: #912cee; font-weight: bold;">// </span><span style="color: #912cee;">something about the data structures).</span>
-<span style="color: #912cee; font-weight: bold;">//</span>
-<span style="color: #912cee; font-weight: bold;">// </span><span style="color: #912cee;">void Pattern::dump(std::ostream &amp;) const;</span>
-
-<span style="color: #912cee; font-weight: bold;">// </span><span style="color: #912cee;">----------------------------------------------------------------------------</span>
 <span style="color: #912cee; font-weight: bold;">///  </span><span style="color: #912cee;">Write pattern to std::ostream</span>
 <span style="color: #912cee; font-weight: bold;">// </span><span style="color: #912cee;">----------------------------------------------------------------------------</span>
 <span style="color: #912cee; font-weight: bold;">//</span>
@@ -1589,6 +1560,14 @@ and pattern failure is indicated by returning a <code>bool</code> result from th
 <span style="color: #912cee; font-weight: bold;">// </span><span style="color: #912cee;">references to variables and functions.</span>
 <span style="font-weight: bold; text-decoration: underline;">std</span>::<span style="color: #0000ff;">ostream</span>&amp; <span style="color: #0000cd; font-weight: bold;">operator</span><span style="color: #00008b; font-weight: bold;">&lt;&lt;</span>(<span style="font-weight: bold; text-decoration: underline;">std</span>::<span style="color: #0000ff;">ostream</span> &amp;, <span style="color: #0000cd; font-weight: bold;">const</span> <span style="color: #0000ff;">Pattern</span>&amp; <span style="color: #000000;">p</span>);
 
+<span style="color: #912cee; font-weight: bold;">// </span><span style="color: #912cee;">----------------------------------------------------------------------------</span>
+<span style="color: #912cee; font-weight: bold;">///  </span><span style="color: #912cee;">Pattern::debugMsg</span>
+<span style="color: #912cee; font-weight: bold;">// </span><span style="color: #912cee;">----------------------------------------------------------------------------</span>
+<span style="color: #0000cd; font-weight: bold;">inline</span> <span style="color: #0000ff;">void</span> <span style="font-weight: bold; text-decoration: underline;">PatMat</span>::<span style="font-weight: bold; text-decoration: underline;">Pattern</span>::<span style="color: #00008b; font-weight: bold;">debugMsg</span>(<span style="color: #0000cd; font-weight: bold;">const</span> <span style="color: #0000ff;">Character</span>* <span style="color: #000000;">fmt</span>) <span style="color: #0000cd; font-weight: bold;">const</span>
+{
+    IDOUT(<span style="font-weight: bold; text-decoration: underline;">std</span>::cerr&lt;&lt; fmt &lt;&lt; <span style="color: #0000ff;">long</span>(pat_) &lt;&lt; <span style="font-weight: bold; text-decoration: underline;">std</span>::endl;);
+}
+
 <span style="color: #912cee; font-weight: bold;">// </span><span style="color: #912cee;">-----------------------------------------------------------------------------</span>
 </pre>
 </div>
@@ -1596,7 +1575,7 @@ and pattern failure is indicated by returning a <code>bool</code> result from th
 </div>
 </div>
 <div id="postamble" class="status">
-<p class="date">Created: 2016-08-23 Tue 18:55</p>
+<p class="date">Created: 2016-08-23 Tue 22:01</p>
 <p class="creator"><a href="http://www.gnu.org/software/emacs/">Emacs</a> 24.5 (<a href="http://orgmode.org">Org</a> mode 8.2.10)</p>
 <p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
 </div>
