@@ -830,7 +830,7 @@
 //        call to XMatch, so that XMatch does not have to be bothered
 //        with strange lower bounds.
 //
-//    ms.pattern
+//    pattern
 //        Points to initial pattern element of pattern to be matched
 //
 //    ms.start
@@ -907,16 +907,6 @@ inline IndentManip indent(const int ns)
 
 
 // -----------------------------------------------------------------------------
-/// LogicError
-// -----------------------------------------------------------------------------
-
-static const char* logicError()
-{
-    return "Internal logic error in PatMat patterns";
-}
-
-
-// -----------------------------------------------------------------------------
 /// matchTrace
 // -----------------------------------------------------------------------------
 static void matchTrace
@@ -955,7 +945,12 @@ static void matchTrace
 /// General match function
 // -----------------------------------------------------------------------------
 template<int Debug>
-static MatchRet XMatch(MatchState& ms)
+static MatchRet XMatch
+(
+    MatchState& ms,
+    const Pattern_* pattern,
+    const Flags flags
+)
 {
     class StackEntry
     {
@@ -968,7 +963,7 @@ static MatchRet XMatch(MatchState& ms)
         //  stored is negative since stack pointer values are always negative.
         union
         {
-            unsigned int cursor;
+            Natural cursor;
             int stackPtr;
         };
 
@@ -1015,7 +1010,7 @@ static MatchRet XMatch(MatchState& ms)
         //  section on handling of recursive pattern matches.
         int base;
 
-        Stack(unsigned int s)
+        Stack(Natural s)
         :
             size(s > stackSize ? s : stackSize),
             entries_(staticEntries_),
@@ -1063,7 +1058,7 @@ static MatchRet XMatch(MatchState& ms)
 
         //- Push an entry onto the pattern matching stack
         //  with current cursor value
-        inline void push(unsigned int cursor, const PatElmt_* node)
+        inline void push(Natural cursor, const PatElmt_* node)
         {
             if (ptr < 1 - size)
             {
@@ -1162,7 +1157,7 @@ static MatchRet XMatch(MatchState& ms)
     const Character* subject = ms.subject.c_str();
 
     // Length of subject string
-    const unsigned int len = ms.subject.length();
+    const Natural len = ms.subject.length();
 
     // If the value is non-negative, then this value is the index showing
     // the current position of the match in the subject string. The next
@@ -1180,31 +1175,33 @@ static MatchRet XMatch(MatchState& ms)
     // int cursor;
     union
     {
-        unsigned int cursor;
+        Natural cursor;
         int stackPtr;
     };
 
     // Dummy pattern element used in the unanchored case
-    const PatElmt_ PE_Unanchored(PC_Unanchored, 0, ms.pattern->pe_);
+    const PatElmt_ PE_Unanchored(PC_Unanchored, 0, pattern->pe_);
 
     // Keeps track of recursive region level. This is used only for
     // debugging, it is the number of saved history stack base values.
-    unsigned int regionLevel = 0;
+    Natural regionLevel = 0;
 
     // The pattern matching failure stack for this call to Match
     // Check we have enough stack for this pattern. This check deals with
     // every possibility except a match of a recursive pattern, where we
     // make a check at each recursion level.
-    Stack stack(ms.pattern->stackIndex_ + 2);      // accessed thru stack()
+    Stack stack(pattern->stackIndex_ + 2);      // accessed thru stack()
 
     // Set true if (assign-on-match or call-on-match operations may be
     // present in the history stack, which must then be scanned on a
     // successful match.
     bool assignOnM = false;
 
+    ms.ret = MATCH_FAILURE;
+
     // Start of processing for XMatch
 
-    if (Debug || ms.flags & Pattern::trace)
+    if (Debug || flags & Pattern::trace)
     {
         cout<< endl;
     }
@@ -1216,14 +1213,14 @@ static MatchRet XMatch(MatchState& ms)
         cout<< indent(regionLevel) << "length = " << len << endl;
     }
 
-    if (ms.pattern->pe_ == NULL)
+    if (pattern->pe_ == NULL)
     {
-        ms.exception = "Uninitialized pattern";
+        ms.ret = MATCH_UNITITIALIZED_PATTERN;
         goto Match_Exception;
     }
 
     // In anchored mode, the bottom entry on the stack is an abort entry
-    if (ms.flags & Pattern::anchor)
+    if (flags & Pattern::anchor)
     {
         stack(stack.init).node = &CP_Abort;
         stack(stack.init).cursor = 0;
@@ -1239,7 +1236,7 @@ static MatchRet XMatch(MatchState& ms)
     }
 
     cursor = 0;
-    node = ms.pattern->pe_;
+    node = pattern->pe_;
     goto Match;
 
     // -----------------------------------
@@ -1257,14 +1254,15 @@ Match_Fail:
     if (Debug) cout<< indent(regionLevel) << "match fails\n";
     ms.start = 0;
     ms.stop = 0;
-    return MATCH_FAILURE;
+    ms.ret = MATCH_FAILURE;
+    return ms.ret;
 
 Match_Exception:
     // Come here if entire match fails
     if (Debug) cout<< indent(regionLevel) << "match fails\n";
     ms.start = 0;
     ms.stop = 0;
-    return MATCH_EXCEPTION;
+    return ms.ret;
 
 Match_Succeed:
     // Come here if entire match succeeds
@@ -1290,8 +1288,8 @@ Match_Succeed:
                 int innerBase = stack(s - 1).cursor;
                 int specialEntry = innerBase + 1;
                 const PatElmt_* nodeOnM = stack(specialEntry).node;
-                unsigned int start = stack(specialEntry).cursor + 1;
-                unsigned int stop = stack(s).cursor;
+                Natural start = stack(specialEntry).cursor + 1;
+                Natural stop = stack(s).cursor;
                 std::string str = slice(subject, start, stop);
 
                 switch (nodeOnM->pCode_)
@@ -1322,7 +1320,7 @@ Match_Succeed:
                         }
                         break;
                     default:
-                        ms.exception = logicError();
+                        ms.ret = MATCH_LOGIC_ERROR;
                         goto Match_Exception;
                 }   // switch nodeOnM->pCode_
             }   // CP_Assign
@@ -1330,7 +1328,9 @@ Match_Succeed:
     }   // assignOnM
 
     if (Debug) cout<< endl;
-    return MATCH_SUCCESS;
+
+    ms.ret = MATCH_SUCCESS;
+    return ms.ret;
 
 Fail:
     // Come here if attempt to match current element fails
@@ -1375,7 +1375,7 @@ Match:
 
     // Processing is NOT allowed to fall through
 
-    if (ms.flags & Pattern::trace)
+    if (flags & Pattern::trace)
     {
         matchTrace(node, subject, cursor);
     }
@@ -1600,7 +1600,7 @@ Match:
             }
             if (subject[cursor] == node->val.open)
             {
-                unsigned int Paren_Count = 1;
+                Natural Paren_Count = 1;
                 for (;;)
                 {
                     cursor++;
@@ -1886,7 +1886,7 @@ Match:
         case PC_Len_NG:
             // Len (Integer function case)
             {
-                const unsigned int n = node->val.NG->get();
+                const Natural n = node->val.NG->get();
                 if (Debug)
                 {
                     cout<< indent(regionLevel) << node
@@ -2060,7 +2060,7 @@ Match:
         case PC_Pos_NG:
             // Pos (Integer function case)
             {
-                const unsigned int n = node->val.NG->get();
+                const Natural n = node->val.NG->get();
                 if (Debug)
                 {
                     cout<< indent(regionLevel) << node
@@ -2198,7 +2198,7 @@ Match:
         case PC_RPos_NG:
             // RPos (integer function case)
             {
-                const unsigned int n = node->val.NG->get();
+                const Natural n = node->val.NG->get();
                 if (Debug)
                 {
                     cout<< indent(regionLevel) << node
@@ -2250,7 +2250,7 @@ Match:
         case PC_RTab_NG:
             // RTab (integer function case)
             {
-                const unsigned int n = node->val.NG->get();
+                const Natural n = node->val.NG->get();
                 if (Debug)
                 {
                     cout<< indent(regionLevel) << node
@@ -2312,7 +2312,7 @@ Match:
                     cout<< indent(regionLevel) << node
                         << " matching Span '" << node->val.Char << "'\n";
                 }
-                unsigned int cur = cursor;
+                Natural cur = cursor;
                 while (cur < len && subject[cur] == node->val.Char)
                 {
                     cur++;
@@ -2336,7 +2336,7 @@ Match:
                     cout<< indent(regionLevel) << node
                         << " matching Span " << *(node->val.set) << endl;
                 }
-                unsigned int cur = cursor;
+                Natural cur = cursor;
                 while (cur < len && isIn(subject[cur], *(node->val.set)))
                 {
                     cur++;
@@ -2361,7 +2361,7 @@ Match:
                     cout<< indent(regionLevel) << node
                         << " matching Span \"" << str << "\"\n";
                 }
-                unsigned int cur = cursor;
+                Natural cur = cursor;
                 while (cur < len && isInStr(subject[cur], str))
                 {
                     cur++;
@@ -2387,7 +2387,7 @@ Match:
                     cout<< indent(regionLevel) << node
                         << " matching Span \"" << str << "\"\n";
                 }
-                unsigned int cur = cursor;
+                Natural cur = cursor;
                 while (cur < len && isInStr(subject[cur], str))
                     cur++;
 
@@ -2567,7 +2567,7 @@ Match:
             // String (function case)
             {
                 std::string str(node->val.SG->get());
-                unsigned int l = str.length();
+                Natural l = str.length();
 
                 if (Debug)
                 {
@@ -2594,7 +2594,7 @@ Match:
                     cout<< indent(regionLevel) << node
                         << " matching \"" << str << "\"\n";
                 }
-                unsigned int l = str.length();
+                Natural l = str.length();
                 if (len >= cursor + l && match(&subject[cursor], str))
                 {
                     cursor += l;
@@ -2635,7 +2635,7 @@ Match:
         case PC_Tab_NG:
             // Tab (integer function case)
             {
-                const unsigned int n = node->val.NG->get();
+                const Natural n = node->val.NG->get();
                 if (Debug)
                 {
                     cout<< indent(regionLevel) << node
@@ -2756,9 +2756,9 @@ Match:
     // We are NOT allowed to fall though this case statement, since every
     // match routine must end by executing a goto to the appropriate point
     // in the finite state machine model.
-    ms.exception = logicError();
+    ms.ret = MATCH_LOGIC_ERROR;
 
-    // Fall-through if logicError does not throw an exception
+    // Fall-through if logicError
     goto Match_Exception;
 }
 
@@ -2767,15 +2767,20 @@ Match:
 } // End namespace PatMat
 // -----------------------------------------------------------------------------
 
-PatMat::MatchRet PatMat::match(MatchState& ms)
+PatMat::MatchRet PatMat::match
+(
+    MatchState& ms,
+    const Pattern_* pattern,
+    const Flags flags
+)
 {
-    if (ms.flags & Pattern::debug)
+    if (flags & Pattern::debug)
     {
-        return XMatch<1>(ms);
+        return XMatch<1>(ms, pattern, flags);
     }
     else
     {
-        return XMatch<0>(ms);
+        return XMatch<0>(ms, pattern, flags);
     }
 }
 

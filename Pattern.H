@@ -55,6 +55,8 @@ class Pattern_;
 class PatElmt_;
 class MatchRes;
 typedef char Character;
+typedef unsigned int Natural;
+typedef int Flags;
 
 
 // -----------------------------------------------------------------------------
@@ -82,12 +84,12 @@ public:
 
     virtual std::string get() const
     {
-        unsigned int l;
+        Natural l;
         const Character* p = get(l);
         return std::string(p, l);
     }
 
-    virtual const Character* get(unsigned int&) const = 0;
+    virtual const Character* get(Natural&) const = 0;
 };
 
 
@@ -108,13 +110,13 @@ public:
 
 
 // -----------------------------------------------------------------------------
-/// UnsignedGetter: unsigned int getter
+/// UnsignedGetter: Natural getter
 // -----------------------------------------------------------------------------
 
-//- Unsigned interface which returns an unsigned int.
+//- Unsigned interface which returns an Natural.
 //  When this type is used as a formal parameter type in this package, it
 //  indicates a deferred pattern.  The function will be called when the pattern
-//  element is matched to obtain the currently referenced unsigned int value.
+//  element is matched to obtain the currently referenced Natural value.
 class UnsignedGetter
 {
 public:
@@ -122,15 +124,15 @@ public:
     virtual ~UnsignedGetter()
     {}
 
-    virtual unsigned int get() const = 0;
+    virtual Natural get() const = 0;
 };
 
 
 // -----------------------------------------------------------------------------
-/// UnsignedSetter: unsigned int setter
+/// UnsignedSetter: Natural setter
 // -----------------------------------------------------------------------------
 
-//- Unsigned interface which sets an unsigned int.
+//- Unsigned interface which sets an Natural.
 class UnsignedSetter
 {
 public:
@@ -138,7 +140,7 @@ public:
     virtual ~UnsignedSetter()
     {}
 
-    virtual void set(const unsigned int) = 0;
+    virtual void set(const Natural) = 0;
 };
 
 
@@ -177,7 +179,7 @@ class Pattern
         static Pattern inline orPatStr(const Pattern&, const std::string&);
         static Pattern inline orStrStr(const std::string&, const std::string&);
 
-        Pattern(unsigned int stackIndex, const PatElmt_* P);
+        Pattern(Natural stackIndex, const PatElmt_* P);
 
 
 public:
@@ -194,7 +196,7 @@ public:
         Pattern(const Character);
         Pattern(const std::string&);
         Pattern(const Character*);
-        Pattern(const Character* ptr, const unsigned int len);
+        Pattern(const Character* ptr, const Natural len);
         Pattern(const StringGetter&);
 
     // Destructor
@@ -303,9 +305,9 @@ public:
         friend Pattern Fence();
         friend Pattern Fence(const Pattern&);
 
-        friend Pattern Len(const unsigned int);
+        friend Pattern Len(const Natural);
         friend Pattern Len(const UnsignedGetter&);
-        friend Pattern Len(const unsigned int*);
+        friend Pattern Len(const Natural*);
 
         friend Pattern NotAny(const Character);
         friend Pattern NotAny(const CharacterSet&);
@@ -319,21 +321,21 @@ public:
         friend Pattern NSpan(const std::string*);
         friend Pattern NSpan(const StringGetter&);
 
-        friend Pattern Pos(const unsigned int);
+        friend Pattern Pos(const Natural);
         friend Pattern Pos(const UnsignedGetter&);
-        friend Pattern Pos(const unsigned int*);
+        friend Pattern Pos(const Natural*);
 
         friend Pattern Rem();
 
-        friend Pattern Rpos(const unsigned int);
+        friend Pattern Rpos(const Natural);
         friend Pattern Rpos(const UnsignedGetter&);
-        friend Pattern Rpos(const unsigned int*);
+        friend Pattern Rpos(const Natural*);
 
-        friend Pattern Rtab(const unsigned int);
+        friend Pattern Rtab(const Natural);
         friend Pattern Rtab(const UnsignedGetter&);
-        friend Pattern Rtab(const unsigned int*);
+        friend Pattern Rtab(const Natural*);
 
-        friend Pattern Setcur(unsigned int&);
+        friend Pattern Setcur(Natural&);
 
         friend Pattern Span(const Character);
         friend Pattern Span(const CharacterSet&);
@@ -343,9 +345,9 @@ public:
 
         friend Pattern Succeed();
 
-        friend Pattern Tab(const unsigned int);
+        friend Pattern Tab(const Natural);
         friend Pattern Tab(const UnsignedGetter&);
-        friend Pattern Tab(const unsigned int*);
+        friend Pattern Tab(const Natural*);
 
         friend Pattern assignOnmatch(const Pattern& p, std::string& var);
         friend Pattern assignImmed(const Pattern& p, std::string& var);
@@ -357,26 +359,24 @@ public:
 
     // Matching
 
-        friend bool Match
+        bool operator()
         (
             const Character* subject,
-            const Pattern& p,
-            int flags
-        );
+            const Flags flags
+        ) const ;
 
-        friend bool Match
+        bool operator()
         (
             const std::string& subject,
-            const Pattern& p,
-            int flags
-        );
+            const Flags flags = 0
+        ) const;
 
         friend bool Match
         (
             std::string& subject,
             const Pattern& p,
             const std::string& replacement,
-            int flags
+            const Flags flags
         );
 
         friend bool Match
@@ -384,14 +384,14 @@ public:
             std::string& subject,
             const Pattern& p,
             const Character* replacement,
-            int flags
+            const Flags flags
         );
 
         friend bool Match
         (
             MatchRes& result,
             const Pattern& p,
-            int flags
+            const Flags flags
         );
 };
 
@@ -411,7 +411,7 @@ class MatchRes
     (
         MatchRes& res,
         const Pattern& p,
-        int flags
+        const Flags flags
     );
 
 public:

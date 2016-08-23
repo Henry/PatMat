@@ -19,7 +19,7 @@ bool valid::validate
 {
     tests++;
 
-    if (Match(s, p) == expected_result)
+    if (p(s) == expected_result)
     {
         successes++;
         return true;

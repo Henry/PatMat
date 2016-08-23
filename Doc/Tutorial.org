@@ -332,9 +332,9 @@
     efficient to preconstruct the pattern as we did in this example.
 
     Now let's look at the use of pattern assignment to break a string into
-    sections. Suppose that the input string has two unsigned int decimal integers,
-    separated by spaces or a comma, with spaces allowed anywhere. Then we can
-    isolate the two numbers with the following pattern:
+    sections. Suppose that the input string has two Natural decimal
+    integers, separated by spaces or a comma, with spaces allowed anywhere. Then
+    we can isolate the two numbers with the following pattern:
     #+begin_src c++
       string num1, num2;
       const Pattern blank = NSpan(' ');
@@ -461,7 +461,7 @@
       .
 
       string cur, max;
-      unsigned int loc;
+      Natural loc;
 
       MaxLen GtS(cur, max);
 

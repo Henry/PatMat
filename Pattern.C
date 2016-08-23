@@ -47,7 +47,7 @@ PatMat::Pattern::Pattern()
     pat_(NULL)
 {}
 
-PatMat::Pattern::Pattern(const unsigned int stackIndex, const PatElmt_* p)
+PatMat::Pattern::Pattern(const Natural stackIndex, const PatElmt_* p)
 :
     pat_(new Pattern_(stackIndex, p))
 {}
@@ -75,7 +75,7 @@ PatMat::Pattern::Pattern(const Character* str)
     pat_(new Pattern_(0, new PatElmt_(str)))
 {}
 
-PatMat::Pattern::Pattern(const Character* str, const unsigned int l)
+PatMat::Pattern::Pattern(const Character* str, const Natural l)
 :
     pat_(new Pattern_(0, new PatElmt_(str, l)))
 {}
@@ -87,7 +87,7 @@ PatMat::Pattern::Pattern(const Character c)
 
 PatMat::Pattern::Pattern(const StringGetter& sg)
 {
-    unsigned int l;
+    Natural l;
     const Character* str = sg.get(l);
     pat_ = new Pattern_(0, new PatElmt_(str, l));
 }
@@ -728,7 +728,7 @@ PatMat::Pattern PatMat::Fence(const Pattern& p)
 // ----------------------------------------------------------------------------
 ///  Len
 // ----------------------------------------------------------------------------
-PatMat::Pattern PatMat::Len(const unsigned int count)
+PatMat::Pattern PatMat::Len(const Natural count)
 {
     // Note, the following is not just an optimization, it is needed
     // to ensure that Arbno (Len (0)) does not generate an infinite
@@ -752,7 +752,7 @@ PatMat::Pattern PatMat::Len(const UnsignedGetter& ng)
     );
 }
 
-PatMat::Pattern PatMat::Len(const unsigned int* count)
+PatMat::Pattern PatMat::Len(const Natural* count)
 {
     return Pattern(0, new PatElmt_(PC_Len_NP, 1, EOP, count));
 }
@@ -838,7 +838,7 @@ PatMat::Pattern PatMat::NSpan(const StringGetter& sg)
 ///  Pos
 // ----------------------------------------------------------------------------
 
-PatMat::Pattern PatMat::Pos(const unsigned int count)
+PatMat::Pattern PatMat::Pos(const Natural count)
 {
     return Pattern(0, new PatElmt_(PC_Pos_Nat, 1, EOP, count));
 }
@@ -852,7 +852,7 @@ PatMat::Pattern PatMat::Pos(const UnsignedGetter& ng)
     );
 }
 
-PatMat::Pattern PatMat::Pos(const unsigned int* Ptr)
+PatMat::Pattern PatMat::Pos(const Natural* Ptr)
 {
     return Pattern(0, new PatElmt_(PC_Pos_NP, 1, EOP, Ptr));
 }
@@ -872,7 +872,7 @@ PatMat::Pattern PatMat::Rem()
 ///  Rpos
 // ----------------------------------------------------------------------------
 
-PatMat::Pattern PatMat::Rpos(const unsigned int count)
+PatMat::Pattern PatMat::Rpos(const Natural count)
 {
     return Pattern(0, new PatElmt_(PC_RPos_Nat, 1, EOP, count));
 }
@@ -886,7 +886,7 @@ PatMat::Pattern PatMat::Rpos(const UnsignedGetter& ng)
     );
 }
 
-PatMat::Pattern PatMat::Rpos(const unsigned int* count)
+PatMat::Pattern PatMat::Rpos(const Natural* count)
 {
     return Pattern(0, new PatElmt_(PC_RPos_NP, 1, EOP, count));
 }
@@ -896,7 +896,7 @@ PatMat::Pattern PatMat::Rpos(const unsigned int* count)
 ///  Rtab
 // ----------------------------------------------------------------------------
 
-PatMat::Pattern PatMat::Rtab(const unsigned int count)
+PatMat::Pattern PatMat::Rtab(const Natural count)
 {
     return Pattern(0, new PatElmt_(PC_RTab_Nat, 1, EOP, count));
 }
@@ -910,7 +910,7 @@ PatMat::Pattern PatMat::Rtab(const UnsignedGetter& ng)
     );
 }
 
-PatMat::Pattern PatMat::Rtab(const unsigned int* count)
+PatMat::Pattern PatMat::Rtab(const Natural* count)
 {
     return Pattern(0, new PatElmt_(PC_RTab_NP, 1, EOP, count));
 }
@@ -920,7 +920,7 @@ PatMat::Pattern PatMat::Rtab(const unsigned int* count)
 ///  Setcur
 // ----------------------------------------------------------------------------
 
-PatMat::Pattern PatMat::Setcur(unsigned int& var)
+PatMat::Pattern PatMat::Setcur(Natural& var)
 {
     // not const; must be a variable!
     return Pattern(0, new PatElmt_(PC_Setcur, 1, EOP, &var));
@@ -979,7 +979,7 @@ PatMat::Pattern PatMat::Succeed()
 ///  Tab
 // ----------------------------------------------------------------------------
 
-PatMat::Pattern PatMat::Tab(const unsigned int count)
+PatMat::Pattern PatMat::Tab(const Natural count)
 {
     return Pattern(0, new PatElmt_(PC_Tab_Nat, 1, EOP, count));
 }
@@ -993,7 +993,7 @@ PatMat::Pattern PatMat::Tab(const UnsignedGetter& ng)
     );
 }
 
-PatMat::Pattern PatMat::Tab(const unsigned int* count)
+PatMat::Pattern PatMat::Tab(const Natural* count)
 {
     return Pattern(0, new PatElmt_(PC_Tab_NP, 1, EOP, count));
 }
@@ -1107,25 +1107,29 @@ PatMat::Pattern PatMat::operator&(const Pattern& l, const Character r)
 // ----------------------------------------------------------------------------
 ///  Match
 // ----------------------------------------------------------------------------
+//
+// Simple match functions. The subject is matched against the pattern.  Any
+// immediate or deferred assignments or writes are executed, and the returned
+// value indicates whether or not the match succeeded.
 
-bool PatMat::Match(const Character* subject, const Pattern& p, int flags)
+bool PatMat::Pattern::operator()
+(
+    const Character* subject,
+    const Flags flags
+) const
 {
-    MatchState ma;
-    ma.flags = flags;
-    ma.subject = subject;
-    ma.pattern = p.pat_;
-    // XXX check for MATCH_EXCEPTION, throw exception!?
-    return match(ma) == MATCH_SUCCESS;
+    MatchState ms(subject);
+    return match(ms, pat_, flags) == MATCH_SUCCESS;
 }
 
-bool PatMat::Match(const std::string& subject, const Pattern& p, int flags)
+bool PatMat::Pattern::operator()
+(
+    const std::string& subject,
+    const Flags flags
+) const
 {
-    MatchState ma;
-    ma.flags = flags;
-    ma.subject = subject;
-    ma.pattern = p.pat_;
-    // XXX check for MATCH_EXCEPTION, throw exception!?
-    return match(ma) == MATCH_SUCCESS;
+    MatchState ms(subject);
+    return match(ms, pat_, flags) == MATCH_SUCCESS;
 }
 
 
@@ -1138,21 +1142,17 @@ bool PatMat::Match
     std::string& subject,
     const Pattern& p,
     const std::string& replacement,
-    int flags
+    const Flags flags
 )
 {
-    MatchState ma;
-    ma.flags = flags;
-    ma.subject = subject;
-    ma.pattern = p.pat_;
+    MatchState ms(subject);
 
-    // XXX check for MATCH_EXCEPTION, throw exception!?
-    if (match(ma) != MATCH_SUCCESS)
+    if (match(ms, p.pat_, flags) != MATCH_SUCCESS)
     {
         return false;
     }
 
-    subject.replace(ma.start - 1, ma.stop - ma.start + 1, replacement);
+    subject.replace(ms.start - 1, ms.stop - ms.start + 1, replacement);
 
     return true;
 }
@@ -1162,21 +1162,17 @@ bool PatMat::Match
     std::string& subject,
     const Pattern& p,
     const Character* replacement,
-    int flags
+    const Flags flags
 )
 {
-    MatchState ma;
-    ma.flags = flags;
-    ma.subject = subject;
-    ma.pattern = p.pat_;
+    MatchState ms(subject);
 
-    // XXX check for MATCH_EXCEPTION, throw exception!?
-    if (match(ma) != MATCH_SUCCESS)
+    if (match(ms, p.pat_, flags) != MATCH_SUCCESS)
     {
         return false;
     }
 
-    subject.replace(ma.start - 1, ma.stop - ma.start + 1, replacement);
+    subject.replace(ms.start - 1, ms.stop - ms.start + 1, replacement);
 
     return true;
 }
@@ -1185,19 +1181,15 @@ bool PatMat::Match
 (
     MatchRes& result,
     const Pattern& p,
-    int flags
+    const Flags flags
 )
 {
-    MatchState ma;
-    ma.flags = flags;
-    ma.subject = result;
-    ma.pattern = p.pat_;
+    MatchState ms(result);
 
-    // XXX check for MATCH_EXCEPTION, throw exception!?
-    if (match(ma) == MATCH_SUCCESS)
+    if (match(ms, p.pat_, flags) == MATCH_SUCCESS)
     {
-        result.start_ = ma.start - 1;
-        result.stop_ = ma.stop;
+        result.start_ = ms.start - 1;
+        result.stop_ = ms.stop;
         return true;
     }
 

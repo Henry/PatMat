@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
 <title><b>PatMat: SPITBOL-like pattern construction and matching in C++</b></title>
-<!-- 2016-08-22 Mon 14:14 -->
+<!-- 2016-08-23 Tue 15:59 -->
 <meta  http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta  name="generator" content="Org-mode" />
 <style type="text/css">
@@ -793,9 +793,9 @@ efficient to preconstruct the pattern as we did in this example.
 
 <p>
 Now let's look at the use of pattern assignment to break a string into
-sections. Suppose that the input string has two unsigned int decimal integers,
-separated by spaces or a comma, with spaces allowed anywhere. Then we can
-isolate the two numbers with the following pattern:
+sections. Suppose that the input string has two Natural decimal
+integers, separated by spaces or a comma, with spaces allowed anywhere. Then
+we can isolate the two numbers with the following pattern:
 </p>
 <div class="org-src-container">
 
@@ -966,7 +966,7 @@ string of decimal digits in the subject string.
 .
 
 string cur, max;
-unsigned int loc;
+Natural loc;
 
 MaxLen GtS(cur, max);
 
@@ -1144,7 +1144,7 @@ int main()
     }
     {
         string cur, max;
-        unsigned int loc;
+        Natural loc;
 
         MaxLen GtS(cur, max);
 
@@ -1338,7 +1338,7 @@ Pattern operator&amp;(const Pattern&amp; l, const Character r);
 //  Here p must be a Pattern variable.
 //
 //  DANGEROUS if Pattern lifetime longer than referenced variable!!
-Pattern Defer(Pattern&amp; p);
+Pattern Defer(const Pattern&amp; p);
 
 //- This function constructs a pattern which at pattern matching time will
 //  access the current value of this variable, and match against these
@@ -1357,7 +1357,7 @@ Pattern Defer(const StringGetter&amp; obj);
 //  is returned, then failure is signalled.
 Pattern Defer(const BoolGetter&amp; obj);
 
-inline Pattern operator+(Pattern&amp; p)
+inline Pattern operator+(const Pattern&amp; p)
 {
     return Defer(p);
 }
@@ -1405,9 +1405,9 @@ Pattern Fence(const Pattern&amp; p);
 // Constructs a pattern that matches exactly the given number of characters. The
 // pattern fails if fewer than this number of characters remain to be matched in
 // the string.
-Pattern Len(const unsigned int count);
+Pattern Len(const Natural count);
 Pattern Len(const UnsignedGetter&amp; count);
-Pattern Len(const unsigned int *count);
+Pattern Len(const Natural *count);
 
 // ----------------------------------------------------------------------------
 ///  NotAny
@@ -1447,9 +1447,9 @@ Pattern NSpan(const StringGetter&amp;);
 // Constructs a pattern that matches the null string if exactly count characters
 // have already been matched, and otherwise fails.
 
-Pattern Pos(unsigned int count);
+Pattern Pos(Natural count);
 Pattern Pos(const UnsignedGetter&amp;);
-Pattern Pos(const unsigned int *ptr);
+Pattern Pos(const Natural *ptr);
 
 // ----------------------------------------------------------------------------
 ///  Rem
@@ -1470,9 +1470,9 @@ Pattern Rem();
 // Constructs a pattern that matches the null string if exactly count characters
 // remain to be matched in the string, and otherwise fails.
 
-Pattern Rpos(unsigned int count);
+Pattern Rpos(Natural count);
 Pattern Rpos(const UnsignedGetter&amp;);
-Pattern Rpos(const unsigned int *ptr);
+Pattern Rpos(const Natural *ptr);
 
 // ----------------------------------------------------------------------------
 ///  Rtab
@@ -1482,9 +1482,9 @@ Pattern Rpos(const unsigned int *ptr);
 // count characters remain to be matched in the string. The pattern fails if
 // fewer than count characters remain to be matched.
 
-Pattern Rtab(unsigned int count);
+Pattern Rtab(Natural count);
 Pattern Rtab(const UnsignedGetter&amp;);
-Pattern Rtab(const unsigned int *ptr);
+Pattern Rtab(const Natural *ptr);
 
 // ----------------------------------------------------------------------------
 ///  Setcur
@@ -1497,7 +1497,7 @@ Pattern Rtab(const unsigned int *ptr);
 // SPITBOL: unary "@"
 // C++: Setcur
 
-Pattern Setcur(unsigned int &amp;var);
+Pattern Setcur(Natural &amp;var);
 
 // ----------------------------------------------------------------------------
 ///  Span
@@ -1532,9 +1532,9 @@ Pattern Succeed();
 // have been matched. The pattern fails if more than count characters have
 // already been matched.
 
-Pattern Tab(const unsigned int count);
+Pattern Tab(const Natural count);
 Pattern Tab(const UnsignedGetter&amp;);
-Pattern Tab(const unsigned int *ptr);
+Pattern Tab(const Natural *ptr);
 
 // ----------------------------------------------------------------------------
 /// Pattern Matching Operations
@@ -1562,17 +1562,6 @@ Pattern Tab(const unsigned int *ptr);
 //   match succeeds, or until all possibilities have failed.
 
 // ----------------------------------------------------------------------------
-///  Match
-// ----------------------------------------------------------------------------
-//
-// Simple match functions. The subject is matched against the pattern.  Any
-// immediate or deferred assignments or writes are executed, and the returned
-// value indicates whether or not the match succeeded.
-
-bool Match(const Character *subj, const Pattern&amp; p, int flags = 0);
-bool Match(const std::string&amp; subj, const Pattern&amp; p, int flags = 0);
-
-// ----------------------------------------------------------------------------
 ///  Match &amp; Replacement
 // ----------------------------------------------------------------------------
 //
@@ -1586,7 +1575,7 @@ bool Match
     std::string&amp; subj,
     const Pattern&amp; p,
     const std::string&amp; replacement,
-    int flags = 0
+    const Flags flags = 0
 );
 
 bool Match
@@ -1594,7 +1583,7 @@ bool Match
     std::string&amp; subj,
     const Pattern&amp; p,
     const Character *replacement,
-    int flags = 0
+    const Flags flags = 0
 );
 
 // ----------------------------------------------------------------------------
@@ -1659,7 +1648,7 @@ std::ostream&amp; operator&lt;&lt;(std::ostream &amp;, const Pattern&amp; p);
 </div>
 </div>
 <div id="postamble" class="status">
-<p class="date">Created: 2016-08-22 Mon 14:14</p>
+<p class="date">Created: 2016-08-23 Tue 15:59</p>
 <p class="creator"><a href="http://www.gnu.org/software/emacs/">Emacs</a> 24.5 (<a href="http://orgmode.org">Org</a> mode 8.2.10)</p>
 <p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
 </div>

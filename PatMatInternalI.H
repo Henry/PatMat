@@ -146,7 +146,7 @@ inline PatElmt_::PatElmt_
     const PatternCode pc,
     const IndexT index,
     const PatElmt_* pNext,
-    unsigned int* nv
+    Natural* nv
 )
 :
     pCode_(pc),
@@ -238,7 +238,7 @@ inline PatElmt_::PatElmt_
     const PatternCode pc,
     const IndexT index,
     const PatElmt_* pNext,
-    const unsigned int Nat
+    const Natural Nat
 )
 :
     pCode_(pc),
@@ -268,7 +268,7 @@ inline PatElmt_::PatElmt_
     const PatternCode pc,
     const IndexT index,
     const PatElmt_* pNext,
-    const unsigned int* NP
+    const Natural* NP
 )
 :
     pCode_(pc),
@@ -317,7 +317,7 @@ inline bool isInStr(Character c, const std::string& S)
 inline std::string slice
 (
     const std::string& str,
-    unsigned int start,
+    Natural start,
     unsigned stop
 )
 {

@@ -60,16 +60,16 @@ class Pattern_
 public:
 
     // Stack index
-    unsigned int stackIndex_;
+    Natural stackIndex_;
 
     // The pattern element tree
     const PatElmt_* pe_;
 
     // Reference count
-    unsigned int refs_;
+    Natural refs_;
 
     // Constructor
-    Pattern_(const unsigned int stackIndex, const PatElmt_* p);
+    Pattern_(const Natural stackIndex, const PatElmt_* p);
 
     // Destructor
     ~Pattern_();
@@ -242,7 +242,7 @@ class PatElmt_
         Character Str6[6];
 
         // PC_Setcur
-        unsigned int* NV;
+        Natural* NV;
 
         // PC_Setcur_Func
         UnsignedSetter* NS;
@@ -264,13 +264,13 @@ class PatElmt_
 
         // PC_Arbno_Y | PC_Len_Nat | PC_Pos_Nat | PC_RPos_Nat | PC_RTab_Nat |
         // PC_Tab_Nat
-        unsigned int Nat;
+        Natural Nat;
 
         // PC_Pos_NG | PC_Len_NG | PC_RPos_NG | PC_RTab_NG |
         const UnsignedGetter* NG;
 
         // PC_Pos_NP | PC_Len_NP | PC_RPos_NP | PC_RTab_NP | PC_Tab_NP
-        const unsigned int* NP;
+        const Natural* NP;
 
         // PC_Any_SG | PC_Break_SG | PC_BreakX_SG | PC_NotAny_SG | PC_NSpan_SG
         // | PC_Span_SG | PC_String_SG
@@ -286,8 +286,8 @@ class PatElmt_
 
         PatElmt_(Character c);
         PatElmt_(const std::string& str);
-        void setStr(const Character* str, const unsigned int l);
-        PatElmt_(const Character* str, const unsigned int l);
+        void setStr(const Character* str, const Natural l);
+        PatElmt_(const Character* str, const Natural l);
         PatElmt_(const Character* str);
 
         inline PatElmt_
@@ -367,7 +367,7 @@ class PatElmt_
             const PatternCode pc,
             const IndexT index,
             const PatElmt_* pNext,
-            unsigned int* var
+            Natural* var
         );
 
         inline PatElmt_
@@ -399,7 +399,7 @@ class PatElmt_
             const PatternCode pc,
             const IndexT index,
             const PatElmt_* pNext,
-            const unsigned int n
+            const Natural n
         );
 
         inline PatElmt_
@@ -415,7 +415,7 @@ class PatElmt_
             const PatternCode pc,
             const IndexT index,
             const PatElmt_* pNext,
-            const unsigned int* nPtr
+            const Natural* nPtr
         );
 
         inline PatElmt_
@@ -437,23 +437,45 @@ class PatElmt_
 /// Match data and functions
 // -----------------------------------------------------------------------------
 
-struct MatchState
-{
-    int flags;
-    std::string subject;
-    Pattern_* pattern;
-    unsigned int start, stop;  // Output from match
-    const char* exception;
-};
-
 enum MatchRet
 {
-    MATCH_EXCEPTION,
+    MATCH_UNITITIALIZED_PATTERN,
+    MATCH_LOGIC_ERROR,
     MATCH_FAILURE,
     MATCH_SUCCESS
 };
 
-MatchRet match(MatchState&);
+const char* const MatchRetMessages[] =
+{
+    "Uninitialized pattern",
+    "Internal logic error patterns",
+    "Match failure",
+    "Match success"
+};
+
+class MatchState
+{
+public:
+
+    const std::string& subject;
+
+    // Output from match
+    Natural start, stop;
+    MatchRet ret;
+
+    MatchState(const std::string& str)
+    :
+        subject(str),
+        ret(MATCH_FAILURE)
+    {}
+
+    operator bool() const
+    {
+        return ret == MATCH_SUCCESS;
+    }
+};
+
+MatchRet match(MatchState&, const Pattern_* pattern, const Flags flags);
 
 
 // -----------------------------------------------------------------------------
@@ -463,7 +485,7 @@ PatElmt_* copy(const PatElmt_* P);
 PatElmt_* alternate(const PatElmt_* L, const PatElmt_* R);
 PatElmt_* arbnoSimple(const PatElmt_* P);
 PatElmt_* bracket(PatElmt_* E, PatElmt_* P, PatElmt_* A);
-const PatElmt_* concat(const PatElmt_* L, const PatElmt_* R, unsigned int Incr);
+const PatElmt_* concat(const PatElmt_* L, const PatElmt_* R, Natural Incr);
 void setSuccessor(const PatElmt_* Pat, const PatElmt_* Succ);
 void buildRefArray(const PatElmt_* E, PatElmt_** RA);
 

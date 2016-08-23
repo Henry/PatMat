@@ -228,9 +228,9 @@ Pattern Fence(const Pattern& p);
 // Constructs a pattern that matches exactly the given number of characters. The
 // pattern fails if fewer than this number of characters remain to be matched in
 // the string.
-Pattern Len(const unsigned int count);
+Pattern Len(const Natural count);
 Pattern Len(const UnsignedGetter& count);
-Pattern Len(const unsigned int *count);
+Pattern Len(const Natural *count);
 
 // ----------------------------------------------------------------------------
 ///  NotAny
@@ -270,9 +270,9 @@ Pattern NSpan(const StringGetter&);
 // Constructs a pattern that matches the null string if exactly count characters
 // have already been matched, and otherwise fails.
 
-Pattern Pos(unsigned int count);
+Pattern Pos(Natural count);
 Pattern Pos(const UnsignedGetter&);
-Pattern Pos(const unsigned int *ptr);
+Pattern Pos(const Natural *ptr);
 
 // ----------------------------------------------------------------------------
 ///  Rem
@@ -293,9 +293,9 @@ Pattern Rem();
 // Constructs a pattern that matches the null string if exactly count characters
 // remain to be matched in the string, and otherwise fails.
 
-Pattern Rpos(unsigned int count);
+Pattern Rpos(Natural count);
 Pattern Rpos(const UnsignedGetter&);
-Pattern Rpos(const unsigned int *ptr);
+Pattern Rpos(const Natural *ptr);
 
 // ----------------------------------------------------------------------------
 ///  Rtab
@@ -305,9 +305,9 @@ Pattern Rpos(const unsigned int *ptr);
 // count characters remain to be matched in the string. The pattern fails if
 // fewer than count characters remain to be matched.
 
-Pattern Rtab(unsigned int count);
+Pattern Rtab(Natural count);
 Pattern Rtab(const UnsignedGetter&);
-Pattern Rtab(const unsigned int *ptr);
+Pattern Rtab(const Natural *ptr);
 
 // ----------------------------------------------------------------------------
 ///  Setcur
@@ -320,7 +320,7 @@ Pattern Rtab(const unsigned int *ptr);
 // SPITBOL: unary "@"
 // C++: Setcur
 
-Pattern Setcur(unsigned int &var);
+Pattern Setcur(Natural &var);
 
 // ----------------------------------------------------------------------------
 ///  Span
@@ -355,9 +355,9 @@ Pattern Succeed();
 // have been matched. The pattern fails if more than count characters have
 // already been matched.
 
-Pattern Tab(const unsigned int count);
+Pattern Tab(const Natural count);
 Pattern Tab(const UnsignedGetter&);
-Pattern Tab(const unsigned int *ptr);
+Pattern Tab(const Natural *ptr);
 
 // ----------------------------------------------------------------------------
 /// Pattern Matching Operations
@@ -385,17 +385,6 @@ Pattern Tab(const unsigned int *ptr);
 //   match succeeds, or until all possibilities have failed.
 
 // ----------------------------------------------------------------------------
-///  Match
-// ----------------------------------------------------------------------------
-//
-// Simple match functions. The subject is matched against the pattern.  Any
-// immediate or deferred assignments or writes are executed, and the returned
-// value indicates whether or not the match succeeded.
-
-bool Match(const Character *subj, const Pattern& p, int flags = 0);
-bool Match(const std::string& subj, const Pattern& p, int flags = 0);
-
-// ----------------------------------------------------------------------------
 ///  Match & Replacement
 // ----------------------------------------------------------------------------
 //
@@ -409,7 +398,7 @@ bool Match
     std::string& subj,
     const Pattern& p,
     const std::string& replacement,
-    int flags = 0
+    const Flags flags = 0
 );
 
 bool Match
@@ -417,7 +406,7 @@ bool Match
     std::string& subj,
     const Pattern& p,
     const Character *replacement,
-    int flags = 0
+    const Flags flags = 0
 );
 
 // ----------------------------------------------------------------------------

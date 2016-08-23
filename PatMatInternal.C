@@ -40,7 +40,7 @@
 ///  Constructors
 // ----------------------------------------------------------------------------
 
-PatMat::Pattern_::Pattern_(const unsigned int stackIndex, const PatElmt_ *p)
+PatMat::Pattern_::Pattern_(const Natural stackIndex, const PatElmt_ *p)
 :
     stackIndex_(stackIndex),
     pe_(p),

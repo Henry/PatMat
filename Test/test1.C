@@ -88,7 +88,7 @@ int main()
 
     // immediate assigment
     string nonv;
-    unsigned int pos;
+    Natural pos;
     Pattern p3 = Setcur(pos) & 'l' % nonv & Abort();
 
     // dump pattern as table on stdout
