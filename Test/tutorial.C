@@ -6,6 +6,7 @@
 using namespace PatMat;
 using namespace std;
 
+
 class MaxLen
 :
     public BoolGetter
@@ -21,7 +22,7 @@ class MaxLen
             max_(max)
         {}
 
-        bool get()
+        bool get() const
         {
             return cur_.size() > max_.size();
         }
@@ -31,18 +32,16 @@ class MaxLen
 int main()
 {
     {
-        MatchRes m("Change brackets around character (a)");
+        string s("Change brackets around a character (c)");
         string c;
-        Match(m, '(' & Len(1) % c & ')');
-        m = '[' + c + ']';
-        cout << m << endl;
+        ('(' & Len(1) % c & ')')(s) = '[' + c + ']';
+        cout << s << endl;
     }
     {
-        //const Pattern digs = Span("0123456789");
         const Pattern digs = Span(CharacterSets::digit);
         const Pattern lNum = Pos(0U) & digs & '.' & Span(' ');
         string line("258. Words etc.");
-        Match(line, lNum, "");
+        lNum(line) = "";
         cout << line << endl;
     }
     {
@@ -50,7 +49,7 @@ int main()
         const Pattern blank = NSpan(' ');
         const Pattern num = Span("0123456789");
         const Pattern nums = blank & num % num1 & Span(" ,") & num % num2;
-        Match(" 124, 257 ", nums);
+        nums(" 124, 257 ");
         cout << "num1 = " << num1 << "; num2 = " << num2 << endl;
     }
     {
@@ -62,7 +61,7 @@ int main()
         string temp;
         const Pattern bNum = uDigs & bChar % temp & ueDig & (+temp);
         const string subject("16#123_abc#");
-        if (Match(subject, bNum)) cout << "Matched " << subject << endl;
+        if (bNum(subject)) cout << "Matched " << subject << endl;
     }
     {
         Pattern balancedString;
@@ -74,7 +73,7 @@ int main()
 
         balancedString = element & Arbno(element);
 
-        cout << Match("xy[ab{cd}]", balancedString % cout & Fail()) << endl;
+        cout << (balancedString % output & Fail())("xy[ab{cd}]") << endl;
     }
     {
         string cur, max;
@@ -86,15 +85,15 @@ int main()
         const Pattern digits = Span(digit);
 
         const Pattern find =
-            "" % max & Fence()         & // initialize max to null
-            BreakX(digit)              & // scan looking for digits
-            ((digits % cur             & // assign next string to cur
-             (+GtS)                    & // check cur.size() > max.size()
-             Setcur(loc))                // if so, save location
-                     % max)            & // and assign to max
-            Fail();                      // seek all alternatives
+            "" % max & Fence()  &   // initialize max to null
+            BreakX(digit)       &   // scan looking for digits
+            ((digits % cur      &   // assign next string to cur
+              +GtS              &   // check cur.size() > max.size()
+             Setcur(loc))           // if so, save location
+                     % max)     &   // and assign to max
+            Fail();                 // seek all alternatives
 
-        Match("ab123cd4657ef23", find);
+        find("ab123cd4657ef23");
         cout<< "max = " << max << "; loc = " << loc << endl;
     }
 

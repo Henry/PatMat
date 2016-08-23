@@ -267,41 +267,19 @@
     previous alternatives are sought.
 
 *** Deferred Replacement
-    The simple model given for pattern replacement (where the matched sub-string
-    is replaced by the string given as the third argument to =Match=) works fine
-    in simple cases, but this approach does not work in the case where the
-    expression used as the replacement string is dependent on values set by the
-    match.
-
-    For example, suppose we want to find an instance of a parenthesized
-    character, and replace the parentheses with square brackets. At first glance
-    it would seem that:
-    #+begin_src c++
-      Match(subject, '(' & Len(1) % c & ')', '[' & c & ']');
-    #+end_src
-    would do the trick, but that does not work, because the third argument to
-    Match gets evaluated too early, before the call to Match, and before the
-    pattern match has had a chance to set =c=.
-
-    To solve this problem we provide the deferred replacement capability.  With
-    this approach, which of course is only needed if the pattern involved has
-    side effects, is to do the match in two stages. The call to =Match= sets a
-    pattern result in a variable of type =MatchRes=, and then a subsequent
-    assignment operation uses this =MatchRes= object to perform the required
+    Matching of a non-const string returns as =MutableMatchState= and then a
+    subsequent assignment operation to this object performs the required
     replacement.
 
-    Using this approach, we can now write the above operation properly in a
-    manner that will work:
+    Using this approach, we can write:
     #+begin_src c++
       string c;
-      MatchRes m(c);
-      ...
-      Match(m, '(' & Len(1) % c & ')');
-      m = '[' + c + ']';
+      string s;
+      ('(' & Len(1) % c & ')')(s) = '[' + c + ']';
     #+end_src
-    An assignment after a failed match has no effect. Note that
-    =MatchRes m= should not be modified between the calls as it stores the start
-    and end of the matched sub-string.
+    An assignment after a failed match has no effect. Note that =string s=
+    should not be modified between the calls as it stores the start and end of
+    the matched sub-string.
 
 *** Examples of Pattern Matching
     First a simple example of the use of pattern replacement to remove a line
@@ -314,7 +292,7 @@
     #+end_src
     Now to use this pattern we simply do a match with a replacement:
     #+begin_src c++
-      Match(line, lNum, "");
+      lNum(line) = "";
     #+end_src
     which replaces the line number by the null string. Note that it is also
     possible to use an =CharacterSet= value as an argument to =Span= and similar
@@ -328,8 +306,9 @@
     typical.  It is possible to build up patterns dynamically, but it is usually
     more efficient to build them in pieces in advance using constant
     declarations.  Note in particular that although it is possible to construct
-    a pattern directly as an argument for the Match routine, it is much more
-    efficient to preconstruct the pattern as we did in this example.
+    a pattern directly as an argument for the =Pattern(string= matching
+    operator, it is much more efficient to preconstruct the pattern as we did in
+    this example.
 
     Now let's look at the use of pattern assignment to break a string into
     sections. Suppose that the input string has two Natural decimal
@@ -340,9 +319,9 @@
       const Pattern blank = NSpan(' ');
       const Pattern num = Span("0123456789");
       const Pattern nums = blank & num % num1 & Span(" ,") & num % num2;
-      Match(" 124, 257 ", nums);
+      nums(" 124, 257 ");
     #+end_src
-    The match operation =Match(" 124, 257 ", nums)= would assign the string
+    The match operation =nums(" 124, 257 ")= would assign the string
     =124= to =num1= and the string =257= to =num2=.
 
     Now let's see how more complex elements can be built from the set of
@@ -407,7 +386,7 @@
     Now that this pattern is constructed, we can use it as though it were a new
     primitive pattern element, and for example, the match:
     #+begin_src c++
-      Match("xy[ab{cd}]", balancedString % cout & Fail());
+      (balancedString % cout & Fail())("xy[ab{cd}]");
     #+end_src
     will generate the output:
     #+begin_src c++
@@ -484,20 +463,19 @@
     match. Now =BreakX= scans to the next digit. =Arb= would do here, but
     =BreakX= will be more efficient.  Once we have found a digit, we scan out
     the longest string of digits with =Span=, and assign it to =cur=. The
-    deferred call to =GtS.get()= tests if the string we assigned to =cur= is
-    the longest so far. If not, then failure is signalled, and we seek
-    alternatives (this means that =BreakX= will extend and look for the next
-    digit string).  If the call to =GtS.get()= succeeds then the matched
-    string is assigned as the largest string so far into =max= and its location
-    is saved in =loc=. Finally =Fail= forces the match to fail and seek
-    alternatives, so that the entire string is searched.
+    deferred call to =GtS.get()= tests if the string we assigned to =cur= is the
+    longest so far. If not, then failure is signalled, and we seek alternatives
+    (this means that =BreakX= will extend and look for the next digit string).
+    If the call to =GtS.get()= succeeds then the matched string is assigned as
+    the largest string so far into =max= and its location is saved in
+    =loc=. Finally =Fail= forces the match to fail and seek alternatives, so
+    that the entire string is searched.
 
     If the pattern =find= is matched against a string, the variable =max= at the
     end of the pattern will have the longest string of digits, and =loc= will be
     the starting character location of the string. For example,
-    =Match("ab123cd4657ef23", find)= will assign "4657" to =max= and =11= to
-    =loc= (indicating that the string ends with the eleventh character of the
-    string).
+    =find("ab123cd4657ef23")= will assign "4657" to =max= and =11= to =loc=
+    (indicating that the string ends with the eleventh character of the string).
 
 *** Correspondence with Pattern Matching in SPITBOL
     Generally the C++ syntax and names correspond closely to SPITBOL syntax for
@@ -521,8 +499,8 @@
     The actual pattern matching syntax is modified in C++ as follows:
     #+begin_src c++
       SPITBOL      C++
-      x y          Match(x, y);
-      x y = repl   Match(x, y, repl);
+      x y          y(x);
+      x y = repl   y(x) = repl;
     #+end_src
     and pattern failure is indicated by returning a =bool= result from the
     =Match= function (=true= for success, =false= for failure).

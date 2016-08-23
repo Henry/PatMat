@@ -40,7 +40,7 @@
 ///  Constructors
 // ----------------------------------------------------------------------------
 
-PatMat::Pattern_::Pattern_(const Natural stackIndex, const PatElmt_ *p)
+PatMat::Pattern_::Pattern_(const Natural stackIndex, const PatElmt_* p)
 :
     stackIndex_(stackIndex),
     pe_(p),
@@ -66,7 +66,7 @@ PatMat::Pattern_::~Pattern_()
 {
     // Otherwise we must free all elements
     int n = pe_->index_;
-    PatElmt_ *refs[n];
+    PatElmt_* refs[n];
 
     // References to elements in pattern to be finalized
     buildRefArray(pe_, refs);
@@ -118,15 +118,15 @@ PatMat::Pattern_::~Pattern_()
 
 
 // -----------------------------------------------------------------------------
-/// recordPE helper function for buildRefArray
+/// recordPE recursive helper function for buildRefArray
 // -----------------------------------------------------------------------------
 // Record given pattern element if not already recorded in ra,
 // and also record any referenced pattern elements recursively.
 namespace PatMat
 {
-static void recordPE(const PatElmt_ *e, PatElmt_ **ra)
+static void recordPE(const PatElmt_* e, PatElmt_** ra)
 {
-    IDOUT(cout<< "  recordPE called with const PatElmt_ *= " << e;)
+    IDOUT(cout<< "  recordPE called with const PatElmt_* = " << e;)
 
     if (e == EOP || ra[e->index_ - 1] != NULL)
     {
@@ -141,7 +141,9 @@ static void recordPE(const PatElmt_ *e, PatElmt_ **ra)
         recordPE(e->pNext_, ra);
 
         if (PCHasAlt(e->pCode_))
+        {
             recordPE(e->val.Alt, ra);
+        }
     }
 }
 }
@@ -154,7 +156,7 @@ static void recordPE(const PatElmt_ *e, PatElmt_ **ra)
 // structure, and a Ref_Array with bounds 1 .. E.Index, fills in the
 // Ref_Array so that its N'th entry references the element of the referenced
 // pattern whose Index value is N.
-void PatMat::buildRefArray(const PatElmt_ *e, PatElmt_ **ra)
+void PatMat::buildRefArray(const PatElmt_* e, PatElmt_** ra)
 {
     IDOUT(cout<< "Entering buildRefArray\n";)
     for (int i = 0; i < e->index_; i++)

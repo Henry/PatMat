@@ -22,14 +22,11 @@ int main()
     string subject1("hello");
     string subject2("goodbye");
 
-    MatchRes match1(subject1);
     Pattern p3 = Pattern("good") * sss;
-    tst.validate(match1, p3, false);
+    tst.validate(p3, subject1, false);
 
-    MatchRes match2(subject2);
-    tst.validate(match2, p3, true);
-    match2 = "<b>" + sss + "</b>";
-    tst.validate_assign(p3, match2, "<b>good</b>bye");
+    p3(subject2) = "<b>" + sss + "</b>";
+    tst.validate_assign(p3, subject2, "<b>good</b>bye");
 
     // test "delayed evaluation" of string value
     MyStringObj s;

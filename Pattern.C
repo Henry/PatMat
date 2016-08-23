@@ -1118,8 +1118,7 @@ bool PatMat::Pattern::operator()
     const Flags flags
 ) const
 {
-    MatchState ms(subject);
-    return match(ms, pat_, flags) == MATCH_SUCCESS;
+    return match(subject, pat_, flags);
 }
 
 bool PatMat::Pattern::operator()
@@ -1128,73 +1127,34 @@ bool PatMat::Pattern::operator()
     const Flags flags
 ) const
 {
-    MatchState ms(subject);
-    return match(ms, pat_, flags) == MATCH_SUCCESS;
+    return match(subject, pat_, flags);
 }
 
 
 // ----------------------------------------------------------------------------
 ///  Match & Replace
 // ----------------------------------------------------------------------------
+//
+// The subject is matched against the pattern.  Any immediate or deferred
+// assignments or writes are executed, and the returned value indicates whether
+// or not the match succeeded.  If the match succeeds, then the matched part of
+// the subject string is replaced by the given Replace string.
 
-bool PatMat::Match
+PatMat::MutableMatchState PatMat::Pattern::operator()
 (
     std::string& subject,
-    const Pattern& p,
-    const std::string& replacement,
     const Flags flags
-)
+) const
 {
-    MatchState ms(subject);
-
-    if (match(ms, p.pat_, flags) != MATCH_SUCCESS)
-    {
-        return false;
-    }
-
-    subject.replace(ms.start - 1, ms.stop - ms.start + 1, replacement);
-
-    return true;
+    return MutableMatchState(match(subject, pat_, flags), subject);
 }
 
-bool PatMat::Match
-(
-    std::string& subject,
-    const Pattern& p,
-    const Character* replacement,
-    const Flags flags
-)
-{
-    MatchState ms(subject);
 
-    if (match(ms, p.pat_, flags) != MATCH_SUCCESS)
-    {
-        return false;
-    }
+// -----------------------------------------------------------------------------
+/// Output: string setter which outputs the string
+// -----------------------------------------------------------------------------
 
-    subject.replace(ms.start - 1, ms.stop - ms.start + 1, replacement);
-
-    return true;
-}
-
-bool PatMat::Match
-(
-    MatchRes& result,
-    const Pattern& p,
-    const Flags flags
-)
-{
-    MatchState ms(result);
-
-    if (match(ms, p.pat_, flags) == MATCH_SUCCESS)
-    {
-        result.start_ = ms.start - 1;
-        result.stop_ = ms.stop;
-        return true;
-    }
-
-    return false;
-}
+PatMat::Output PatMat::output;
 
 
 // -----------------------------------------------------------------------------

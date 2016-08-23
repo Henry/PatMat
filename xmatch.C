@@ -823,26 +823,24 @@
 //    assignments to the subject string, so pattern replacement is for the
 //    caller.
 //
-//    ms.subject
+//    ms.subject_
 //        The subject string. The lower bound is always one. In the
-//        Match procedures, it is fine to use strings whose lower bound
+//        match procedures, it is fine to use strings whose lower bound
 //        is not one, but we perform a one time conversion before the
 //        call to XMatch, so that XMatch does not have to be bothered
 //        with strange lower bounds.
 //
 //    pattern
-//        Points to initial pattern element of pattern to be matched
+//        Pointer to initial pattern element of pattern to be matched.
 //
-//    ms.start
+//    ms.start_
 //        If match is successful, starting index of matched section.
-//        This value is always non-zero. A value of zero is used to
-//        indicate a failed match.
 //
-//    ms.stop
+//    ms.stop_
 //        If match is successful, ending index of matched section.
 //        This can be zero if we match the null string at the start,
-//        in which case Start is set to zero, and Stop to one. If the
-//        Match fails, then the contents of Stop is undefined.
+//        in which case 'start' is set to zero, and 'stop' to one. If the
+//        match fails, then the contents of 'stop' is undefined.
 //
 // -----------------------------------------------------------------------------
 
@@ -850,7 +848,6 @@
 #include "PatMatInternalI.H"
 
 #include <iostream>
-#include <iomanip>
 #include <cstring>
 
 using std::cout;
@@ -945,9 +942,9 @@ static void matchTrace
 /// General match function
 // -----------------------------------------------------------------------------
 template<int Debug>
-static MatchRet XMatch
+static MatchState XMatch
 (
-    MatchState& ms,
+    const std::string& sbj,
     const Pattern_* pattern,
     const Flags flags
 )
@@ -1154,10 +1151,10 @@ static MatchRet XMatch
     const PatElmt_* node;
 
     // Subject string
-    const Character* subject = ms.subject.c_str();
+    const Character* subject = sbj.c_str();
 
     // Length of subject string
-    const Natural len = ms.subject.length();
+    const Natural len = sbj.length();
 
     // If the value is non-negative, then this value is the index showing
     // the current position of the match in the subject string. The next
@@ -1197,7 +1194,7 @@ static MatchRet XMatch
     // successful match.
     bool assignOnM = false;
 
-    ms.ret = MATCH_FAILURE;
+    MatchState ms;
 
     // Start of processing for XMatch
 
@@ -1215,8 +1212,11 @@ static MatchRet XMatch
 
     if (pattern->pe_ == NULL)
     {
-        ms.ret = MATCH_UNITITIALIZED_PATTERN;
-        goto Match_Exception;
+        ms.ret_ = MATCH_UNITITIALIZED_PATTERN;
+        if (Debug)
+            cout<< indent(regionLevel)
+                << "match failed due to uninitialized pattern\n";
+        return ms;
     }
 
     // In anchored mode, the bottom entry on the stack is an abort entry
@@ -1249,33 +1249,18 @@ static MatchRet XMatch
     // following descriptions, we indicate the global values that
     // are relevant for the state transition.
 
-Match_Fail:
-    // Come here if entire match fails
-    if (Debug) cout<< indent(regionLevel) << "match fails\n";
-    ms.start = 0;
-    ms.stop = 0;
-    ms.ret = MATCH_FAILURE;
-    return ms.ret;
-
-Match_Exception:
-    // Come here if entire match fails
-    if (Debug) cout<< indent(regionLevel) << "match fails\n";
-    ms.start = 0;
-    ms.stop = 0;
-    return ms.ret;
-
 Match_Succeed:
     // Come here if entire match succeeds
     // cursor current position in subject string
-    if (Debug) cout<< indent(regionLevel) << "match succeeds\n";
-    ms.start = stack(stack.init).cursor + 1;
-    ms.stop = cursor;
+    if (Debug) cout<< indent(regionLevel) << "match succeeded\n";
+    ms.start_ = stack(stack.init).cursor;
+    ms.stop_ = cursor;
     if (Debug)
     {
         cout<< indent(regionLevel) << "matched positions "
-            << ms.start << " .. " << ms.stop << endl
+            << ms.start_ << " .. " << ms.stop_ << endl
             << indent(regionLevel) << "matched substring = \""
-            << slice(subject, ms.start, ms.stop) << "\"\n";
+            << slice(subject, ms.start_, ms.stop_) << "\"\n";
     }
 
     // Scan history stack for deferred assignments or writes
@@ -1320,17 +1305,20 @@ Match_Succeed:
                         }
                         break;
                     default:
-                        ms.ret = MATCH_LOGIC_ERROR;
-                        goto Match_Exception;
-                }   // switch nodeOnM->pCode_
-            }   // CP_Assign
-        }   // for each stack entry
-    }   // assignOnM
+                        ms.ret_ = MATCH_LOGIC_ERROR;
+                        if (Debug)
+                            cout<< indent(regionLevel)
+                                << "match failed due to logic error\n";
+                        return ms;
+                } // switch nodeOnM->pCode_
+            } // CP_Assign
+        } // for each stack entry
+    } // assignOnM
 
     if (Debug) cout<< endl;
 
-    ms.ret = MATCH_SUCCESS;
-    return ms.ret;
+    ms.ret_ = MATCH_SUCCESS;
+    return ms;
 
 Fail:
     // Come here if attempt to match current element fails
@@ -1370,7 +1358,6 @@ Match:
 
     // goto Succeed to move to the successor
     // goto Match_Succeed if (the entire match succeeds
-    // goto Match_Fail if (the entire match fails
     // goto Fail to signal failure of current match
 
     // Processing is NOT allowed to fall through
@@ -1388,7 +1375,8 @@ Match:
             {
                 cout<< indent(regionLevel) << node << " matching Abort\n";
             }
-            goto Match_Fail;
+            ms.ret_ = MATCH_FAILURE;
+            return ms;
 
         case PC_Alt:
             // Alternation
@@ -1559,7 +1547,7 @@ Match:
             {
                 std::string str
                 (
-                    slice(ms.subject, stack(stack.base + 1).cursor + 1, cursor)
+                    slice(sbj, stack(stack.base + 1).cursor + 1, cursor)
                 );
                 if (Debug)
                 {
@@ -2679,7 +2667,14 @@ Match:
             }
             if (cursor > len)
             {
-                goto Match_Fail;        // All done if we tried every position
+                // All done if we tried every position
+                if (Debug)
+                {
+                    cout<< indent(regionLevel)
+                        << "reached end of string\n";
+                }
+                ms.ret_ = MATCH_FAILURE;
+                return ms;
             }
 
             // Otherwise extend the anchor point, and restack ourself
@@ -2692,7 +2687,7 @@ Match:
             {
                 std::string str
                 (
-                    slice(ms.subject, stack(stack.base + 1).cursor + 1, cursor)
+                    slice(sbj, stack(stack.base + 1).cursor + 1, cursor)
                 );
                 if (Debug)
                 {
@@ -2710,7 +2705,7 @@ Match:
             {
                 std::string str
                 (
-                    slice(ms.subject, stack(stack.base + 1).cursor + 1, cursor)
+                    slice(sbj, stack(stack.base + 1).cursor + 1, cursor)
                 );
                 if (Debug)
                 {
@@ -2751,15 +2746,16 @@ Match:
             assignOnM = true;
             goto Succeed;
 
-    }   // switch (node->pCode_)
+    } // switch (node->pCode_)
 
     // We are NOT allowed to fall though this case statement, since every
     // match routine must end by executing a goto to the appropriate point
     // in the finite state machine model.
-    ms.ret = MATCH_LOGIC_ERROR;
-
-    // Fall-through if logicError
-    goto Match_Exception;
+    ms.ret_ = MATCH_LOGIC_ERROR;
+    if (Debug)
+        cout<< indent(regionLevel)
+            << "match failed due to logic error\n";
+    return ms;
 }
 
 
@@ -2767,20 +2763,20 @@ Match:
 } // End namespace PatMat
 // -----------------------------------------------------------------------------
 
-PatMat::MatchRet PatMat::match
+PatMat::MatchState PatMat::match
 (
-    MatchState& ms,
+    const std::string& subject,
     const Pattern_* pattern,
     const Flags flags
 )
 {
     if (flags & Pattern::debug)
     {
-        return XMatch<1>(ms, pattern, flags);
+        return XMatch<1>(subject, pattern, flags);
     }
     else
     {
-        return XMatch<0>(ms, pattern, flags);
+        return XMatch<0>(subject, pattern, flags);
     }
 }
 

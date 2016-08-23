@@ -51,9 +51,15 @@ namespace PatMat
 // -----------------------------------------------------------------------------
 /// Forward declarations
 // -----------------------------------------------------------------------------
+class Pattern;
 class Pattern_;
 class PatElmt_;
-class MatchRes;
+
+
+// -----------------------------------------------------------------------------
+/// Typedefs
+// -----------------------------------------------------------------------------
+
 typedef char Character;
 typedef unsigned int Natural;
 typedef int Flags;
@@ -164,6 +170,98 @@ public:
 
 
 // -----------------------------------------------------------------------------
+/// Match data
+// -----------------------------------------------------------------------------
+
+enum MatchRet
+{
+    MATCH_UNITITIALIZED_PATTERN,
+    MATCH_LOGIC_ERROR,
+    MATCH_FAILURE,
+    MATCH_SUCCESS
+};
+
+const char* const MatchRetMessages[] =
+{
+    "Uninitialized pattern",
+    "Internal logic error patterns",
+    "Match failure",
+    "Match success"
+};
+
+class MatchState
+{
+public:
+
+    // Output from match
+    Natural start_, stop_;
+    MatchRet ret_;
+
+    MatchState()
+    :
+        start_(0),
+        stop_(0),
+        ret_(MATCH_FAILURE)
+    {}
+
+    inline bool matched() const
+    {
+        return ret_ == MATCH_SUCCESS;
+    }
+
+    inline operator bool() const
+    {
+        return matched();
+    }
+
+    inline Natural start() const
+    {
+        return start_;
+    }
+
+    inline Natural stop() const
+    {
+        return stop_;
+    }
+};
+
+class MutableMatchState
+:
+    public MatchState
+{
+public:
+
+    std::string& subject_;
+
+    MutableMatchState(const MatchState& ms, std::string& subject)
+    :
+        MatchState(ms),
+        subject_(subject)
+    {}
+
+    bool operator=(const std::string& replacement)
+    {
+        if (matched())
+        {
+            subject_.replace(start_, stop_ - start_, replacement);
+            return true;
+        }
+        return false;
+    }
+
+    bool operator=(const Character* replacement)
+    {
+        if (matched())
+        {
+            subject_.replace(start_, stop_ - start_, replacement);
+            return true;
+        }
+        return false;
+    }
+};
+
+
+// -----------------------------------------------------------------------------
 /// Pattern: pattern object
 // -----------------------------------------------------------------------------
 
@@ -201,11 +299,6 @@ public:
 
     // Destructor
     ~Pattern();
-
-    inline void debugMsg(const Character* fmt)
-    {
-        IDOUT(std::cerr<< fmt << long(pat_) << std::endl;);
-    }
 
     // Member operators
 
@@ -352,18 +445,13 @@ public:
         friend Pattern assignOnmatch(const Pattern& p, std::string& var);
         friend Pattern assignImmed(const Pattern& p, std::string& var);
 
-    // Output
-
-        void dump(std::ostream&) const;
-        friend std::ostream& operator<<(std::ostream &, const Pattern&);
-
     // Matching
 
         bool operator()
         (
             const Character* subject,
-            const Flags flags
-        ) const ;
+            const Flags flags = 0
+        ) const;
 
         bool operator()
         (
@@ -371,95 +459,38 @@ public:
             const Flags flags = 0
         ) const;
 
-        friend bool Match
+        MutableMatchState operator()
         (
             std::string& subject,
-            const Pattern& p,
-            const std::string& replacement,
-            const Flags flags
-        );
+            const Flags flags = 0
+        ) const;
 
-        friend bool Match
-        (
-            std::string& subject,
-            const Pattern& p,
-            const Character* replacement,
-            const Flags flags
-        );
+    // Output
 
-        friend bool Match
-        (
-            MatchRes& result,
-            const Pattern& p,
-            const Flags flags
-        );
+        inline void debugMsg(const Character* fmt) const;
+
+        void dump(std::ostream&) const;
+        friend std::ostream& operator<<(std::ostream&, const Pattern&);
 };
 
 
 // -----------------------------------------------------------------------------
-/// MatchRes: match result object
+/// Sout: string setter which outputs the string
 // -----------------------------------------------------------------------------
-class MatchRes
+
+class Output
 :
-    public std::string
+    public StringSetter
 {
-    int start_;
-    int stop_;
-
-    // Subject can be replaced: must not be literal
-    friend bool Match
-    (
-        MatchRes& res,
-        const Pattern& p,
-        const Flags flags
-    );
-
 public:
 
-    MatchRes(const std::string& str)
-    :
-        std::string(str),
-        start_(0),
-        stop_(0)
-    {}
-
-    inline int start()
+    void set(const std::string& str)
     {
-        return start_;
-    }
-
-    inline int stop()
-    {
-        return stop_;
-    }
-
-    inline bool matched()
-    {
-        return stop_ > 0;
-    }
-
-    bool operator=(const std::string& replacement)
-    {
-        // debug output??
-        if (matched())
-        {
-            replace(start_, stop_ - start_, replacement);
-            return true;
-        }
-        return false;
-    }
-
-    bool operator=(const Character* replacement)
-    {
-        // debug output??
-        if (matched())
-        {
-            replace(start_, stop_ - start_, replacement);
-            return true;
-        }
-        return false;
+        std::cout << str;
     }
 };
+
+extern Output output;
 
 
 // ----------------------------------------------------------------------------

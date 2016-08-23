@@ -434,48 +434,15 @@ class PatElmt_
 
 
 // -----------------------------------------------------------------------------
-/// Match data and functions
+/// Match  function
 // -----------------------------------------------------------------------------
 
-enum MatchRet
-{
-    MATCH_UNITITIALIZED_PATTERN,
-    MATCH_LOGIC_ERROR,
-    MATCH_FAILURE,
-    MATCH_SUCCESS
-};
-
-const char* const MatchRetMessages[] =
-{
-    "Uninitialized pattern",
-    "Internal logic error patterns",
-    "Match failure",
-    "Match success"
-};
-
-class MatchState
-{
-public:
-
-    const std::string& subject;
-
-    // Output from match
-    Natural start, stop;
-    MatchRet ret;
-
-    MatchState(const std::string& str)
-    :
-        subject(str),
-        ret(MATCH_FAILURE)
-    {}
-
-    operator bool() const
-    {
-        return ret == MATCH_SUCCESS;
-    }
-};
-
-MatchRet match(MatchState&, const Pattern_* pattern, const Flags flags);
+MatchState match
+(
+    const std::string& subject,
+    const Pattern_* pattern,
+    const Flags flags
+);
 
 
 // -----------------------------------------------------------------------------

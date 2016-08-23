@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
 <title><b>PatMat: SPITBOL-like pattern construction and matching in C++</b></title>
-<!-- 2016-08-23 Tue 15:59 -->
+<!-- 2016-08-23 Tue 18:55 -->
 <meta  http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta  name="generator" content="Org-mode" />
 <style type="text/css">
@@ -252,7 +252,7 @@ specific string literals as the pattern elements:
 </p>
 <div class="org-src-container">
 
-<pre class="src src-c++">("ABC" | "AB") &amp; ("DEF" | "CDE") &amp; ("GH" | "IJ")
+<pre class="src src-c++">(<span style="color: #008b00;">"ABC"</span> | <span style="color: #008b00;">"AB"</span>) &amp; (<span style="color: #008b00;">"DEF"</span> | <span style="color: #008b00;">"CDE"</span>) &amp; (<span style="color: #008b00;">"GH"</span> | <span style="color: #008b00;">"IJ"</span>)
 </pre>
 </div>
 <p>
@@ -295,7 +295,7 @@ attempted. As an example, suppose that we had the subject string
 </p>
 <div class="org-src-container">
 
-<pre class="src src-c++">"ABABCDEIJKL"
+<pre class="src src-c++"><span style="color: #008b00;">"ABABCDEIJKL"</span>
 </pre>
 </div>
 <p>
@@ -303,7 +303,7 @@ matched using the pattern in the previous example:
 </p>
 <div class="org-src-container">
 
-<pre class="src src-c++">("ABC" | "AB") &amp; ("DEF" | "CDE") &amp; ("GH" | "IJ")
+<pre class="src src-c++">(<span style="color: #008b00;">"ABC"</span> | <span style="color: #008b00;">"AB"</span>) &amp; (<span style="color: #008b00;">"DEF"</span> | <span style="color: #008b00;">"CDE"</span>) &amp; (<span style="color: #008b00;">"GH"</span> | <span style="color: #008b00;">"IJ"</span>)
 </pre>
 </div>
 <p>
@@ -311,7 +311,7 @@ would succeed, after two anchor point moves:
 </p>
 <div class="org-src-container">
 
-<pre class="src src-c++">"ABABCDEIJKL"
+<pre class="src src-c++"><span style="color: #008b00;">"ABABCDEIJKL"</span>
    ^^^^^^^
    matched
    section
@@ -395,7 +395,7 @@ Repeatedly matches the null string.  It is equivalent to the alternation
 </p>
 <div class="org-src-container">
 
-<pre class="src src-c++">("" | "" | "" ....).
+<pre class="src src-c++">(<span style="color: #008b00;">""</span> | <span style="color: #008b00;">""</span> | <span style="color: #008b00;">""</span> ....).
 </pre>
 </div>
 <p>
@@ -432,7 +432,7 @@ starting with zero occurrences. It is thus equivalent to
 </p>
 <div class="org-src-container">
 
-<pre class="src src-c++">("" | (P &amp; ("" | (P &amp; ("" ....)))).
+<pre class="src src-c++">(<span style="color: #008b00;">""</span> | (P &amp; (<span style="color: #008b00;">""</span> | (P &amp; (<span style="color: #008b00;">""</span> ....)))).
 </pre>
 </div>
 <p>
@@ -581,7 +581,7 @@ to construct recursive patterns. Consider for example:
 </p>
 <div class="org-src-container">
 
-<pre class="src src-c++">P = ("A" | ("B" &amp; (+P)))
+<pre class="src src-c++">P = (<span style="color: #008b00;">"A"</span> | (<span style="color: #008b00;">"B"</span> &amp; (+P)))
 </pre>
 </div>
 <p>
@@ -694,55 +694,25 @@ previous alternatives are sought.
 <h3 id="sec-1-8"><span class="section-number-3">1.8</span> Deferred Replacement</h3>
 <div class="outline-text-3" id="text-1-8">
 <p>
-The simple model given for pattern replacement (where the matched sub-string
-is replaced by the string given as the third argument to <code>Match</code>) works fine
-in simple cases, but this approach does not work in the case where the
-expression used as the replacement string is dependent on values set by the
-match.
-</p>
-
-<p>
-For example, suppose we want to find an instance of a parenthesized
-character, and replace the parentheses with square brackets. At first glance
-it would seem that:
-</p>
-<div class="org-src-container">
-
-<pre class="src src-c++">Match(subject, '(' &amp; Len(1) % c &amp; ')', '[' &amp; c &amp; ']');
-</pre>
-</div>
-<p>
-would do the trick, but that does not work, because the third argument to
-Match gets evaluated too early, before the call to Match, and before the
-pattern match has had a chance to set <code>c</code>.
-</p>
-
-<p>
-To solve this problem we provide the deferred replacement capability.  With
-this approach, which of course is only needed if the pattern involved has
-side effects, is to do the match in two stages. The call to <code>Match</code> sets a
-pattern result in a variable of type <code>MatchRes</code>, and then a subsequent
-assignment operation uses this <code>MatchRes</code> object to perform the required
+Matching of a non-const string returns as <code>MutableMatchState</code> and then a
+subsequent assignment operation to this object performs the required
 replacement.
 </p>
 
 <p>
-Using this approach, we can now write the above operation properly in a
-manner that will work:
+Using this approach, we can write:
 </p>
 <div class="org-src-container">
 
-<pre class="src src-c++">string c;
-MatchRes m(c);
-...
-Match(m, '(' &amp; Len(1) % c &amp; ')');
-m = '[' + c + ']';
+<pre class="src src-c++"><span style="color: #0000ff;">string</span> <span style="color: #000000;">c</span>;
+<span style="color: #0000ff;">string</span> <span style="color: #000000;">s</span>;
+(<span style="color: #008b00;">'('</span> &amp; Len(1) % c &amp; <span style="color: #008b00;">')'</span>)(s) = <span style="color: #008b00;">'['</span> + c + <span style="color: #008b00;">']'</span>;
 </pre>
 </div>
 <p>
-An assignment after a failed match has no effect. Note that
-<code>MatchRes m</code> should not be modified between the calls as it stores the start
-and end of the matched sub-string.
+An assignment after a failed match has no effect. Note that <code>string s</code>
+should not be modified between the calls as it stores the start and end of
+the matched sub-string.
 </p>
 </div>
 </div>
@@ -758,8 +728,8 @@ more spaces.
 </p>
 <div class="org-src-container">
 
-<pre class="src src-c++">const Pattern digs = Span("0123456789");
-const Pattern lNum = Pos(0U) &amp; digs &amp; '.' &amp; Span(' ');
+<pre class="src src-c++"><span style="color: #0000cd; font-weight: bold;">const</span> <span style="color: #0000ff;">Pattern</span> <span style="color: #000000;">digs</span> = Span(<span style="color: #008b00;">"0123456789"</span>);
+<span style="color: #0000cd; font-weight: bold;">const</span> <span style="color: #0000ff;">Pattern</span> <span style="color: #000000;">lNum</span> = Pos(0U) &amp; digs &amp; <span style="color: #008b00;">'.'</span> &amp; Span(<span style="color: #008b00;">' '</span>);
 </pre>
 </div>
 <p>
@@ -767,7 +737,7 @@ Now to use this pattern we simply do a match with a replacement:
 </p>
 <div class="org-src-container">
 
-<pre class="src src-c++">Match(line, lNum, "");
+<pre class="src src-c++">lNum(line) = <span style="color: #008b00;">""</span>;
 </pre>
 </div>
 <p>
@@ -779,7 +749,7 @@ functions, and in particular all the useful constants 'in
 </p>
 <div class="org-src-container">
 
-<pre class="src src-c++">const Pattern digs = Span(CharacterSets::digit);
+<pre class="src src-c++"><span style="color: #0000cd; font-weight: bold;">const</span> <span style="color: #0000ff;">Pattern</span> <span style="color: #000000;">digs</span> = Span(<span style="font-weight: bold; text-decoration: underline;">CharacterSets</span>::digit);
 </pre>
 </div>
 <p>
@@ -787,8 +757,9 @@ The style we use here, of defining constant patterns and then using them is
 typical.  It is possible to build up patterns dynamically, but it is usually
 more efficient to build them in pieces in advance using constant
 declarations.  Note in particular that although it is possible to construct
-a pattern directly as an argument for the Match routine, it is much more
-efficient to preconstruct the pattern as we did in this example.
+a pattern directly as an argument for the <code>Pattern(string</code> matching
+operator, it is much more efficient to preconstruct the pattern as we did in
+this example.
 </p>
 
 <p>
@@ -799,15 +770,15 @@ we can isolate the two numbers with the following pattern:
 </p>
 <div class="org-src-container">
 
-<pre class="src src-c++">string num1, num2;
-const Pattern blank = NSpan(' ');
-const Pattern num = Span("0123456789");
-const Pattern nums = blank &amp; num % num1 &amp; Span(" ,") &amp; num % num2;
-Match(" 124, 257 ", nums);
+<pre class="src src-c++"><span style="color: #0000ff;">string</span> <span style="color: #000000;">num1</span>, <span style="color: #000000;">num2</span>;
+<span style="color: #0000cd; font-weight: bold;">const</span> <span style="color: #0000ff;">Pattern</span> <span style="color: #000000;">blank</span> = NSpan(<span style="color: #008b00;">' '</span>);
+<span style="color: #0000cd; font-weight: bold;">const</span> <span style="color: #0000ff;">Pattern</span> <span style="color: #000000;">num</span> = Span(<span style="color: #008b00;">"0123456789"</span>);
+<span style="color: #0000cd; font-weight: bold;">const</span> <span style="color: #0000ff;">Pattern</span> <span style="color: #000000;">nums</span> = blank &amp; num % num1 &amp; Span(<span style="color: #008b00;">" ,"</span>) &amp; num % num2;
+nums(<span style="color: #008b00;">" 124, 257 "</span>);
 </pre>
 </div>
 <p>
-The match operation <code>Match(" 124, 257 ", nums)</code> would assign the string
+The match operation <code>nums(" 124, 257 ")</code> would assign the string
 <code>124</code> to <code>num1</code> and the string <code>257</code> to <code>num2</code>.
 </p>
 
@@ -818,13 +789,13 @@ syntax of Ada 95 literals:
 </p>
 <div class="org-src-container">
 
-<pre class="src src-c++">const Pattern digs  = Span(CharacterSets::digit);
-const Pattern uDigs = digs &amp; Arbno('_' &amp; digs);
+<pre class="src src-c++"><span style="color: #0000cd; font-weight: bold;">const</span> <span style="color: #0000ff;">Pattern</span> <span style="color: #000000;">digs</span>  = Span(<span style="font-weight: bold; text-decoration: underline;">CharacterSets</span>::digit);
+<span style="color: #0000cd; font-weight: bold;">const</span> <span style="color: #0000ff;">Pattern</span> <span style="color: #000000;">uDigs</span> = digs &amp; Arbno(<span style="color: #008b00;">'_'</span> &amp; digs);
 
-const Pattern eDig  = Span(CharacterSets::xdigit);
-const Pattern ueDdig = eDig &amp; Arbno('_' &amp; eDig);
+<span style="color: #0000cd; font-weight: bold;">const</span> <span style="color: #0000ff;">Pattern</span> <span style="color: #000000;">eDig</span>  = Span(<span style="font-weight: bold; text-decoration: underline;">CharacterSets</span>::xdigit);
+<span style="color: #0000cd; font-weight: bold;">const</span> <span style="color: #0000ff;">Pattern</span> <span style="color: #000000;">ueDdig</span> = eDig &amp; Arbno(<span style="color: #008b00;">'_'</span> &amp; eDig);
 
-const Pattern bNum  = uDigs &amp; '#' &amp; ueDig &amp; '#';
+<span style="color: #0000cd; font-weight: bold;">const</span> <span style="color: #0000ff;">Pattern</span> <span style="color: #000000;">bNum</span>  = uDigs &amp; <span style="color: #008b00;">'#'</span> &amp; ueDig &amp; <span style="color: #008b00;">'#'</span>;
 </pre>
 </div>
 <p>
@@ -835,8 +806,8 @@ following is more complete:
 </p>
 <div class="org-src-container">
 
-<pre class="src src-c++">const Pattern bChar = Any("#:");
-const Pattern bNum  = uDigs &amp; bChar &amp; ueDig &amp; bChar;
+<pre class="src src-c++"><span style="color: #0000cd; font-weight: bold;">const</span> <span style="color: #0000ff;">Pattern</span> <span style="color: #000000;">bChar</span> = Any(<span style="color: #008b00;">"#:"</span>);
+<span style="color: #0000cd; font-weight: bold;">const</span> <span style="color: #0000ff;">Pattern</span> <span style="color: #000000;">bNum</span>  = uDigs &amp; bChar &amp; ueDig &amp; bChar;
 </pre>
 </div>
 <p>
@@ -846,8 +817,8 @@ deferred match.
 </p>
 <div class="org-src-container">
 
-<pre class="src src-c++">string temp;
-const Pattern bNum = uDigs &amp; bChar % temp &amp; ueDdig &amp; (+temp)
+<pre class="src src-c++"><span style="color: #0000ff;">string</span> <span style="color: #000000;">temp</span>;
+<span style="color: #0000cd; font-weight: bold;">const</span> <span style="color: #0000ff;">Pattern</span> <span style="color: #000000;">bNum</span> = uDigs &amp; bChar % temp &amp; ueDdig &amp; (+temp)
 </pre>
 </div>
 <p>
@@ -866,9 +837,9 @@ The language for such strings might be defined in extended BNF as
 </p>
 <div class="org-src-container">
 
-<pre class="src src-c++">ELEMENT ::= &lt;any character other than [] or {}&gt;
-           | '[' BALANCED_STRING ']'
-           | '{' BALANCED_STRING '}'
+<pre class="src src-c++">ELEMENT ::= &lt;any character other than [] <span style="color: #0000cd; font-weight: bold;">or</span> {}&gt;
+           | <span style="color: #008b00;">'['</span> BALANCED_STRING <span style="color: #008b00;">']'</span>
+           | <span style="color: #008b00;">'{'</span> BALANCED_STRING <span style="color: #008b00;">'}'</span>
 
 BALANCED_STRING ::= ELEMENT {ELEMENT}
 </pre>
@@ -880,12 +851,12 @@ recursive patterns as follows:
 </p>
 <div class="org-src-container">
 
-<pre class="src src-c++">Pattern balancedString;
+<pre class="src src-c++"><span style="color: #0000ff;">Pattern</span> <span style="color: #000000;">balancedString</span>;
 
-Pattern element =
-    NotAny("[]{}")
-  | ('[' &amp; (+balancedString) &amp; ']')
-  | ('{' &amp; (+balancedString) &amp; '}');
+<span style="color: #0000ff;">Pattern</span> <span style="color: #000000;">element</span> =
+    NotAny(<span style="color: #008b00;">"[]{}"</span>)
+  | (<span style="color: #008b00;">'['</span> &amp; (+balancedString) &amp; <span style="color: #008b00;">']'</span>)
+  | (<span style="color: #008b00;">'{'</span> &amp; (+balancedString) &amp; <span style="color: #008b00;">'}'</span>);
 
 balancedString = element &amp; Arbno(element);
 </pre>
@@ -902,7 +873,7 @@ primitive pattern element, and for example, the match:
 </p>
 <div class="org-src-container">
 
-<pre class="src src-c++">Match("xy[ab{cd}]", balancedString % cout &amp; Fail());
+<pre class="src src-c++">(balancedString % cout &amp; Fail())(<span style="color: #008b00;">"xy[ab{cd}]"</span>);
 </pre>
 </div>
 <p>
@@ -911,20 +882,20 @@ will generate the output:
 <div class="org-src-container">
 
 <pre class="src src-c++">x
-xy
-xy[ab{cd}]
+<span style="color: #0000ff;">xy</span>
+<span style="color: #000000;">xy</span>[ab{cd}]
 y
 y[ab{cd}]
 [ab{cd}]
 a
 ab
 ab{cd}
-b
-b{cd}
+<span style="color: #0000ff;">b</span>
+<span style="color: #000000;">b</span>{cd}
 {cd}
 c
-cd
-d
+<span style="color: #0000ff;">cd</span>
+<span style="color: #000000;">d</span>
 </pre>
 </div>
 <p>
@@ -940,24 +911,24 @@ string of decimal digits in the subject string.
 </p>
 <div class="org-src-container">
 
-<pre class="src src-c++">class MaxLen
+<pre class="src src-c++"><span style="color: #0000cd; font-weight: bold;">class</span> <span style="color: #0000ff;">MaxLen</span>
 :
-    public BoolGetter
+    <span style="color: #0000cd; font-weight: bold;">public</span> <span style="color: #0000ff;">BoolGetter</span>
 {
-    const string&amp; cur_;
-    const string&amp; max_;
+    <span style="color: #0000cd; font-weight: bold;">const</span> <span style="color: #0000ff;">string</span>&amp; <span style="color: #000000;">cur_</span>;
+    <span style="color: #0000cd; font-weight: bold;">const</span> <span style="color: #0000ff;">string</span>&amp; <span style="color: #000000;">max_</span>;
 
-    public:
+    <span style="color: #0000cd; font-weight: bold;">public</span>:
 
-        MaxLen(const string&amp; cur, const string&amp; max)
+        <span style="color: #00008b; font-weight: bold;">MaxLen</span>(<span style="color: #0000cd; font-weight: bold;">const</span> <span style="color: #0000ff;">string</span>&amp; <span style="color: #000000;">cur</span>, <span style="color: #0000cd; font-weight: bold;">const</span> <span style="color: #0000ff;">string</span>&amp; <span style="color: #000000;">max</span>)
         :
             cur_(cur),
             max_(max)
         {}
 
-        bool get()
+        <span style="color: #0000ff;">bool</span> <span style="color: #00008b; font-weight: bold;">get</span>()
         {
-            return cur_.size() &gt; max_.size();
+            <span style="color: #0000cd; font-weight: bold;">return</span> cur_.size() &gt; max_.size();
         }
 };
 
@@ -966,21 +937,21 @@ string of decimal digits in the subject string.
 .
 
 string cur, max;
-Natural loc;
+<span style="color: #0000ff;">Natural</span> <span style="color: #000000;">loc</span>;
 
-MaxLen GtS(cur, max);
+<span style="color: #0000ff;">MaxLen</span> <span style="color: #00008b; font-weight: bold;">GtS</span>(cur, max);
 
-const CharacterSet&amp; digit = CharacterSets::digit;
-const Pattern digits = Span(digit);
+<span style="color: #0000cd; font-weight: bold;">const</span> <span style="color: #0000ff;">CharacterSet</span>&amp; <span style="color: #000000;">digit</span> = <span style="font-weight: bold; text-decoration: underline;">CharacterSets</span>::digit;
+<span style="color: #0000cd; font-weight: bold;">const</span> <span style="color: #0000ff;">Pattern</span> <span style="color: #000000;">digits</span> = Span(digit);
 
-const Pattern find =
-    "" % max &amp; Fence()         &amp; // initialize max to null
-    BreakX(digit)              &amp; // scan looking for digits
-    ((digits % cur             &amp; // assign next string to cur
-     (+GtS)                    &amp; // check cur.size() &gt; max.size()
-     Setcur(loc))                // if so, save location
-             % max)            &amp; // and assign to max
-    Fail();                      // seek all alternatives
+<span style="color: #0000cd; font-weight: bold;">const</span> <span style="color: #0000ff;">Pattern</span> <span style="color: #000000;">find</span> =
+    <span style="color: #008b00;">""</span> % max &amp; Fence()         &amp; <span style="color: #912cee; font-weight: bold;">// </span><span style="color: #912cee;">initialize max to null</span>
+    BreakX(digit)              &amp; <span style="color: #912cee; font-weight: bold;">// </span><span style="color: #912cee;">scan looking for digits</span>
+    ((digits % cur             &amp; <span style="color: #912cee; font-weight: bold;">// </span><span style="color: #912cee;">assign next string to cur</span>
+     (+GtS)                    &amp; <span style="color: #912cee; font-weight: bold;">// </span><span style="color: #912cee;">check cur.size() &gt; max.size()</span>
+     Setcur(loc))                <span style="color: #912cee; font-weight: bold;">// </span><span style="color: #912cee;">if so, save location</span>
+             % max)            &amp; <span style="color: #912cee; font-weight: bold;">// </span><span style="color: #912cee;">and assign to max</span>
+    Fail();                      <span style="color: #912cee; font-weight: bold;">// </span><span style="color: #912cee;">seek all alternatives</span>
 </pre>
 </div>
 <p>
@@ -991,22 +962,21 @@ matches null and assigns it to <code>max</code>, so that it is initialized for t
 match. Now <code>BreakX</code> scans to the next digit. <code>Arb</code> would do here, but
 <code>BreakX</code> will be more efficient.  Once we have found a digit, we scan out
 the longest string of digits with <code>Span</code>, and assign it to <code>cur</code>. The
-deferred call to <code>GtS.get()</code> tests if the string we assigned to <code>cur</code> is
-the longest so far. If not, then failure is signalled, and we seek
-alternatives (this means that <code>BreakX</code> will extend and look for the next
-digit string).  If the call to <code>GtS.get()</code> succeeds then the matched
-string is assigned as the largest string so far into <code>max</code> and its location
-is saved in <code>loc</code>. Finally <code>Fail</code> forces the match to fail and seek
-alternatives, so that the entire string is searched.
+deferred call to <code>GtS.get()</code> tests if the string we assigned to <code>cur</code> is the
+longest so far. If not, then failure is signalled, and we seek alternatives
+(this means that <code>BreakX</code> will extend and look for the next digit string).
+If the call to <code>GtS.get()</code> succeeds then the matched string is assigned as
+the largest string so far into <code>max</code> and its location is saved in
+<code>loc</code>. Finally <code>Fail</code> forces the match to fail and seek alternatives, so
+that the entire string is searched.
 </p>
 
 <p>
 If the pattern <code>find</code> is matched against a string, the variable <code>max</code> at the
 end of the pattern will have the longest string of digits, and <code>loc</code> will be
 the starting character location of the string. For example,
-<code>Match("ab123cd4657ef23", find)</code> will assign "4657" to <code>max</code> and <code>11</code> to
-<code>loc</code> (indicating that the string ends with the eleventh character of the
-string).
+<code>find("ab123cd4657ef23")</code> will assign "4657" to <code>max</code> and <code>11</code> to <code>loc</code>
+(indicating that the string ends with the eleventh character of the string).
 </p>
 </div>
 </div>
@@ -1024,9 +994,9 @@ The basic pattern construction operators are renamed as follows:
 </p>
 <div class="org-src-container">
 
-<pre class="src src-c++">SPITBOL     C++
+<pre class="src src-c++"><span style="color: #0000ff;">SPITBOL</span>     <span style="color: #00008b; font-weight: bold;">C</span>++
 (space)      &amp;
-   |         | (Or for Character)
+   |         | (Or <span style="color: #0000cd; font-weight: bold;">for</span> Character)
    $         %
    .         *
    *         +
@@ -1047,9 +1017,9 @@ The actual pattern matching syntax is modified in C++ as follows:
 </p>
 <div class="org-src-container">
 
-<pre class="src src-c++">SPITBOL      C++
-x y          Match(x, y);
-x y = repl   Match(x, y, repl);
+<pre class="src src-c++"><span style="color: #0000ff;">SPITBOL</span>      <span style="color: #00008b; font-weight: bold;">C</span>++
+x y          y(x);
+<span style="color: #0000ff;">x</span> <span style="color: #000000;">y</span> = repl   y(x) = repl;
 </pre>
 </div>
 <p>
@@ -1064,107 +1034,122 @@ and pattern failure is indicated by returning a <code>bool</code> result from th
 <div class="outline-text-2" id="text-2">
 <div class="org-src-container">
 
-<pre class="src src-c++">#include &lt;string&gt;
-#include &lt;iostream&gt;
+<pre class="src src-c++"><span style="color: #008b00; font-weight: bold;">#include</span> <span style="color: #008b00;">&lt;string&gt;</span>
+<span style="color: #008b00; font-weight: bold;">#include</span> <span style="color: #008b00;">&lt;iostream&gt;</span>
 
-#include "Pattern.H"
+<span style="color: #008b00; font-weight: bold;">#include</span> <span style="color: #008b00;">"Pattern.H"</span>
 
-using namespace PatMat;
-using namespace std;
+<span style="color: #0000cd; font-weight: bold;">using</span> <span style="color: #0000cd; font-weight: bold;">namespace</span> <span style="font-weight: bold; text-decoration: underline;">PatMat</span>;
+<span style="color: #0000cd; font-weight: bold;">using</span> <span style="color: #0000cd; font-weight: bold;">namespace</span> <span style="font-weight: bold; text-decoration: underline;">std</span>;
 
-class MaxLen
+
+<span style="color: #0000cd; font-weight: bold;">class</span> <span style="color: #0000ff;">MaxLen</span>
 :
-    public BoolGetter
+    <span style="color: #0000cd; font-weight: bold;">public</span> <span style="color: #0000ff;">BoolGetter</span>
 {
-    const string&amp; cur_;
-    const string&amp; max_;
+    <span style="color: #0000cd; font-weight: bold;">const</span> <span style="color: #0000ff;">string</span>&amp; <span style="color: #000000;">cur_</span>;
+    <span style="color: #0000cd; font-weight: bold;">const</span> <span style="color: #0000ff;">string</span>&amp; <span style="color: #000000;">max_</span>;
 
-    public:
+    <span style="color: #0000cd; font-weight: bold;">public</span>:
 
-        MaxLen(const string&amp; cur, const string&amp; max)
+        <span style="color: #00008b; font-weight: bold;">MaxLen</span>(<span style="color: #0000cd; font-weight: bold;">const</span> <span style="color: #0000ff;">string</span>&amp; <span style="color: #000000;">cur</span>, <span style="color: #0000cd; font-weight: bold;">const</span> <span style="color: #0000ff;">string</span>&amp; <span style="color: #000000;">max</span>)
         :
             cur_(cur),
             max_(max)
         {}
 
-        bool get()
+        <span style="color: #0000ff;">bool</span> <span style="color: #00008b; font-weight: bold;">get</span>() <span style="color: #0000cd; font-weight: bold;">const</span>
         {
-            return cur_.size() &gt; max_.size();
+            <span style="color: #0000cd; font-weight: bold;">return</span> cur_.size() &gt; max_.size();
         }
 };
 
 
-int main()
+<span style="color: #0000cd; font-weight: bold;">class</span> <span style="color: #0000ff;">Sout</span>
+:
+    <span style="color: #0000cd; font-weight: bold;">public</span> <span style="color: #0000ff;">StringSetter</span>
+{
+<span style="color: #0000cd; font-weight: bold;">public</span>:
+
+    <span style="color: #0000ff;">void</span> <span style="color: #00008b; font-weight: bold;">set</span>(<span style="color: #0000cd; font-weight: bold;">const</span> <span style="font-weight: bold; text-decoration: underline;">std</span>::<span style="color: #0000ff;">string</span>&amp; <span style="color: #000000;">str</span>)
+    {
+        cout &lt;&lt; str;
+    }
+};
+
+<span style="color: #0000ff;">Sout</span> <span style="color: #000000;">sout</span>;
+
+
+<span style="color: #0000ff;">int</span> <span style="color: #00008b; font-weight: bold;">main</span>()
 {
     {
-        MatchRes m("Change brackets around character (a)");
-        string c;
-        Match(m, '(' &amp; Len(1) % c &amp; ')');
-        m = '[' + c + ']';
-        cout &lt;&lt; m &lt;&lt; endl;
+        <span style="color: #0000ff;">string</span> <span style="color: #000000;">s</span>(<span style="color: #008b00;">"Change brackets around a character (c)"</span>);
+        <span style="color: #0000ff;">string</span> <span style="color: #000000;">c</span>;
+        (<span style="color: #008b00;">'('</span> &amp; Len(1) % c &amp; <span style="color: #008b00;">')'</span>)(s) = <span style="color: #008b00;">'['</span> + c + <span style="color: #008b00;">']'</span>;
+        cout &lt;&lt; s &lt;&lt; endl;
     }
     {
-        //const Pattern digs = Span("0123456789");
-        const Pattern digs = Span(CharacterSets::digit);
-        const Pattern lNum = Pos(0U) &amp; digs &amp; '.' &amp; Span(' ');
-        string line("258. Words etc.");
-        Match(line, lNum, "");
+        <span style="color: #912cee; font-weight: bold;">//</span><span style="color: #912cee;">const Pattern digs = Span("0123456789");</span>
+        <span style="color: #0000cd; font-weight: bold;">const</span> <span style="color: #0000ff;">Pattern</span> <span style="color: #000000;">digs</span> = Span(<span style="font-weight: bold; text-decoration: underline;">CharacterSets</span>::digit);
+        <span style="color: #0000cd; font-weight: bold;">const</span> <span style="color: #0000ff;">Pattern</span> <span style="color: #000000;">lNum</span> = Pos(0U) &amp; digs &amp; <span style="color: #008b00;">'.'</span> &amp; Span(<span style="color: #008b00;">' '</span>);
+        <span style="color: #0000ff;">string</span> <span style="color: #000000;">line</span>(<span style="color: #008b00;">"258. Words etc."</span>);
+        lNum(line) = <span style="color: #008b00;">""</span>;
         cout &lt;&lt; line &lt;&lt; endl;
     }
     {
-        string num1, num2;
-        const Pattern blank = NSpan(' ');
-        const Pattern num = Span("0123456789");
-        const Pattern nums = blank &amp; num % num1 &amp; Span(" ,") &amp; num % num2;
-        Match(" 124, 257 ", nums);
-        cout &lt;&lt; "num1 = " &lt;&lt; num1 &lt;&lt; "; num2 = " &lt;&lt; num2 &lt;&lt; endl;
+        <span style="color: #0000ff;">string</span> <span style="color: #000000;">num1</span>, <span style="color: #000000;">num2</span>;
+        <span style="color: #0000cd; font-weight: bold;">const</span> <span style="color: #0000ff;">Pattern</span> <span style="color: #000000;">blank</span> = NSpan(<span style="color: #008b00;">' '</span>);
+        <span style="color: #0000cd; font-weight: bold;">const</span> <span style="color: #0000ff;">Pattern</span> <span style="color: #000000;">num</span> = Span(<span style="color: #008b00;">"0123456789"</span>);
+        <span style="color: #0000cd; font-weight: bold;">const</span> <span style="color: #0000ff;">Pattern</span> <span style="color: #000000;">nums</span> = blank &amp; num % num1 &amp; Span(<span style="color: #008b00;">" ,"</span>) &amp; num % num2;
+        nums(<span style="color: #008b00;">" 124, 257 "</span>);
+        cout &lt;&lt; <span style="color: #008b00;">"num1 = "</span> &lt;&lt; num1 &lt;&lt; <span style="color: #008b00;">"; num2 = "</span> &lt;&lt; num2 &lt;&lt; endl;
     }
     {
-        const Pattern digs  = Span(CharacterSets::digit);
-        const Pattern uDigs = digs &amp; Arbno('_' &amp; digs);
-        const Pattern eDig  = Span(CharacterSets::xdigit);
-        const Pattern ueDig = eDig &amp; Arbno('_' &amp; eDig);
-        const Pattern bChar = Any("#:");
-        string temp;
-        const Pattern bNum = uDigs &amp; bChar % temp &amp; ueDig &amp; (+temp);
-        const string subject("16#123_abc#");
-        if (Match(subject, bNum)) cout &lt;&lt; "Matched " &lt;&lt; subject &lt;&lt; endl;
+        <span style="color: #0000cd; font-weight: bold;">const</span> <span style="color: #0000ff;">Pattern</span> <span style="color: #000000;">digs</span>  = Span(<span style="font-weight: bold; text-decoration: underline;">CharacterSets</span>::digit);
+        <span style="color: #0000cd; font-weight: bold;">const</span> <span style="color: #0000ff;">Pattern</span> <span style="color: #000000;">uDigs</span> = digs &amp; Arbno(<span style="color: #008b00;">'_'</span> &amp; digs);
+        <span style="color: #0000cd; font-weight: bold;">const</span> <span style="color: #0000ff;">Pattern</span> <span style="color: #000000;">eDig</span>  = Span(<span style="font-weight: bold; text-decoration: underline;">CharacterSets</span>::xdigit);
+        <span style="color: #0000cd; font-weight: bold;">const</span> <span style="color: #0000ff;">Pattern</span> <span style="color: #000000;">ueDig</span> = eDig &amp; Arbno(<span style="color: #008b00;">'_'</span> &amp; eDig);
+        <span style="color: #0000cd; font-weight: bold;">const</span> <span style="color: #0000ff;">Pattern</span> <span style="color: #000000;">bChar</span> = Any(<span style="color: #008b00;">"#:"</span>);
+        <span style="color: #0000ff;">string</span> <span style="color: #000000;">temp</span>;
+        <span style="color: #0000cd; font-weight: bold;">const</span> <span style="color: #0000ff;">Pattern</span> <span style="color: #000000;">bNum</span> = uDigs &amp; bChar % temp &amp; ueDig &amp; (+temp);
+        <span style="color: #0000cd; font-weight: bold;">const</span> <span style="color: #0000ff;">string</span> <span style="color: #000000;">subject</span>(<span style="color: #008b00;">"16#123_abc#"</span>);
+        <span style="color: #0000cd; font-weight: bold;">if</span> (bNum(subject)) cout &lt;&lt; <span style="color: #008b00;">"Matched "</span> &lt;&lt; subject &lt;&lt; endl;
     }
     {
-        Pattern balancedString;
+        <span style="color: #0000ff;">Pattern</span> <span style="color: #000000;">balancedString</span>;
 
-        Pattern element =
-            NotAny("[]{}")
-          | ('[' &amp; (+balancedString) &amp; ']')
-          | ('{' &amp; (+balancedString) &amp; '}');
+        <span style="color: #0000ff;">Pattern</span> <span style="color: #000000;">element</span> =
+            NotAny(<span style="color: #008b00;">"[]{}"</span>)
+          | (<span style="color: #008b00;">'['</span> &amp; (+balancedString) &amp; <span style="color: #008b00;">']'</span>)
+          | (<span style="color: #008b00;">'{'</span> &amp; (+balancedString) &amp; <span style="color: #008b00;">'}'</span>);
 
         balancedString = element &amp; Arbno(element);
 
-        cout &lt;&lt; Match("xy[ab{cd}]", balancedString % cout &amp; Fail()) &lt;&lt; endl;
+        cout &lt;&lt; (balancedString % sout &amp; Fail())(<span style="color: #008b00;">"xy[ab{cd}]"</span>) &lt;&lt; endl;
     }
     {
-        string cur, max;
-        Natural loc;
+        <span style="color: #0000ff;">string</span> <span style="color: #000000;">cur</span>, <span style="color: #000000;">max</span>;
+        <span style="color: #0000ff;">Natural</span> <span style="color: #000000;">loc</span>;
 
-        MaxLen GtS(cur, max);
+        <span style="color: #0000ff;">MaxLen</span> <span style="color: #000000;">GtS</span>(cur, max);
 
-        const CharacterSet&amp; digit = CharacterSets::digit;
-        const Pattern digits = Span(digit);
+        <span style="color: #0000cd; font-weight: bold;">const</span> <span style="color: #0000ff;">CharacterSet</span>&amp; <span style="color: #000000;">digit</span> = <span style="font-weight: bold; text-decoration: underline;">CharacterSets</span>::digit;
+        <span style="color: #0000cd; font-weight: bold;">const</span> <span style="color: #0000ff;">Pattern</span> <span style="color: #000000;">digits</span> = Span(digit);
 
-        const Pattern find =
-            "" % max &amp; Fence()         &amp; // initialize max to null
-            BreakX(digit)              &amp; // scan looking for digits
-            ((digits % cur             &amp; // assign next string to cur
-             (+GtS)                    &amp; // check cur.size() &gt; max.size()
-             Setcur(loc))                // if so, save location
-                     % max)            &amp; // and assign to max
-            Fail();                      // seek all alternatives
+        <span style="color: #0000cd; font-weight: bold;">const</span> <span style="color: #0000ff;">Pattern</span> <span style="color: #000000;">find</span> =
+            <span style="color: #008b00;">""</span> % max &amp; Fence()         &amp; <span style="color: #912cee; font-weight: bold;">// </span><span style="color: #912cee;">initialize max to null</span>
+            BreakX(digit)              &amp; <span style="color: #912cee; font-weight: bold;">// </span><span style="color: #912cee;">scan looking for digits</span>
+            ((digits % cur             &amp; <span style="color: #912cee; font-weight: bold;">// </span><span style="color: #912cee;">assign next string to cur</span>
+             (+GtS)                    &amp; <span style="color: #912cee; font-weight: bold;">// </span><span style="color: #912cee;">check cur.size() &gt; max.size()</span>
+             Setcur(loc))                <span style="color: #912cee; font-weight: bold;">// </span><span style="color: #912cee;">if so, save location</span>
+                     % max)            &amp; <span style="color: #912cee; font-weight: bold;">// </span><span style="color: #912cee;">and assign to max</span>
+            Fail();                      <span style="color: #912cee; font-weight: bold;">// </span><span style="color: #912cee;">seek all alternatives</span>
 
-        Match("ab123cd4657ef23", find);
-        cout&lt;&lt; "max = " &lt;&lt; max &lt;&lt; "; loc = " &lt;&lt; loc &lt;&lt; endl;
+        find(<span style="color: #008b00;">"ab123cd4657ef23"</span>);
+        cout&lt;&lt; <span style="color: #008b00;">"max = "</span> &lt;&lt; max &lt;&lt; <span style="color: #008b00;">"; loc = "</span> &lt;&lt; loc &lt;&lt; endl;
     }
 
-    return 0;
+    <span style="color: #0000cd; font-weight: bold;">return</span> 0;
 }
 </pre>
 </div>
@@ -1175,480 +1160,443 @@ int main()
 <div class="outline-text-2" id="text-3">
 <div class="org-src-container">
 
-<pre class="src src-c++">// ----------------------------------------------------------------------------
-/// Pattern functions and operators
-// ----------------------------------------------------------------------------
+<pre class="src src-c++"><span style="color: #912cee; font-weight: bold;">// </span><span style="color: #912cee;">----------------------------------------------------------------------------</span>
+<span style="color: #912cee; font-weight: bold;">/// </span><span style="color: #912cee;">Pattern functions and operators</span>
+<span style="color: #912cee; font-weight: bold;">// </span><span style="color: #912cee;">----------------------------------------------------------------------------</span>
 
-// ----------------------------------------------------------------------------
-///  Abort
-// ----------------------------------------------------------------------------
-// Constructs a pattern that immediately aborts the entire match
-Pattern Abort();
+<span style="color: #912cee; font-weight: bold;">// </span><span style="color: #912cee;">----------------------------------------------------------------------------</span>
+<span style="color: #912cee; font-weight: bold;">///  </span><span style="color: #912cee;">Abort</span>
+<span style="color: #912cee; font-weight: bold;">// </span><span style="color: #912cee;">----------------------------------------------------------------------------</span>
+<span style="color: #912cee; font-weight: bold;">// </span><span style="color: #912cee;">Constructs a pattern that immediately aborts the entire match</span>
+<span style="color: #0000ff;">Pattern</span> <span style="color: #00008b; font-weight: bold;">Abort</span>();
 
-// ----------------------------------------------------------------------------
-///  Alternation
-// ----------------------------------------------------------------------------
-// Creates a pattern that will first try to match l and then on a subsequent
-// failure, attempts to match r instead.
-// Matches l followed by r
-// SPITBOL: binary "|"
-// C++: binary "|"
+<span style="color: #912cee; font-weight: bold;">// </span><span style="color: #912cee;">----------------------------------------------------------------------------</span>
+<span style="color: #912cee; font-weight: bold;">///  </span><span style="color: #912cee;">Alternation</span>
+<span style="color: #912cee; font-weight: bold;">// </span><span style="color: #912cee;">----------------------------------------------------------------------------</span>
+<span style="color: #912cee; font-weight: bold;">// </span><span style="color: #912cee;">Creates a pattern that will first try to match l and then on a subsequent</span>
+<span style="color: #912cee; font-weight: bold;">// </span><span style="color: #912cee;">failure, attempts to match r instead.</span>
+<span style="color: #912cee; font-weight: bold;">// </span><span style="color: #912cee;">Matches l followed by r</span>
+<span style="color: #912cee; font-weight: bold;">// </span><span style="color: #912cee;">SPITBOL: binary "|"</span>
+<span style="color: #912cee; font-weight: bold;">// </span><span style="color: #912cee;">C++: binary "|"</span>
 
-Pattern operator|(const std::string&amp; l, const Pattern&amp; r);
-Pattern operator|(const Character *l, const Pattern&amp; r);
-Pattern operator|(const Pattern&amp; l, const std::string&amp; r);
-Pattern operator|(const Pattern&amp; l, const Character *r);
-Pattern operator|(const std::string&amp; l, const std::string&amp; r);
-Pattern operator|(const Character *l, const std::string&amp; r);
-Pattern operator|(const std::string&amp; l, const Character *r);
-Pattern Or(const Character *l, const Character *r);
-Pattern operator|(const Pattern&amp; l, const Pattern&amp; r);
-Pattern operator|(const Character l, const Pattern&amp; r);
-Pattern operator|(const Pattern&amp; l, const Character r);
-Pattern operator|(const std::string&amp; l, const Character r);
-Pattern Or(const Character *l, const Character r);
-Pattern operator|(const Character l, const std::string&amp; r);
-Pattern Or(const Character l, const Character *r);
+<span style="color: #0000ff;">Pattern</span> <span style="color: #0000cd; font-weight: bold;">operator</span><span style="color: #00008b; font-weight: bold;">|</span>(<span style="color: #0000cd; font-weight: bold;">const</span> <span style="font-weight: bold; text-decoration: underline;">std</span>::<span style="color: #0000ff;">string</span>&amp; <span style="color: #000000;">l</span>, <span style="color: #0000cd; font-weight: bold;">const</span> <span style="color: #0000ff;">Pattern</span>&amp; <span style="color: #000000;">r</span>);
+<span style="color: #0000ff;">Pattern</span> <span style="color: #0000cd; font-weight: bold;">operator</span><span style="color: #00008b; font-weight: bold;">|</span>(<span style="color: #0000cd; font-weight: bold;">const</span> <span style="color: #0000ff;">Character</span> *<span style="color: #000000;">l</span>, <span style="color: #0000cd; font-weight: bold;">const</span> <span style="color: #0000ff;">Pattern</span>&amp; <span style="color: #000000;">r</span>);
+<span style="color: #0000ff;">Pattern</span> <span style="color: #0000cd; font-weight: bold;">operator</span><span style="color: #00008b; font-weight: bold;">|</span>(<span style="color: #0000cd; font-weight: bold;">const</span> <span style="color: #0000ff;">Pattern</span>&amp; <span style="color: #000000;">l</span>, <span style="color: #0000cd; font-weight: bold;">const</span> <span style="font-weight: bold; text-decoration: underline;">std</span>::<span style="color: #0000ff;">string</span>&amp; <span style="color: #000000;">r</span>);
+<span style="color: #0000ff;">Pattern</span> <span style="color: #0000cd; font-weight: bold;">operator</span><span style="color: #00008b; font-weight: bold;">|</span>(<span style="color: #0000cd; font-weight: bold;">const</span> <span style="color: #0000ff;">Pattern</span>&amp; <span style="color: #000000;">l</span>, <span style="color: #0000cd; font-weight: bold;">const</span> <span style="color: #0000ff;">Character</span> *<span style="color: #000000;">r</span>);
+<span style="color: #0000ff;">Pattern</span> <span style="color: #0000cd; font-weight: bold;">operator</span><span style="color: #00008b; font-weight: bold;">|</span>(<span style="color: #0000cd; font-weight: bold;">const</span> <span style="font-weight: bold; text-decoration: underline;">std</span>::<span style="color: #0000ff;">string</span>&amp; <span style="color: #000000;">l</span>, <span style="color: #0000cd; font-weight: bold;">const</span> <span style="font-weight: bold; text-decoration: underline;">std</span>::<span style="color: #0000ff;">string</span>&amp; <span style="color: #000000;">r</span>);
+<span style="color: #0000ff;">Pattern</span> <span style="color: #0000cd; font-weight: bold;">operator</span><span style="color: #00008b; font-weight: bold;">|</span>(<span style="color: #0000cd; font-weight: bold;">const</span> <span style="color: #0000ff;">Character</span> *<span style="color: #000000;">l</span>, <span style="color: #0000cd; font-weight: bold;">const</span> <span style="font-weight: bold; text-decoration: underline;">std</span>::<span style="color: #0000ff;">string</span>&amp; <span style="color: #000000;">r</span>);
+<span style="color: #0000ff;">Pattern</span> <span style="color: #0000cd; font-weight: bold;">operator</span><span style="color: #00008b; font-weight: bold;">|</span>(<span style="color: #0000cd; font-weight: bold;">const</span> <span style="font-weight: bold; text-decoration: underline;">std</span>::<span style="color: #0000ff;">string</span>&amp; <span style="color: #000000;">l</span>, <span style="color: #0000cd; font-weight: bold;">const</span> <span style="color: #0000ff;">Character</span> *<span style="color: #000000;">r</span>);
+<span style="color: #0000ff;">Pattern</span> <span style="color: #00008b; font-weight: bold;">Or</span>(<span style="color: #0000cd; font-weight: bold;">const</span> <span style="color: #0000ff;">Character</span> *<span style="color: #000000;">l</span>, <span style="color: #0000cd; font-weight: bold;">const</span> <span style="color: #0000ff;">Character</span> *<span style="color: #000000;">r</span>);
+<span style="color: #0000ff;">Pattern</span> <span style="color: #0000cd; font-weight: bold;">operator</span><span style="color: #00008b; font-weight: bold;">|</span>(<span style="color: #0000cd; font-weight: bold;">const</span> <span style="color: #0000ff;">Pattern</span>&amp; <span style="color: #000000;">l</span>, <span style="color: #0000cd; font-weight: bold;">const</span> <span style="color: #0000ff;">Pattern</span>&amp; <span style="color: #000000;">r</span>);
+<span style="color: #0000ff;">Pattern</span> <span style="color: #0000cd; font-weight: bold;">operator</span><span style="color: #00008b; font-weight: bold;">|</span>(<span style="color: #0000cd; font-weight: bold;">const</span> <span style="color: #0000ff;">Character</span> <span style="color: #000000;">l</span>, <span style="color: #0000cd; font-weight: bold;">const</span> <span style="color: #0000ff;">Pattern</span>&amp; <span style="color: #000000;">r</span>);
+<span style="color: #0000ff;">Pattern</span> <span style="color: #0000cd; font-weight: bold;">operator</span><span style="color: #00008b; font-weight: bold;">|</span>(<span style="color: #0000cd; font-weight: bold;">const</span> <span style="color: #0000ff;">Pattern</span>&amp; <span style="color: #000000;">l</span>, <span style="color: #0000cd; font-weight: bold;">const</span> <span style="color: #0000ff;">Character</span> <span style="color: #000000;">r</span>);
+<span style="color: #0000ff;">Pattern</span> <span style="color: #0000cd; font-weight: bold;">operator</span><span style="color: #00008b; font-weight: bold;">|</span>(<span style="color: #0000cd; font-weight: bold;">const</span> <span style="font-weight: bold; text-decoration: underline;">std</span>::<span style="color: #0000ff;">string</span>&amp; <span style="color: #000000;">l</span>, <span style="color: #0000cd; font-weight: bold;">const</span> <span style="color: #0000ff;">Character</span> <span style="color: #000000;">r</span>);
+<span style="color: #0000ff;">Pattern</span> <span style="color: #00008b; font-weight: bold;">Or</span>(<span style="color: #0000cd; font-weight: bold;">const</span> <span style="color: #0000ff;">Character</span> *<span style="color: #000000;">l</span>, <span style="color: #0000cd; font-weight: bold;">const</span> <span style="color: #0000ff;">Character</span> <span style="color: #000000;">r</span>);
+<span style="color: #0000ff;">Pattern</span> <span style="color: #0000cd; font-weight: bold;">operator</span><span style="color: #00008b; font-weight: bold;">|</span>(<span style="color: #0000cd; font-weight: bold;">const</span> <span style="color: #0000ff;">Character</span> <span style="color: #000000;">l</span>, <span style="color: #0000cd; font-weight: bold;">const</span> <span style="font-weight: bold; text-decoration: underline;">std</span>::<span style="color: #0000ff;">string</span>&amp; <span style="color: #000000;">r</span>);
+<span style="color: #0000ff;">Pattern</span> <span style="color: #00008b; font-weight: bold;">Or</span>(<span style="color: #0000cd; font-weight: bold;">const</span> <span style="color: #0000ff;">Character</span> <span style="color: #000000;">l</span>, <span style="color: #0000cd; font-weight: bold;">const</span> <span style="color: #0000ff;">Character</span> *<span style="color: #000000;">r</span>);
 
-// ----------------------------------------------------------------------------
-/// Any
-// ----------------------------------------------------------------------------
-// Constructs a pattern that matches a single character that is one of the
-// characters in the given argument. The pattern fails if the current character
-// is not in str.
+<span style="color: #912cee; font-weight: bold;">// </span><span style="color: #912cee;">----------------------------------------------------------------------------</span>
+<span style="color: #912cee; font-weight: bold;">/// </span><span style="color: #912cee;">Any</span>
+<span style="color: #912cee; font-weight: bold;">// </span><span style="color: #912cee;">----------------------------------------------------------------------------</span>
+<span style="color: #912cee; font-weight: bold;">// </span><span style="color: #912cee;">Constructs a pattern that matches a single character that is one of the</span>
+<span style="color: #912cee; font-weight: bold;">// </span><span style="color: #912cee;">characters in the given argument. The pattern fails if the current character</span>
+<span style="color: #912cee; font-weight: bold;">// </span><span style="color: #912cee;">is not in str.</span>
 
-Pattern Any(const Character c);
-Pattern Any(const CharacterSet&amp; set);
-Pattern Any(const std::string&amp; str);
-Pattern Any(const std::string *str);
-Pattern Any(const StringGetter&amp;);
+<span style="color: #0000ff;">Pattern</span> <span style="color: #00008b; font-weight: bold;">Any</span>(<span style="color: #0000cd; font-weight: bold;">const</span> <span style="color: #0000ff;">Character</span> <span style="color: #000000;">c</span>);
+<span style="color: #0000ff;">Pattern</span> <span style="color: #00008b; font-weight: bold;">Any</span>(<span style="color: #0000cd; font-weight: bold;">const</span> <span style="color: #0000ff;">CharacterSet</span>&amp; <span style="color: #000000;">set</span>);
+<span style="color: #0000ff;">Pattern</span> <span style="color: #00008b; font-weight: bold;">Any</span>(<span style="color: #0000cd; font-weight: bold;">const</span> <span style="font-weight: bold; text-decoration: underline;">std</span>::<span style="color: #0000ff;">string</span>&amp; <span style="color: #000000;">str</span>);
+<span style="color: #0000ff;">Pattern</span> <span style="color: #00008b; font-weight: bold;">Any</span>(<span style="color: #0000cd; font-weight: bold;">const</span> <span style="font-weight: bold; text-decoration: underline;">std</span>::<span style="color: #0000ff;">string</span> *<span style="color: #000000;">str</span>);
+<span style="color: #0000ff;">Pattern</span> <span style="color: #00008b; font-weight: bold;">Any</span>(<span style="color: #0000cd; font-weight: bold;">const</span> <span style="color: #0000ff;">StringGetter</span>&amp;);
 
-// ----------------------------------------------------------------------------
-/// Arb
-// ----------------------------------------------------------------------------
-//
-// Constructs a pattern that will match any string. On the first attempt, the
-// pattern matches a null string, then on each successive failure, it matches
-// one more character, and only fails if matching the entire rest of the string.
+<span style="color: #912cee; font-weight: bold;">// </span><span style="color: #912cee;">----------------------------------------------------------------------------</span>
+<span style="color: #912cee; font-weight: bold;">/// </span><span style="color: #912cee;">Arb</span>
+<span style="color: #912cee; font-weight: bold;">// </span><span style="color: #912cee;">----------------------------------------------------------------------------</span>
+<span style="color: #912cee; font-weight: bold;">//</span>
+<span style="color: #912cee; font-weight: bold;">// </span><span style="color: #912cee;">Constructs a pattern that will match any string. On the first attempt, the</span>
+<span style="color: #912cee; font-weight: bold;">// </span><span style="color: #912cee;">pattern matches a null string, then on each successive failure, it matches</span>
+<span style="color: #912cee; font-weight: bold;">// </span><span style="color: #912cee;">one more character, and only fails if matching the entire rest of the string.</span>
 
-Pattern Arb();
+<span style="color: #0000ff;">Pattern</span> <span style="color: #00008b; font-weight: bold;">Arb</span>();
 
-// ----------------------------------------------------------------------------
-///  Arbno
-// ----------------------------------------------------------------------------
-//
-// Pattern repetition. First matches null, then on a subsequent failure attempts
-// to match an additional instance of the given pattern.  Equivalent to (but
-// more efficient than) P &amp; ("" | (P &amp; ("" | ...
+<span style="color: #912cee; font-weight: bold;">// </span><span style="color: #912cee;">----------------------------------------------------------------------------</span>
+<span style="color: #912cee; font-weight: bold;">///  </span><span style="color: #912cee;">Arbno</span>
+<span style="color: #912cee; font-weight: bold;">// </span><span style="color: #912cee;">----------------------------------------------------------------------------</span>
+<span style="color: #912cee; font-weight: bold;">//</span>
+<span style="color: #912cee; font-weight: bold;">// </span><span style="color: #912cee;">Pattern repetition. First matches null, then on a subsequent failure attempts</span>
+<span style="color: #912cee; font-weight: bold;">// </span><span style="color: #912cee;">to match an additional instance of the given pattern.  Equivalent to (but</span>
+<span style="color: #912cee; font-weight: bold;">// </span><span style="color: #912cee;">more efficient than) P &amp; ("" | (P &amp; ("" | ...</span>
 
-Pattern Arbno(const Character c);
-Pattern Arbno(const std::string&amp; str);
-Pattern Arbno(const Character *str);
-Pattern Arbno(const Pattern&amp; p);
+<span style="color: #0000ff;">Pattern</span> <span style="color: #00008b; font-weight: bold;">Arbno</span>(<span style="color: #0000cd; font-weight: bold;">const</span> <span style="color: #0000ff;">Character</span> <span style="color: #000000;">c</span>);
+<span style="color: #0000ff;">Pattern</span> <span style="color: #00008b; font-weight: bold;">Arbno</span>(<span style="color: #0000cd; font-weight: bold;">const</span> <span style="font-weight: bold; text-decoration: underline;">std</span>::<span style="color: #0000ff;">string</span>&amp; <span style="color: #000000;">str</span>);
+<span style="color: #0000ff;">Pattern</span> <span style="color: #00008b; font-weight: bold;">Arbno</span>(<span style="color: #0000cd; font-weight: bold;">const</span> <span style="color: #0000ff;">Character</span> *<span style="color: #000000;">str</span>);
+<span style="color: #0000ff;">Pattern</span> <span style="color: #00008b; font-weight: bold;">Arbno</span>(<span style="color: #0000cd; font-weight: bold;">const</span> <span style="color: #0000ff;">Pattern</span>&amp; <span style="color: #000000;">p</span>);
 
-// ----------------------------------------------------------------------------
-///  Assignment immediately
-// ----------------------------------------------------------------------------
-//
-// Matches P, and if the match succeeds, assigns the matched sub-string to the
-// given std::string variable S. This assignment happens as soon as the
-// sub-string is matched, and if the pattern P1 is matched more than once during
-// the course of the match, then the assignment will occur more than once.
-//
-// SPITBOL: binary "$"
-// C++: binary "%"
+<span style="color: #912cee; font-weight: bold;">// </span><span style="color: #912cee;">----------------------------------------------------------------------------</span>
+<span style="color: #912cee; font-weight: bold;">///  </span><span style="color: #912cee;">Assignment immediately</span>
+<span style="color: #912cee; font-weight: bold;">// </span><span style="color: #912cee;">----------------------------------------------------------------------------</span>
+<span style="color: #912cee; font-weight: bold;">//</span>
+<span style="color: #912cee; font-weight: bold;">// </span><span style="color: #912cee;">Matches P, and if the match succeeds, assigns the matched sub-string to the</span>
+<span style="color: #912cee; font-weight: bold;">// </span><span style="color: #912cee;">given std::string variable S. This assignment happens as soon as the</span>
+<span style="color: #912cee; font-weight: bold;">// </span><span style="color: #912cee;">sub-string is matched, and if the pattern P1 is matched more than once during</span>
+<span style="color: #912cee; font-weight: bold;">// </span><span style="color: #912cee;">the course of the match, then the assignment will occur more than once.</span>
+<span style="color: #912cee; font-weight: bold;">//</span>
+<span style="color: #912cee; font-weight: bold;">// </span><span style="color: #912cee;">SPITBOL: binary "$"</span>
+<span style="color: #912cee; font-weight: bold;">// </span><span style="color: #912cee;">C++: binary "%"</span>
 
-Pattern operator%(const Pattern&amp; p, std::string&amp; var);
-Pattern operator%(const Pattern&amp; p, StringGetter&amp; obj);
+<span style="color: #0000ff;">Pattern</span> <span style="color: #0000cd; font-weight: bold;">operator</span><span style="color: #00008b; font-weight: bold;">%</span>(<span style="color: #0000cd; font-weight: bold;">const</span> <span style="color: #0000ff;">Pattern</span>&amp; <span style="color: #000000;">p</span>, <span style="font-weight: bold; text-decoration: underline;">std</span>::<span style="color: #0000ff;">string</span>&amp; <span style="color: #000000;">var</span>);
+<span style="color: #0000ff;">Pattern</span> <span style="color: #0000cd; font-weight: bold;">operator</span><span style="color: #00008b; font-weight: bold;">%</span>(<span style="color: #0000cd; font-weight: bold;">const</span> <span style="color: #0000ff;">Pattern</span>&amp; <span style="color: #000000;">p</span>, <span style="color: #0000ff;">StringGetter</span>&amp; <span style="color: #000000;">obj</span>);
 
-// ----------------------------------------------------------------------------
-///  Assignment on match
-// ----------------------------------------------------------------------------
-//
-// Like "%" above, except that the assignment happens at most once after the
-// entire match is completed successfully. If the match fails, then no
-// assignment takes place.
-//
-// SPITBOL: binary "."
-// C++: binary "*"
+<span style="color: #912cee; font-weight: bold;">// </span><span style="color: #912cee;">----------------------------------------------------------------------------</span>
+<span style="color: #912cee; font-weight: bold;">///  </span><span style="color: #912cee;">Assignment on match</span>
+<span style="color: #912cee; font-weight: bold;">// </span><span style="color: #912cee;">----------------------------------------------------------------------------</span>
+<span style="color: #912cee; font-weight: bold;">//</span>
+<span style="color: #912cee; font-weight: bold;">// </span><span style="color: #912cee;">Like "%" above, except that the assignment happens at most once after the</span>
+<span style="color: #912cee; font-weight: bold;">// </span><span style="color: #912cee;">entire match is completed successfully. If the match fails, then no</span>
+<span style="color: #912cee; font-weight: bold;">// </span><span style="color: #912cee;">assignment takes place.</span>
+<span style="color: #912cee; font-weight: bold;">//</span>
+<span style="color: #912cee; font-weight: bold;">// </span><span style="color: #912cee;">SPITBOL: binary "."</span>
+<span style="color: #912cee; font-weight: bold;">// </span><span style="color: #912cee;">C++: binary "*"</span>
 
-Pattern operator*(const Pattern&amp; p, std::string&amp; var);
-Pattern operator*(const Pattern&amp; p, StringGetter&amp; obj);
+<span style="color: #0000ff;">Pattern</span> <span style="color: #0000cd; font-weight: bold;">operator</span><span style="color: #00008b; font-weight: bold;">*</span>(<span style="color: #0000cd; font-weight: bold;">const</span> <span style="color: #0000ff;">Pattern</span>&amp; <span style="color: #000000;">p</span>, <span style="font-weight: bold; text-decoration: underline;">std</span>::<span style="color: #0000ff;">string</span>&amp; <span style="color: #000000;">var</span>);
+<span style="color: #0000ff;">Pattern</span> <span style="color: #0000cd; font-weight: bold;">operator</span><span style="color: #00008b; font-weight: bold;">*</span>(<span style="color: #0000cd; font-weight: bold;">const</span> <span style="color: #0000ff;">Pattern</span>&amp; <span style="color: #000000;">p</span>, <span style="color: #0000ff;">StringGetter</span>&amp; <span style="color: #000000;">obj</span>);
 
-// ----------------------------------------------------------------------------
-///  Bal
-// ----------------------------------------------------------------------------
-//
-// Constructs a pattern that will match any non-empty string that is parentheses
-// balanced with respect to the parentheses characters open and close.
-// Attempts to extend the string if a subsequent failure occurs.
-Pattern Bal(const Character open, const Character close);
+<span style="color: #912cee; font-weight: bold;">// </span><span style="color: #912cee;">----------------------------------------------------------------------------</span>
+<span style="color: #912cee; font-weight: bold;">///  </span><span style="color: #912cee;">Bal</span>
+<span style="color: #912cee; font-weight: bold;">// </span><span style="color: #912cee;">----------------------------------------------------------------------------</span>
+<span style="color: #912cee; font-weight: bold;">//</span>
+<span style="color: #912cee; font-weight: bold;">// </span><span style="color: #912cee;">Constructs a pattern that will match any non-empty string that is parentheses</span>
+<span style="color: #912cee; font-weight: bold;">// </span><span style="color: #912cee;">balanced with respect to the parentheses characters open and close.</span>
+<span style="color: #912cee; font-weight: bold;">// </span><span style="color: #912cee;">Attempts to extend the string if a subsequent failure occurs.</span>
+<span style="color: #0000ff;">Pattern</span> <span style="color: #00008b; font-weight: bold;">Bal</span>(<span style="color: #0000cd; font-weight: bold;">const</span> <span style="color: #0000ff;">Character</span> <span style="color: #000000;">open</span>, <span style="color: #0000cd; font-weight: bold;">const</span> <span style="color: #0000ff;">Character</span> <span style="color: #000000;">close</span>);
 
-// ----------------------------------------------------------------------------
-///  Break
-// ----------------------------------------------------------------------------
-//
-// Constructs a pattern that matches a (possibly null) string which is
-// immediately followed by a character in the given argument. This character is
-// not part of the matched string. The pattern fails if the remaining characters
-// to be matched do not include any of the characters in str.
-Pattern Break(const Character c);
-Pattern Break(const CharacterSet&amp; set);
-Pattern Break(const std::string&amp; str);
-Pattern Break(const std::string *str);
-Pattern Break(const StringGetter&amp;);
+<span style="color: #912cee; font-weight: bold;">// </span><span style="color: #912cee;">----------------------------------------------------------------------------</span>
+<span style="color: #912cee; font-weight: bold;">///  </span><span style="color: #912cee;">Break</span>
+<span style="color: #912cee; font-weight: bold;">// </span><span style="color: #912cee;">----------------------------------------------------------------------------</span>
+<span style="color: #912cee; font-weight: bold;">//</span>
+<span style="color: #912cee; font-weight: bold;">// </span><span style="color: #912cee;">Constructs a pattern that matches a (possibly null) string which is</span>
+<span style="color: #912cee; font-weight: bold;">// </span><span style="color: #912cee;">immediately followed by a character in the given argument. This character is</span>
+<span style="color: #912cee; font-weight: bold;">// </span><span style="color: #912cee;">not part of the matched string. The pattern fails if the remaining characters</span>
+<span style="color: #912cee; font-weight: bold;">// </span><span style="color: #912cee;">to be matched do not include any of the characters in str.</span>
+<span style="color: #0000ff;">Pattern</span> <span style="color: #00008b; font-weight: bold;">Break</span>(<span style="color: #0000cd; font-weight: bold;">const</span> <span style="color: #0000ff;">Character</span> <span style="color: #000000;">c</span>);
+<span style="color: #0000ff;">Pattern</span> <span style="color: #00008b; font-weight: bold;">Break</span>(<span style="color: #0000cd; font-weight: bold;">const</span> <span style="color: #0000ff;">CharacterSet</span>&amp; <span style="color: #000000;">set</span>);
+<span style="color: #0000ff;">Pattern</span> <span style="color: #00008b; font-weight: bold;">Break</span>(<span style="color: #0000cd; font-weight: bold;">const</span> <span style="font-weight: bold; text-decoration: underline;">std</span>::<span style="color: #0000ff;">string</span>&amp; <span style="color: #000000;">str</span>);
+<span style="color: #0000ff;">Pattern</span> <span style="color: #00008b; font-weight: bold;">Break</span>(<span style="color: #0000cd; font-weight: bold;">const</span> <span style="font-weight: bold; text-decoration: underline;">std</span>::<span style="color: #0000ff;">string</span> *<span style="color: #000000;">str</span>);
+<span style="color: #0000ff;">Pattern</span> <span style="color: #00008b; font-weight: bold;">Break</span>(<span style="color: #0000cd; font-weight: bold;">const</span> <span style="color: #0000ff;">StringGetter</span>&amp;);
 
-// ----------------------------------------------------------------------------
-///  BreakX
-// ----------------------------------------------------------------------------
-//
-// Like Break, but the pattern attempts to extend on a failure to find the next
-// occurrence of a character in str, and only fails when the last such instance
-// causes a failure.
-Pattern BreakX(const Character c);
-Pattern BreakX(const CharacterSet&amp; set);
-Pattern BreakX(const std::string&amp; str);
-Pattern BreakX(const std::string *str);
-Pattern BreakX(const StringGetter&amp;);
+<span style="color: #912cee; font-weight: bold;">// </span><span style="color: #912cee;">----------------------------------------------------------------------------</span>
+<span style="color: #912cee; font-weight: bold;">///  </span><span style="color: #912cee;">BreakX</span>
+<span style="color: #912cee; font-weight: bold;">// </span><span style="color: #912cee;">----------------------------------------------------------------------------</span>
+<span style="color: #912cee; font-weight: bold;">//</span>
+<span style="color: #912cee; font-weight: bold;">// </span><span style="color: #912cee;">Like Break, but the pattern attempts to extend on a failure to find the next</span>
+<span style="color: #912cee; font-weight: bold;">// </span><span style="color: #912cee;">occurrence of a character in str, and only fails when the last such instance</span>
+<span style="color: #912cee; font-weight: bold;">// </span><span style="color: #912cee;">causes a failure.</span>
+<span style="color: #0000ff;">Pattern</span> <span style="color: #00008b; font-weight: bold;">BreakX</span>(<span style="color: #0000cd; font-weight: bold;">const</span> <span style="color: #0000ff;">Character</span> <span style="color: #000000;">c</span>);
+<span style="color: #0000ff;">Pattern</span> <span style="color: #00008b; font-weight: bold;">BreakX</span>(<span style="color: #0000cd; font-weight: bold;">const</span> <span style="color: #0000ff;">CharacterSet</span>&amp; <span style="color: #000000;">set</span>);
+<span style="color: #0000ff;">Pattern</span> <span style="color: #00008b; font-weight: bold;">BreakX</span>(<span style="color: #0000cd; font-weight: bold;">const</span> <span style="font-weight: bold; text-decoration: underline;">std</span>::<span style="color: #0000ff;">string</span>&amp; <span style="color: #000000;">str</span>);
+<span style="color: #0000ff;">Pattern</span> <span style="color: #00008b; font-weight: bold;">BreakX</span>(<span style="color: #0000cd; font-weight: bold;">const</span> <span style="font-weight: bold; text-decoration: underline;">std</span>::<span style="color: #0000ff;">string</span> *<span style="color: #000000;">str</span>);
+<span style="color: #0000ff;">Pattern</span> <span style="color: #00008b; font-weight: bold;">BreakX</span>(<span style="color: #0000cd; font-weight: bold;">const</span> <span style="color: #0000ff;">StringGetter</span>&amp;);
 
-// ----------------------------------------------------------------------------
-///  Concatenation operators
-// ----------------------------------------------------------------------------
-//
-// Matches L followed by r
-// SPITBOL: binary " " operator
-// C++: binary "&amp;" operator
+<span style="color: #912cee; font-weight: bold;">// </span><span style="color: #912cee;">----------------------------------------------------------------------------</span>
+<span style="color: #912cee; font-weight: bold;">///  </span><span style="color: #912cee;">Concatenation operators</span>
+<span style="color: #912cee; font-weight: bold;">// </span><span style="color: #912cee;">----------------------------------------------------------------------------</span>
+<span style="color: #912cee; font-weight: bold;">//</span>
+<span style="color: #912cee; font-weight: bold;">// </span><span style="color: #912cee;">Matches L followed by r</span>
+<span style="color: #912cee; font-weight: bold;">// </span><span style="color: #912cee;">SPITBOL: binary " " operator</span>
+<span style="color: #912cee; font-weight: bold;">// </span><span style="color: #912cee;">C++: binary "&amp;" operator</span>
 
-Pattern operator&amp;(const std::string&amp; l, const Pattern&amp; r);
-Pattern operator&amp;(const Pattern&amp; l, const std::string&amp; r);
-Pattern operator&amp;(const Pattern&amp; l, const Pattern&amp; r);
-Pattern operator&amp;(const Character l, const Pattern&amp; r);
-Pattern operator&amp;(const Pattern&amp; l, const Character r);
+<span style="color: #0000ff;">Pattern</span> <span style="color: #0000cd; font-weight: bold;">operator</span><span style="color: #00008b; font-weight: bold;">&amp;</span>(<span style="color: #0000cd; font-weight: bold;">const</span> <span style="font-weight: bold; text-decoration: underline;">std</span>::<span style="color: #0000ff;">string</span>&amp; <span style="color: #000000;">l</span>, <span style="color: #0000cd; font-weight: bold;">const</span> <span style="color: #0000ff;">Pattern</span>&amp; <span style="color: #000000;">r</span>);
+<span style="color: #0000ff;">Pattern</span> <span style="color: #0000cd; font-weight: bold;">operator</span><span style="color: #00008b; font-weight: bold;">&amp;</span>(<span style="color: #0000cd; font-weight: bold;">const</span> <span style="color: #0000ff;">Pattern</span>&amp; <span style="color: #000000;">l</span>, <span style="color: #0000cd; font-weight: bold;">const</span> <span style="font-weight: bold; text-decoration: underline;">std</span>::<span style="color: #0000ff;">string</span>&amp; <span style="color: #000000;">r</span>);
+<span style="color: #0000ff;">Pattern</span> <span style="color: #0000cd; font-weight: bold;">operator</span><span style="color: #00008b; font-weight: bold;">&amp;</span>(<span style="color: #0000cd; font-weight: bold;">const</span> <span style="color: #0000ff;">Pattern</span>&amp; <span style="color: #000000;">l</span>, <span style="color: #0000cd; font-weight: bold;">const</span> <span style="color: #0000ff;">Pattern</span>&amp; <span style="color: #000000;">r</span>);
+<span style="color: #0000ff;">Pattern</span> <span style="color: #0000cd; font-weight: bold;">operator</span><span style="color: #00008b; font-weight: bold;">&amp;</span>(<span style="color: #0000cd; font-weight: bold;">const</span> <span style="color: #0000ff;">Character</span> <span style="color: #000000;">l</span>, <span style="color: #0000cd; font-weight: bold;">const</span> <span style="color: #0000ff;">Pattern</span>&amp; <span style="color: #000000;">r</span>);
+<span style="color: #0000ff;">Pattern</span> <span style="color: #0000cd; font-weight: bold;">operator</span><span style="color: #00008b; font-weight: bold;">&amp;</span>(<span style="color: #0000cd; font-weight: bold;">const</span> <span style="color: #0000ff;">Pattern</span>&amp; <span style="color: #000000;">l</span>, <span style="color: #0000cd; font-weight: bold;">const</span> <span style="color: #0000ff;">Character</span> <span style="color: #000000;">r</span>);
 
-// ----------------------------------------------------------------------------
-///  Deferred Matching
-// ----------------------------------------------------------------------------
-// SPITBOL: unary "*"
-// C++: unary "+"
+<span style="color: #912cee; font-weight: bold;">// </span><span style="color: #912cee;">----------------------------------------------------------------------------</span>
+<span style="color: #912cee; font-weight: bold;">///  </span><span style="color: #912cee;">Deferred Matching</span>
+<span style="color: #912cee; font-weight: bold;">// </span><span style="color: #912cee;">----------------------------------------------------------------------------</span>
+<span style="color: #912cee; font-weight: bold;">// </span><span style="color: #912cee;">SPITBOL: unary "*"</span>
+<span style="color: #912cee; font-weight: bold;">// </span><span style="color: #912cee;">C++: unary "+"</span>
 
-//- This function constructs a pattern which at pattern matching time will
-//  access the current value of this variable, and match against the pattern
-//  value.
-//
-//  Here p must be a Pattern variable.
-//
-//  DANGEROUS if Pattern lifetime longer than referenced variable!!
-Pattern Defer(const Pattern&amp; p);
+<span style="color: #912cee; font-weight: bold;">//</span><span style="color: #912cee;">- This function constructs a pattern which at pattern matching time will</span>
+<span style="color: #912cee; font-weight: bold;">//  </span><span style="color: #912cee;">access the current value of this variable, and match against the pattern</span>
+<span style="color: #912cee; font-weight: bold;">//  </span><span style="color: #912cee;">value.</span>
+<span style="color: #912cee; font-weight: bold;">//</span>
+<span style="color: #912cee; font-weight: bold;">//  </span><span style="color: #912cee;">Here p must be a Pattern variable.</span>
+<span style="color: #912cee; font-weight: bold;">//</span>
+<span style="color: #912cee; font-weight: bold;">//  </span><span style="color: #912cee;">DANGEROUS if Pattern lifetime longer than referenced variable!!</span>
+<span style="color: #0000ff;">Pattern</span> <span style="color: #00008b; font-weight: bold;">Defer</span>(<span style="color: #0000cd; font-weight: bold;">const</span> <span style="color: #0000ff;">Pattern</span>&amp; <span style="color: #000000;">p</span>);
 
-//- This function constructs a pattern which at pattern matching time will
-//  access the current value of this variable, and match against these
-//  characters.
-//
-//  Here str must be a std::string variable.
-Pattern Defer(const std::string&amp; str);
+<span style="color: #912cee; font-weight: bold;">//</span><span style="color: #912cee;">- This function constructs a pattern which at pattern matching time will</span>
+<span style="color: #912cee; font-weight: bold;">//  </span><span style="color: #912cee;">access the current value of this variable, and match against these</span>
+<span style="color: #912cee; font-weight: bold;">//  </span><span style="color: #912cee;">characters.</span>
+<span style="color: #912cee; font-weight: bold;">//</span>
+<span style="color: #912cee; font-weight: bold;">//  </span><span style="color: #912cee;">Here str must be a std::string variable.</span>
+<span style="color: #0000ff;">Pattern</span> <span style="color: #00008b; font-weight: bold;">Defer</span>(<span style="color: #0000cd; font-weight: bold;">const</span> <span style="font-weight: bold; text-decoration: underline;">std</span>::<span style="color: #0000ff;">string</span>&amp; <span style="color: #000000;">str</span>);
 
-//- Constructs a pattern which at pattern matching time calls the given
-//  function, and then matches against the string or character value that is
-//  returned by the call.
-Pattern Defer(const StringGetter&amp; obj);
+<span style="color: #912cee; font-weight: bold;">//</span><span style="color: #912cee;">- Constructs a pattern which at pattern matching time calls the given</span>
+<span style="color: #912cee; font-weight: bold;">//  </span><span style="color: #912cee;">function, and then matches against the string or character value that is</span>
+<span style="color: #912cee; font-weight: bold;">//  </span><span style="color: #912cee;">returned by the call.</span>
+<span style="color: #0000ff;">Pattern</span> <span style="color: #00008b; font-weight: bold;">Defer</span>(<span style="color: #0000cd; font-weight: bold;">const</span> <span style="color: #0000ff;">StringGetter</span>&amp; <span style="color: #000000;">obj</span>);
 
-//- Constructs a predicate pattern function that at pattern matching time calls
-//  the given function. If True is returned, then the pattern matches.  If False
-//  is returned, then failure is signalled.
-Pattern Defer(const BoolGetter&amp; obj);
+<span style="color: #912cee; font-weight: bold;">//</span><span style="color: #912cee;">- Constructs a predicate pattern function that at pattern matching time calls</span>
+<span style="color: #912cee; font-weight: bold;">//  </span><span style="color: #912cee;">the given function. If True is returned, then the pattern matches.  If False</span>
+<span style="color: #912cee; font-weight: bold;">//  </span><span style="color: #912cee;">is returned, then failure is signalled.</span>
+<span style="color: #0000ff;">Pattern</span> <span style="color: #00008b; font-weight: bold;">Defer</span>(<span style="color: #0000cd; font-weight: bold;">const</span> <span style="color: #0000ff;">BoolGetter</span>&amp; <span style="color: #000000;">obj</span>);
 
-inline Pattern operator+(const Pattern&amp; p)
+<span style="color: #0000cd; font-weight: bold;">inline</span> <span style="color: #0000ff;">Pattern</span> <span style="color: #0000cd; font-weight: bold;">operator</span><span style="color: #00008b; font-weight: bold;">+</span>(<span style="color: #0000cd; font-weight: bold;">const</span> <span style="color: #0000ff;">Pattern</span>&amp; <span style="color: #000000;">p</span>)
 {
-    return Defer(p);
+    <span style="color: #0000cd; font-weight: bold;">return</span> Defer(p);
 }
 
-inline Pattern operator+(const std::string&amp; s)
+<span style="color: #0000cd; font-weight: bold;">inline</span> <span style="color: #0000ff;">Pattern</span> <span style="color: #0000cd; font-weight: bold;">operator</span><span style="color: #00008b; font-weight: bold;">+</span>(<span style="color: #0000cd; font-weight: bold;">const</span> <span style="font-weight: bold; text-decoration: underline;">std</span>::<span style="color: #0000ff;">string</span>&amp; <span style="color: #000000;">s</span>)
 {
-    return Defer(s);
+    <span style="color: #0000cd; font-weight: bold;">return</span> Defer(s);
 }
 
-inline Pattern operator+(const StringGetter&amp; obj)
+<span style="color: #0000cd; font-weight: bold;">inline</span> <span style="color: #0000ff;">Pattern</span> <span style="color: #0000cd; font-weight: bold;">operator</span><span style="color: #00008b; font-weight: bold;">+</span>(<span style="color: #0000cd; font-weight: bold;">const</span> <span style="color: #0000ff;">StringGetter</span>&amp; <span style="color: #000000;">obj</span>)
 {
-    return Defer(obj);
+    <span style="color: #0000cd; font-weight: bold;">return</span> Defer(obj);
 }
 
-inline Pattern operator+(const BoolGetter&amp; obj)
+<span style="color: #0000cd; font-weight: bold;">inline</span> <span style="color: #0000ff;">Pattern</span> <span style="color: #0000cd; font-weight: bold;">operator</span><span style="color: #00008b; font-weight: bold;">+</span>(<span style="color: #0000cd; font-weight: bold;">const</span> <span style="color: #0000ff;">BoolGetter</span>&amp; <span style="color: #000000;">obj</span>)
 {
-    return Defer(obj);
+    <span style="color: #0000cd; font-weight: bold;">return</span> Defer(obj);
 }
 
-// ----------------------------------------------------------------------------
-///  Fail
-// ----------------------------------------------------------------------------
-// Constructs a pattern that always fails
-Pattern Fail();
+<span style="color: #912cee; font-weight: bold;">// </span><span style="color: #912cee;">----------------------------------------------------------------------------</span>
+<span style="color: #912cee; font-weight: bold;">///  </span><span style="color: #912cee;">Fail</span>
+<span style="color: #912cee; font-weight: bold;">// </span><span style="color: #912cee;">----------------------------------------------------------------------------</span>
+<span style="color: #912cee; font-weight: bold;">// </span><span style="color: #912cee;">Constructs a pattern that always fails</span>
+<span style="color: #0000ff;">Pattern</span> <span style="color: #00008b; font-weight: bold;">Fail</span>();
 
-// ----------------------------------------------------------------------------
-///  Fence
-// ----------------------------------------------------------------------------
-//
-// Constructs a pattern that matches null on the first attempt, and then causes
-// the entire match to be aborted if a subsequent failure occurs.
-Pattern Fence();
+<span style="color: #912cee; font-weight: bold;">// </span><span style="color: #912cee;">----------------------------------------------------------------------------</span>
+<span style="color: #912cee; font-weight: bold;">///  </span><span style="color: #912cee;">Fence</span>
+<span style="color: #912cee; font-weight: bold;">// </span><span style="color: #912cee;">----------------------------------------------------------------------------</span>
+<span style="color: #912cee; font-weight: bold;">//</span>
+<span style="color: #912cee; font-weight: bold;">// </span><span style="color: #912cee;">Constructs a pattern that matches null on the first attempt, and then causes</span>
+<span style="color: #912cee; font-weight: bold;">// </span><span style="color: #912cee;">the entire match to be aborted if a subsequent failure occurs.</span>
+<span style="color: #0000ff;">Pattern</span> <span style="color: #00008b; font-weight: bold;">Fence</span>();
 
-// Constructs a pattern that first matches P. if P fails, then the constructed
-// pattern fails. If P succeeds, then the match proceeds, but if subsequent
-// failure occurs, alternatives in P are not sought.  The idea of Fence is that
-// each time the pattern is matched, just one attempt is made to match P,
-// without trying alternatives.
-Pattern Fence(const Pattern&amp; p);
+<span style="color: #912cee; font-weight: bold;">// </span><span style="color: #912cee;">Constructs a pattern that first matches P. if P fails, then the constructed</span>
+<span style="color: #912cee; font-weight: bold;">// </span><span style="color: #912cee;">pattern fails. If P succeeds, then the match proceeds, but if subsequent</span>
+<span style="color: #912cee; font-weight: bold;">// </span><span style="color: #912cee;">failure occurs, alternatives in P are not sought.  The idea of Fence is that</span>
+<span style="color: #912cee; font-weight: bold;">// </span><span style="color: #912cee;">each time the pattern is matched, just one attempt is made to match P,</span>
+<span style="color: #912cee; font-weight: bold;">// </span><span style="color: #912cee;">without trying alternatives.</span>
+<span style="color: #0000ff;">Pattern</span> <span style="color: #00008b; font-weight: bold;">Fence</span>(<span style="color: #0000cd; font-weight: bold;">const</span> <span style="color: #0000ff;">Pattern</span>&amp; <span style="color: #000000;">p</span>);
 
-// ----------------------------------------------------------------------------
-///  Len
-// ----------------------------------------------------------------------------
-//
-// Constructs a pattern that matches exactly the given number of characters. The
-// pattern fails if fewer than this number of characters remain to be matched in
-// the string.
-Pattern Len(const Natural count);
-Pattern Len(const UnsignedGetter&amp; count);
-Pattern Len(const Natural *count);
+<span style="color: #912cee; font-weight: bold;">// </span><span style="color: #912cee;">----------------------------------------------------------------------------</span>
+<span style="color: #912cee; font-weight: bold;">///  </span><span style="color: #912cee;">Len</span>
+<span style="color: #912cee; font-weight: bold;">// </span><span style="color: #912cee;">----------------------------------------------------------------------------</span>
+<span style="color: #912cee; font-weight: bold;">//</span>
+<span style="color: #912cee; font-weight: bold;">// </span><span style="color: #912cee;">Constructs a pattern that matches exactly the given number of characters. The</span>
+<span style="color: #912cee; font-weight: bold;">// </span><span style="color: #912cee;">pattern fails if fewer than this number of characters remain to be matched in</span>
+<span style="color: #912cee; font-weight: bold;">// </span><span style="color: #912cee;">the string.</span>
+<span style="color: #0000ff;">Pattern</span> <span style="color: #00008b; font-weight: bold;">Len</span>(<span style="color: #0000cd; font-weight: bold;">const</span> <span style="color: #0000ff;">Natural</span> <span style="color: #000000;">count</span>);
+<span style="color: #0000ff;">Pattern</span> <span style="color: #00008b; font-weight: bold;">Len</span>(<span style="color: #0000cd; font-weight: bold;">const</span> <span style="color: #0000ff;">UnsignedGetter</span>&amp; <span style="color: #000000;">count</span>);
+<span style="color: #0000ff;">Pattern</span> <span style="color: #00008b; font-weight: bold;">Len</span>(<span style="color: #0000cd; font-weight: bold;">const</span> <span style="color: #0000ff;">Natural</span> *<span style="color: #000000;">count</span>);
 
-// ----------------------------------------------------------------------------
-///  NotAny
-// ----------------------------------------------------------------------------
-//
-// Constructs a pattern that matches a single character that is not one of the
-// characters in the given argument. The pattern Fails if the current character
-// is in str.
+<span style="color: #912cee; font-weight: bold;">// </span><span style="color: #912cee;">----------------------------------------------------------------------------</span>
+<span style="color: #912cee; font-weight: bold;">///  </span><span style="color: #912cee;">NotAny</span>
+<span style="color: #912cee; font-weight: bold;">// </span><span style="color: #912cee;">----------------------------------------------------------------------------</span>
+<span style="color: #912cee; font-weight: bold;">//</span>
+<span style="color: #912cee; font-weight: bold;">// </span><span style="color: #912cee;">Constructs a pattern that matches a single character that is not one of the</span>
+<span style="color: #912cee; font-weight: bold;">// </span><span style="color: #912cee;">characters in the given argument. The pattern Fails if the current character</span>
+<span style="color: #912cee; font-weight: bold;">// </span><span style="color: #912cee;">is in str.</span>
 
-Pattern NotAny(const Character c);
-Pattern NotAny(const CharacterSet&amp; set);
-Pattern NotAny(const std::string&amp; str);
-Pattern NotAny(const std::string* str);
-Pattern NotAny(const StringGetter&amp;);
+<span style="color: #0000ff;">Pattern</span> <span style="color: #00008b; font-weight: bold;">NotAny</span>(<span style="color: #0000cd; font-weight: bold;">const</span> <span style="color: #0000ff;">Character</span> <span style="color: #000000;">c</span>);
+<span style="color: #0000ff;">Pattern</span> <span style="color: #00008b; font-weight: bold;">NotAny</span>(<span style="color: #0000cd; font-weight: bold;">const</span> <span style="color: #0000ff;">CharacterSet</span>&amp; <span style="color: #000000;">set</span>);
+<span style="color: #0000ff;">Pattern</span> <span style="color: #00008b; font-weight: bold;">NotAny</span>(<span style="color: #0000cd; font-weight: bold;">const</span> <span style="font-weight: bold; text-decoration: underline;">std</span>::<span style="color: #0000ff;">string</span>&amp; <span style="color: #000000;">str</span>);
+<span style="color: #0000ff;">Pattern</span> <span style="color: #00008b; font-weight: bold;">NotAny</span>(<span style="color: #0000cd; font-weight: bold;">const</span> <span style="font-weight: bold; text-decoration: underline;">std</span>::<span style="color: #0000ff;">string</span>* <span style="color: #000000;">str</span>);
+<span style="color: #0000ff;">Pattern</span> <span style="color: #00008b; font-weight: bold;">NotAny</span>(<span style="color: #0000cd; font-weight: bold;">const</span> <span style="color: #0000ff;">StringGetter</span>&amp;);
 
-// ----------------------------------------------------------------------------
-///  NSpan
-// ----------------------------------------------------------------------------
-//
-// Constructs a pattern that matches the longest possible string consisting
-// entirely of characters from the given argument. The string may be empty, so
-// this pattern always succeeds.
+<span style="color: #912cee; font-weight: bold;">// </span><span style="color: #912cee;">----------------------------------------------------------------------------</span>
+<span style="color: #912cee; font-weight: bold;">///  </span><span style="color: #912cee;">NSpan</span>
+<span style="color: #912cee; font-weight: bold;">// </span><span style="color: #912cee;">----------------------------------------------------------------------------</span>
+<span style="color: #912cee; font-weight: bold;">//</span>
+<span style="color: #912cee; font-weight: bold;">// </span><span style="color: #912cee;">Constructs a pattern that matches the longest possible string consisting</span>
+<span style="color: #912cee; font-weight: bold;">// </span><span style="color: #912cee;">entirely of characters from the given argument. The string may be empty, so</span>
+<span style="color: #912cee; font-weight: bold;">// </span><span style="color: #912cee;">this pattern always succeeds.</span>
 
-// Null or Span (always succeeds)
-// [NOT in SPITBOL]
+<span style="color: #912cee; font-weight: bold;">// </span><span style="color: #912cee;">Null or Span (always succeeds)</span>
+<span style="color: #912cee; font-weight: bold;">// </span><span style="color: #912cee;">[NOT in SPITBOL]</span>
 
-Pattern NSpan(const Character c);
-Pattern NSpan(const CharacterSet&amp; set);
-Pattern NSpan(const std::string&amp; str);
-Pattern NSpan(const std::string *str);
-Pattern NSpan(const StringGetter&amp;);
+<span style="color: #0000ff;">Pattern</span> <span style="color: #00008b; font-weight: bold;">NSpan</span>(<span style="color: #0000cd; font-weight: bold;">const</span> <span style="color: #0000ff;">Character</span> <span style="color: #000000;">c</span>);
+<span style="color: #0000ff;">Pattern</span> <span style="color: #00008b; font-weight: bold;">NSpan</span>(<span style="color: #0000cd; font-weight: bold;">const</span> <span style="color: #0000ff;">CharacterSet</span>&amp; <span style="color: #000000;">set</span>);
+<span style="color: #0000ff;">Pattern</span> <span style="color: #00008b; font-weight: bold;">NSpan</span>(<span style="color: #0000cd; font-weight: bold;">const</span> <span style="font-weight: bold; text-decoration: underline;">std</span>::<span style="color: #0000ff;">string</span>&amp; <span style="color: #000000;">str</span>);
+<span style="color: #0000ff;">Pattern</span> <span style="color: #00008b; font-weight: bold;">NSpan</span>(<span style="color: #0000cd; font-weight: bold;">const</span> <span style="font-weight: bold; text-decoration: underline;">std</span>::<span style="color: #0000ff;">string</span> *<span style="color: #000000;">str</span>);
+<span style="color: #0000ff;">Pattern</span> <span style="color: #00008b; font-weight: bold;">NSpan</span>(<span style="color: #0000cd; font-weight: bold;">const</span> <span style="color: #0000ff;">StringGetter</span>&amp;);
 
-// ----------------------------------------------------------------------------
-///  Pos
-// ----------------------------------------------------------------------------
-//
-// Constructs a pattern that matches the null string if exactly count characters
-// have already been matched, and otherwise fails.
+<span style="color: #912cee; font-weight: bold;">// </span><span style="color: #912cee;">----------------------------------------------------------------------------</span>
+<span style="color: #912cee; font-weight: bold;">///  </span><span style="color: #912cee;">Pos</span>
+<span style="color: #912cee; font-weight: bold;">// </span><span style="color: #912cee;">----------------------------------------------------------------------------</span>
+<span style="color: #912cee; font-weight: bold;">//</span>
+<span style="color: #912cee; font-weight: bold;">// </span><span style="color: #912cee;">Constructs a pattern that matches the null string if exactly count characters</span>
+<span style="color: #912cee; font-weight: bold;">// </span><span style="color: #912cee;">have already been matched, and otherwise fails.</span>
 
-Pattern Pos(Natural count);
-Pattern Pos(const UnsignedGetter&amp;);
-Pattern Pos(const Natural *ptr);
+<span style="color: #0000ff;">Pattern</span> <span style="color: #00008b; font-weight: bold;">Pos</span>(<span style="color: #0000ff;">Natural</span> <span style="color: #000000;">count</span>);
+<span style="color: #0000ff;">Pattern</span> <span style="color: #00008b; font-weight: bold;">Pos</span>(<span style="color: #0000cd; font-weight: bold;">const</span> <span style="color: #0000ff;">UnsignedGetter</span>&amp;);
+<span style="color: #0000ff;">Pattern</span> <span style="color: #00008b; font-weight: bold;">Pos</span>(<span style="color: #0000cd; font-weight: bold;">const</span> <span style="color: #0000ff;">Natural</span> *<span style="color: #000000;">ptr</span>);
 
-// ----------------------------------------------------------------------------
-///  Rem
-// ----------------------------------------------------------------------------
-//
-// Constructs a pattern that always succeeds, matching the remaining unmatched
-// characters in the pattern.
+<span style="color: #912cee; font-weight: bold;">// </span><span style="color: #912cee;">----------------------------------------------------------------------------</span>
+<span style="color: #912cee; font-weight: bold;">///  </span><span style="color: #912cee;">Rem</span>
+<span style="color: #912cee; font-weight: bold;">// </span><span style="color: #912cee;">----------------------------------------------------------------------------</span>
+<span style="color: #912cee; font-weight: bold;">//</span>
+<span style="color: #912cee; font-weight: bold;">// </span><span style="color: #912cee;">Constructs a pattern that always succeeds, matching the remaining unmatched</span>
+<span style="color: #912cee; font-weight: bold;">// </span><span style="color: #912cee;">characters in the pattern.</span>
 
-// SPITBOL: REM
-// C++: Rem
+<span style="color: #912cee; font-weight: bold;">// </span><span style="color: #912cee;">SPITBOL: REM</span>
+<span style="color: #912cee; font-weight: bold;">// </span><span style="color: #912cee;">C++: Rem</span>
 
-Pattern Rem();
+<span style="color: #0000ff;">Pattern</span> <span style="color: #00008b; font-weight: bold;">Rem</span>();
 
-// ----------------------------------------------------------------------------
-///  Rpos
-// ----------------------------------------------------------------------------
-//
-// Constructs a pattern that matches the null string if exactly count characters
-// remain to be matched in the string, and otherwise fails.
+<span style="color: #912cee; font-weight: bold;">// </span><span style="color: #912cee;">----------------------------------------------------------------------------</span>
+<span style="color: #912cee; font-weight: bold;">///  </span><span style="color: #912cee;">Rpos</span>
+<span style="color: #912cee; font-weight: bold;">// </span><span style="color: #912cee;">----------------------------------------------------------------------------</span>
+<span style="color: #912cee; font-weight: bold;">//</span>
+<span style="color: #912cee; font-weight: bold;">// </span><span style="color: #912cee;">Constructs a pattern that matches the null string if exactly count characters</span>
+<span style="color: #912cee; font-weight: bold;">// </span><span style="color: #912cee;">remain to be matched in the string, and otherwise fails.</span>
 
-Pattern Rpos(Natural count);
-Pattern Rpos(const UnsignedGetter&amp;);
-Pattern Rpos(const Natural *ptr);
+<span style="color: #0000ff;">Pattern</span> <span style="color: #00008b; font-weight: bold;">Rpos</span>(<span style="color: #0000ff;">Natural</span> <span style="color: #000000;">count</span>);
+<span style="color: #0000ff;">Pattern</span> <span style="color: #00008b; font-weight: bold;">Rpos</span>(<span style="color: #0000cd; font-weight: bold;">const</span> <span style="color: #0000ff;">UnsignedGetter</span>&amp;);
+<span style="color: #0000ff;">Pattern</span> <span style="color: #00008b; font-weight: bold;">Rpos</span>(<span style="color: #0000cd; font-weight: bold;">const</span> <span style="color: #0000ff;">Natural</span> *<span style="color: #000000;">ptr</span>);
 
-// ----------------------------------------------------------------------------
-///  Rtab
-// ----------------------------------------------------------------------------
-//
-// Constructs a pattern that matches from the current location until exactly
-// count characters remain to be matched in the string. The pattern fails if
-// fewer than count characters remain to be matched.
+<span style="color: #912cee; font-weight: bold;">// </span><span style="color: #912cee;">----------------------------------------------------------------------------</span>
+<span style="color: #912cee; font-weight: bold;">///  </span><span style="color: #912cee;">Rtab</span>
+<span style="color: #912cee; font-weight: bold;">// </span><span style="color: #912cee;">----------------------------------------------------------------------------</span>
+<span style="color: #912cee; font-weight: bold;">//</span>
+<span style="color: #912cee; font-weight: bold;">// </span><span style="color: #912cee;">Constructs a pattern that matches from the current location until exactly</span>
+<span style="color: #912cee; font-weight: bold;">// </span><span style="color: #912cee;">count characters remain to be matched in the string. The pattern fails if</span>
+<span style="color: #912cee; font-weight: bold;">// </span><span style="color: #912cee;">fewer than count characters remain to be matched.</span>
 
-Pattern Rtab(Natural count);
-Pattern Rtab(const UnsignedGetter&amp;);
-Pattern Rtab(const Natural *ptr);
+<span style="color: #0000ff;">Pattern</span> <span style="color: #00008b; font-weight: bold;">Rtab</span>(<span style="color: #0000ff;">Natural</span> <span style="color: #000000;">count</span>);
+<span style="color: #0000ff;">Pattern</span> <span style="color: #00008b; font-weight: bold;">Rtab</span>(<span style="color: #0000cd; font-weight: bold;">const</span> <span style="color: #0000ff;">UnsignedGetter</span>&amp;);
+<span style="color: #0000ff;">Pattern</span> <span style="color: #00008b; font-weight: bold;">Rtab</span>(<span style="color: #0000cd; font-weight: bold;">const</span> <span style="color: #0000ff;">Natural</span> *<span style="color: #000000;">ptr</span>);
 
-// ----------------------------------------------------------------------------
-///  Setcur
-// ----------------------------------------------------------------------------
-//
-// Constructs a pattern that matches the null string, and assigns the current
-// cursor position in the string to var. This value is the number of
-// characters matched so far. So it is zero at the start of the match.
-//
-// SPITBOL: unary "@"
-// C++: Setcur
+<span style="color: #912cee; font-weight: bold;">// </span><span style="color: #912cee;">----------------------------------------------------------------------------</span>
+<span style="color: #912cee; font-weight: bold;">///  </span><span style="color: #912cee;">Setcur</span>
+<span style="color: #912cee; font-weight: bold;">// </span><span style="color: #912cee;">----------------------------------------------------------------------------</span>
+<span style="color: #912cee; font-weight: bold;">//</span>
+<span style="color: #912cee; font-weight: bold;">// </span><span style="color: #912cee;">Constructs a pattern that matches the null string, and assigns the current</span>
+<span style="color: #912cee; font-weight: bold;">// </span><span style="color: #912cee;">cursor position in the string to var. This value is the number of</span>
+<span style="color: #912cee; font-weight: bold;">// </span><span style="color: #912cee;">characters matched so far. So it is zero at the start of the match.</span>
+<span style="color: #912cee; font-weight: bold;">//</span>
+<span style="color: #912cee; font-weight: bold;">// </span><span style="color: #912cee;">SPITBOL: unary "@"</span>
+<span style="color: #912cee; font-weight: bold;">// </span><span style="color: #912cee;">C++: Setcur</span>
 
-Pattern Setcur(Natural &amp;var);
+<span style="color: #0000ff;">Pattern</span> <span style="color: #00008b; font-weight: bold;">Setcur</span>(<span style="color: #0000ff;">Natural</span> &amp;<span style="color: #000000;">var</span>);
 
-// ----------------------------------------------------------------------------
-///  Span
-// ----------------------------------------------------------------------------
-//
-// Constructs a pattern that matches the longest possible string consisting
-// entirely of characters from the given argument. The string cannot be empty ,
-// so the pattern fails if the current character is not one of the characters in
-// str.
+<span style="color: #912cee; font-weight: bold;">// </span><span style="color: #912cee;">----------------------------------------------------------------------------</span>
+<span style="color: #912cee; font-weight: bold;">///  </span><span style="color: #912cee;">Span</span>
+<span style="color: #912cee; font-weight: bold;">// </span><span style="color: #912cee;">----------------------------------------------------------------------------</span>
+<span style="color: #912cee; font-weight: bold;">//</span>
+<span style="color: #912cee; font-weight: bold;">// </span><span style="color: #912cee;">Constructs a pattern that matches the longest possible string consisting</span>
+<span style="color: #912cee; font-weight: bold;">// </span><span style="color: #912cee;">entirely of characters from the given argument. The string cannot be empty ,</span>
+<span style="color: #912cee; font-weight: bold;">// </span><span style="color: #912cee;">so the pattern fails if the current character is not one of the characters in</span>
+<span style="color: #912cee; font-weight: bold;">// </span><span style="color: #912cee;">str.</span>
 
-Pattern Span(const Character c);
-Pattern Span(const CharacterSet&amp; set);
-Pattern Span(const std::string&amp; str);
-Pattern Span(const std::string *str);
-Pattern Span(const StringGetter&amp;);
+<span style="color: #0000ff;">Pattern</span> <span style="color: #00008b; font-weight: bold;">Span</span>(<span style="color: #0000cd; font-weight: bold;">const</span> <span style="color: #0000ff;">Character</span> <span style="color: #000000;">c</span>);
+<span style="color: #0000ff;">Pattern</span> <span style="color: #00008b; font-weight: bold;">Span</span>(<span style="color: #0000cd; font-weight: bold;">const</span> <span style="color: #0000ff;">CharacterSet</span>&amp; <span style="color: #000000;">set</span>);
+<span style="color: #0000ff;">Pattern</span> <span style="color: #00008b; font-weight: bold;">Span</span>(<span style="color: #0000cd; font-weight: bold;">const</span> <span style="font-weight: bold; text-decoration: underline;">std</span>::<span style="color: #0000ff;">string</span>&amp; <span style="color: #000000;">str</span>);
+<span style="color: #0000ff;">Pattern</span> <span style="color: #00008b; font-weight: bold;">Span</span>(<span style="color: #0000cd; font-weight: bold;">const</span> <span style="font-weight: bold; text-decoration: underline;">std</span>::<span style="color: #0000ff;">string</span> *<span style="color: #000000;">str</span>);
+<span style="color: #0000ff;">Pattern</span> <span style="color: #00008b; font-weight: bold;">Span</span>(<span style="color: #0000cd; font-weight: bold;">const</span> <span style="color: #0000ff;">StringGetter</span>&amp;);
 
-// ----------------------------------------------------------------------------
-///  Succeed
-// ----------------------------------------------------------------------------
-//
-// Constructs a pattern that succeeds matching null, both on the first attempt,
-// and on any rematch attempt, i.e. it is equivalent to an infinite alternation
-// of null strings.
+<span style="color: #912cee; font-weight: bold;">// </span><span style="color: #912cee;">----------------------------------------------------------------------------</span>
+<span style="color: #912cee; font-weight: bold;">///  </span><span style="color: #912cee;">Succeed</span>
+<span style="color: #912cee; font-weight: bold;">// </span><span style="color: #912cee;">----------------------------------------------------------------------------</span>
+<span style="color: #912cee; font-weight: bold;">//</span>
+<span style="color: #912cee; font-weight: bold;">// </span><span style="color: #912cee;">Constructs a pattern that succeeds matching null, both on the first attempt,</span>
+<span style="color: #912cee; font-weight: bold;">// </span><span style="color: #912cee;">and on any rematch attempt, i.e. it is equivalent to an infinite alternation</span>
+<span style="color: #912cee; font-weight: bold;">// </span><span style="color: #912cee;">of null strings.</span>
 
-Pattern Succeed();
+<span style="color: #0000ff;">Pattern</span> <span style="color: #00008b; font-weight: bold;">Succeed</span>();
 
-// ----------------------------------------------------------------------------
-///  Tab
-// ----------------------------------------------------------------------------
-//
-// Constructs a pattern that from the current location until count characters
-// have been matched. The pattern fails if more than count characters have
-// already been matched.
+<span style="color: #912cee; font-weight: bold;">// </span><span style="color: #912cee;">----------------------------------------------------------------------------</span>
+<span style="color: #912cee; font-weight: bold;">///  </span><span style="color: #912cee;">Tab</span>
+<span style="color: #912cee; font-weight: bold;">// </span><span style="color: #912cee;">----------------------------------------------------------------------------</span>
+<span style="color: #912cee; font-weight: bold;">//</span>
+<span style="color: #912cee; font-weight: bold;">// </span><span style="color: #912cee;">Constructs a pattern that from the current location until count characters</span>
+<span style="color: #912cee; font-weight: bold;">// </span><span style="color: #912cee;">have been matched. The pattern fails if more than count characters have</span>
+<span style="color: #912cee; font-weight: bold;">// </span><span style="color: #912cee;">already been matched.</span>
 
-Pattern Tab(const Natural count);
-Pattern Tab(const UnsignedGetter&amp;);
-Pattern Tab(const Natural *ptr);
+<span style="color: #0000ff;">Pattern</span> <span style="color: #00008b; font-weight: bold;">Tab</span>(<span style="color: #0000cd; font-weight: bold;">const</span> <span style="color: #0000ff;">Natural</span> <span style="color: #000000;">count</span>);
+<span style="color: #0000ff;">Pattern</span> <span style="color: #00008b; font-weight: bold;">Tab</span>(<span style="color: #0000cd; font-weight: bold;">const</span> <span style="color: #0000ff;">UnsignedGetter</span>&amp;);
+<span style="color: #0000ff;">Pattern</span> <span style="color: #00008b; font-weight: bold;">Tab</span>(<span style="color: #0000cd; font-weight: bold;">const</span> <span style="color: #0000ff;">Natural</span> *<span style="color: #000000;">ptr</span>);
 
-// ----------------------------------------------------------------------------
-/// Pattern Matching Operations
-// ----------------------------------------------------------------------------
-//
-// The Match function performs an actual pattern matching operation.  The
-// versions with two parameters perform a match without modifying the subject
-// string and return a bool result indicating if the match is successful or
-// not.
-//
-// Note that pattern assignment functions in the pattern may generate side
-// effects, so these functions are not necessarily pure.
-//
-// Pattern::anchor
-//
-//   This flag can be set to cause all subsequent pattern matches to operate in
-//   anchored mode. In anchored mode, no attempt is made to move the anchor
-//   point, so that if the match succeeds it must succeed starting at the first
-//   character. Note that the effect of anchored mode may be achieved in
-//   individual pattern matches by using Fence or Pos(0) at the start of the
-//   pattern.
-//
-//   In an unanchored match, which is the default, successive attempts are made
-//   to match the given pattern at each character of the subject string until a
-//   match succeeds, or until all possibilities have failed.
+<span style="color: #912cee; font-weight: bold;">// </span><span style="color: #912cee;">----------------------------------------------------------------------------</span>
+<span style="color: #912cee; font-weight: bold;">/// </span><span style="color: #912cee;">Pattern Matching Operations</span>
+<span style="color: #912cee; font-weight: bold;">// </span><span style="color: #912cee;">----------------------------------------------------------------------------</span>
+<span style="color: #912cee; font-weight: bold;">//</span>
+<span style="color: #912cee; font-weight: bold;">// </span><span style="color: #912cee;">The Match function performs an actual pattern matching operation.  The</span>
+<span style="color: #912cee; font-weight: bold;">// </span><span style="color: #912cee;">versions with two parameters perform a match without modifying the subject</span>
+<span style="color: #912cee; font-weight: bold;">// </span><span style="color: #912cee;">string and return a bool result indicating if the match is successful or</span>
+<span style="color: #912cee; font-weight: bold;">// </span><span style="color: #912cee;">not.</span>
+<span style="color: #912cee; font-weight: bold;">//</span>
+<span style="color: #912cee; font-weight: bold;">// </span><span style="color: #912cee;">Note that pattern assignment functions in the pattern may generate side</span>
+<span style="color: #912cee; font-weight: bold;">// </span><span style="color: #912cee;">effects, so these functions are not necessarily pure.</span>
+<span style="color: #912cee; font-weight: bold;">//</span>
+<span style="color: #912cee; font-weight: bold;">// </span><span style="color: #912cee;">Pattern::anchor</span>
+<span style="color: #912cee; font-weight: bold;">//</span>
+<span style="color: #912cee; font-weight: bold;">//   </span><span style="color: #912cee;">This flag can be set to cause all subsequent pattern matches to operate in</span>
+<span style="color: #912cee; font-weight: bold;">//   </span><span style="color: #912cee;">anchored mode. In anchored mode, no attempt is made to move the anchor</span>
+<span style="color: #912cee; font-weight: bold;">//   </span><span style="color: #912cee;">point, so that if the match succeeds it must succeed starting at the first</span>
+<span style="color: #912cee; font-weight: bold;">//   </span><span style="color: #912cee;">character. Note that the effect of anchored mode may be achieved in</span>
+<span style="color: #912cee; font-weight: bold;">//   </span><span style="color: #912cee;">individual pattern matches by using Fence or Pos(0) at the start of the</span>
+<span style="color: #912cee; font-weight: bold;">//   </span><span style="color: #912cee;">pattern.</span>
+<span style="color: #912cee; font-weight: bold;">//</span>
+<span style="color: #912cee; font-weight: bold;">//   </span><span style="color: #912cee;">In an unanchored match, which is the default, successive attempts are made</span>
+<span style="color: #912cee; font-weight: bold;">//   </span><span style="color: #912cee;">to match the given pattern at each character of the subject string until a</span>
+<span style="color: #912cee; font-weight: bold;">//   </span><span style="color: #912cee;">match succeeds, or until all possibilities have failed.</span>
 
-// ----------------------------------------------------------------------------
-///  Match &amp; Replacement
-// ----------------------------------------------------------------------------
-//
-// The subject is matched against the pattern.  Any immediate or deferred
-// assignments or writes are executed, and the returned value indicates whether
-// or not the match succeeded.  If the match succeeds, then the matched part of
-// the subject string is replaced by the given Replace string.
+<span style="color: #912cee; font-weight: bold;">// </span><span style="color: #912cee;">----------------------------------------------------------------------------</span>
+<span style="color: #912cee; font-weight: bold;">/// </span><span style="color: #912cee;">Debugging Routines</span>
+<span style="color: #912cee; font-weight: bold;">// </span><span style="color: #912cee;">----------------------------------------------------------------------------</span>
+<span style="color: #912cee; font-weight: bold;">//</span>
+<span style="color: #912cee; font-weight: bold;">// </span><span style="color: #912cee;">Debugging pattern matching operations can often be quite complex, since there</span>
+<span style="color: #912cee; font-weight: bold;">// </span><span style="color: #912cee;">is no obvious way to trace the progress of the match.  The declarations in</span>
+<span style="color: #912cee; font-weight: bold;">// </span><span style="color: #912cee;">this section provide some debugging assistance.</span>
 
-bool Match
-(
-    std::string&amp; subj,
-    const Pattern&amp; p,
-    const std::string&amp; replacement,
-    const Flags flags = 0
-);
+<span style="color: #912cee; font-weight: bold;">// </span><span style="color: #912cee;">----------------------------------------------------------------------------</span>
+<span style="color: #912cee; font-weight: bold;">///  </span><span style="color: #912cee;">Pattern::debug flag</span>
+<span style="color: #912cee; font-weight: bold;">// </span><span style="color: #912cee;">----------------------------------------------------------------------------</span>
+<span style="color: #912cee; font-weight: bold;">//</span>
+<span style="color: #912cee; font-weight: bold;">// </span><span style="color: #912cee;">The Pattern::debug flag can be provided to the Match functions to generate</span>
+<span style="color: #912cee; font-weight: bold;">// </span><span style="color: #912cee;">debugging information. The debugging output is a full trace of the actions of</span>
+<span style="color: #912cee; font-weight: bold;">// </span><span style="color: #912cee;">the pattern matcher, written to cout. The level of this information is</span>
+<span style="color: #912cee; font-weight: bold;">// </span><span style="color: #912cee;">intended to be comprehensible at the abstract level of this package</span>
+<span style="color: #912cee; font-weight: bold;">// </span><span style="color: #912cee;">declaration. However, note that the use of this switch often generates large</span>
+<span style="color: #912cee; font-weight: bold;">// </span><span style="color: #912cee;">amounts of output.</span>
 
-bool Match
-(
-    std::string&amp; subj,
-    const Pattern&amp; p,
-    const Character *replacement,
-    const Flags flags = 0
-);
+<span style="color: #912cee; font-weight: bold;">// </span><span style="color: #912cee;">----------------------------------------------------------------------------</span>
+<span style="color: #912cee; font-weight: bold;">///  </span><span style="color: #912cee;">Dump pattern (as table) to std::ostream</span>
+<span style="color: #912cee; font-weight: bold;">// </span><span style="color: #912cee;">----------------------------------------------------------------------------</span>
+<span style="color: #912cee; font-weight: bold;">//</span>
+<span style="color: #912cee; font-weight: bold;">// </span><span style="color: #912cee;">This procedure writes information about the pattern to the std::ostream</span>
+<span style="color: #912cee; font-weight: bold;">// </span><span style="color: #912cee;">provided.  The format of this information is keyed to the internal data</span>
+<span style="color: #912cee; font-weight: bold;">// </span><span style="color: #912cee;">structures used to implement patterns. The information provided by Dump is</span>
+<span style="color: #912cee; font-weight: bold;">// </span><span style="color: #912cee;">thus more precise than that yielded by Image, but is also a bit more obscure</span>
+<span style="color: #912cee; font-weight: bold;">// </span><span style="color: #912cee;">(i.e. it cannot be interpreted solely in terms of this spec, you have to know</span>
+<span style="color: #912cee; font-weight: bold;">// </span><span style="color: #912cee;">something about the data structures).</span>
+<span style="color: #912cee; font-weight: bold;">//</span>
+<span style="color: #912cee; font-weight: bold;">// </span><span style="color: #912cee;">void Pattern::dump(std::ostream &amp;) const;</span>
 
-// ----------------------------------------------------------------------------
-/// Debugging Routines
-// ----------------------------------------------------------------------------
-//
-// Debugging pattern matching operations can often be quite complex, since there
-// is no obvious way to trace the progress of the match.  The declarations in
-// this section provide some debugging assistance.
+<span style="color: #912cee; font-weight: bold;">// </span><span style="color: #912cee;">----------------------------------------------------------------------------</span>
+<span style="color: #912cee; font-weight: bold;">///  </span><span style="color: #912cee;">Write pattern to std::ostream</span>
+<span style="color: #912cee; font-weight: bold;">// </span><span style="color: #912cee;">----------------------------------------------------------------------------</span>
+<span style="color: #912cee; font-weight: bold;">//</span>
+<span style="color: #912cee; font-weight: bold;">// </span><span style="color: #912cee;">This output operator writes a string representation of the pattern that</span>
+<span style="color: #912cee; font-weight: bold;">// </span><span style="color: #912cee;">corresponds to the syntax needed to create the given pattern using the</span>
+<span style="color: #912cee; font-weight: bold;">// </span><span style="color: #912cee;">functions in this package. The form of this string is such that it could</span>
+<span style="color: #912cee; font-weight: bold;">// </span><span style="color: #912cee;">actually be compiled and evaluated to yield the required pattern except for</span>
+<span style="color: #912cee; font-weight: bold;">// </span><span style="color: #912cee;">references to variables and functions.</span>
+<span style="font-weight: bold; text-decoration: underline;">std</span>::<span style="color: #0000ff;">ostream</span>&amp; <span style="color: #0000cd; font-weight: bold;">operator</span><span style="color: #00008b; font-weight: bold;">&lt;&lt;</span>(<span style="font-weight: bold; text-decoration: underline;">std</span>::<span style="color: #0000ff;">ostream</span> &amp;, <span style="color: #0000cd; font-weight: bold;">const</span> <span style="color: #0000ff;">Pattern</span>&amp; <span style="color: #000000;">p</span>);
 
-// ----------------------------------------------------------------------------
-///  Pattern::debug flag
-// ----------------------------------------------------------------------------
-//
-// The Pattern::debug flag can be provided to the Match functions to generate
-// debugging information. The debugging output is a full trace of the actions of
-// the pattern matcher, written to cout. The level of this information is
-// intended to be comprehensible at the abstract level of this package
-// declaration. However, note that the use of this switch often generates large
-// amounts of output.
-
-// ----------------------------------------------------------------------------
-///  Debug assignment
-// ----------------------------------------------------------------------------
-//
-// These are similar to the corresponding pattern assignment operations except
-// that instead of setting the value of a variable, the matched sub-string is
-// written to the appropriate file. This can be useful in following the progress
-// of a match without generating the full amount of information obtained by
-// setting Debug_Mode to True.
-Pattern operator%(const Pattern&amp; p, std::ostream &amp;);
-Pattern operator*(const Pattern&amp; p, std::ostream &amp;);
-
-// ----------------------------------------------------------------------------
-///  Dump pattern (as table) to std::ostream
-// ----------------------------------------------------------------------------
-//
-// This procedure writes information about the pattern to the std::ostream
-// provided.  The format of this information is keyed to the internal data
-// structures used to implement patterns. The information provided by Dump is
-// thus more precise than that yielded by Image, but is also a bit more obscure
-// (i.e. it cannot be interpreted solely in terms of this spec, you have to know
-// something about the data structures).
-//
-// void Pattern::dump(std::ostream &amp;) const;
-
-// ----------------------------------------------------------------------------
-///  Write pattern to std::ostream
-// ----------------------------------------------------------------------------
-//
-// This output operator writes a string representation of the pattern that
-// corresponds to the syntax needed to create the given pattern using the
-// functions in this package. The form of this string is such that it could
-// actually be compiled and evaluated to yield the required pattern except for
-// references to variables and functions.
-std::ostream&amp; operator&lt;&lt;(std::ostream &amp;, const Pattern&amp; p);
-
-// -----------------------------------------------------------------------------
+<span style="color: #912cee; font-weight: bold;">// </span><span style="color: #912cee;">-----------------------------------------------------------------------------</span>
 </pre>
 </div>
 </div>
 </div>
 </div>
 <div id="postamble" class="status">
-<p class="date">Created: 2016-08-23 Tue 15:59</p>
+<p class="date">Created: 2016-08-23 Tue 18:55</p>
 <p class="creator"><a href="http://www.gnu.org/software/emacs/">Emacs</a> 24.5 (<a href="http://orgmode.org">Org</a> mode 8.2.10)</p>
 <p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
 </div>

@@ -385,31 +385,6 @@ Pattern Tab(const Natural *ptr);
 //   match succeeds, or until all possibilities have failed.
 
 // ----------------------------------------------------------------------------
-///  Match & Replacement
-// ----------------------------------------------------------------------------
-//
-// The subject is matched against the pattern.  Any immediate or deferred
-// assignments or writes are executed, and the returned value indicates whether
-// or not the match succeeded.  If the match succeeds, then the matched part of
-// the subject string is replaced by the given Replace string.
-
-bool Match
-(
-    std::string& subj,
-    const Pattern& p,
-    const std::string& replacement,
-    const Flags flags = 0
-);
-
-bool Match
-(
-    std::string& subj,
-    const Pattern& p,
-    const Character *replacement,
-    const Flags flags = 0
-);
-
-// ----------------------------------------------------------------------------
 /// Debugging Routines
 // ----------------------------------------------------------------------------
 //
@@ -429,31 +404,6 @@ bool Match
 // amounts of output.
 
 // ----------------------------------------------------------------------------
-///  Debug assignment
-// ----------------------------------------------------------------------------
-//
-// These are similar to the corresponding pattern assignment operations except
-// that instead of setting the value of a variable, the matched sub-string is
-// written to the appropriate file. This can be useful in following the progress
-// of a match without generating the full amount of information obtained by
-// setting Debug_Mode to True.
-Pattern operator%(const Pattern& p, std::ostream &);
-Pattern operator*(const Pattern& p, std::ostream &);
-
-// ----------------------------------------------------------------------------
-///  Dump pattern (as table) to std::ostream
-// ----------------------------------------------------------------------------
-//
-// This procedure writes information about the pattern to the std::ostream
-// provided.  The format of this information is keyed to the internal data
-// structures used to implement patterns. The information provided by Dump is
-// thus more precise than that yielded by Image, but is also a bit more obscure
-// (i.e. it cannot be interpreted solely in terms of this spec, you have to know
-// something about the data structures).
-//
-// void Pattern::dump(std::ostream &) const;
-
-// ----------------------------------------------------------------------------
 ///  Write pattern to std::ostream
 // ----------------------------------------------------------------------------
 //
@@ -463,5 +413,13 @@ Pattern operator*(const Pattern& p, std::ostream &);
 // actually be compiled and evaluated to yield the required pattern except for
 // references to variables and functions.
 std::ostream& operator<<(std::ostream &, const Pattern& p);
+
+// ----------------------------------------------------------------------------
+///  Pattern::debugMsg
+// ----------------------------------------------------------------------------
+inline void PatMat::Pattern::debugMsg(const Character* fmt) const
+{
+    IDOUT(std::cerr<< fmt << long(pat_) << std::endl;);
+}
 
 // -----------------------------------------------------------------------------

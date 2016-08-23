@@ -34,12 +34,7 @@
 
 // -----------------------------------------------------------------------------
 
-namespace PatMat
-{
-
-// -----------------------------------------------------------------------------
-
-inline PatElmt_::PatElmt_
+inline PatMat::PatElmt_::PatElmt_
 (
     const PatternCode pc,
     const IndexT index,
@@ -51,7 +46,7 @@ inline PatElmt_::PatElmt_
     pNext_(pNext)
 {}
 
-inline PatElmt_::PatElmt_
+inline PatMat::PatElmt_::PatElmt_
 (
     const PatternCode pc,
     const IndexT index,
@@ -66,7 +61,7 @@ inline PatElmt_::PatElmt_
     val.Alt = alt;
 }
 
-inline PatElmt_::PatElmt_
+inline PatMat::PatElmt_::PatElmt_
 (
     const PatternCode pc,
     const IndexT index,
@@ -81,7 +76,7 @@ inline PatElmt_::PatElmt_
     val.PP = pat;
 }
 
-inline PatElmt_::PatElmt_
+inline PatMat::PatElmt_::PatElmt_
 (
     const PatternCode pc,
     const IndexT index,
@@ -96,7 +91,7 @@ inline PatElmt_::PatElmt_
     val.BG = iPtr;
 }
 
-inline PatElmt_::PatElmt_
+inline PatMat::PatElmt_::PatElmt_
 (
     const PatternCode pc,
     const IndexT index,
@@ -111,7 +106,7 @@ inline PatElmt_::PatElmt_
     val.SP = sp;
 }
 
-inline PatElmt_::PatElmt_
+inline PatMat::PatElmt_::PatElmt_
 (
     const PatternCode pc,
     const IndexT index,
@@ -126,7 +121,7 @@ inline PatElmt_::PatElmt_
     val.SP = vp;
 }
 
-inline PatElmt_::PatElmt_
+inline PatMat::PatElmt_::PatElmt_
 (
     const PatternCode pc,
     const IndexT index,
@@ -141,7 +136,7 @@ inline PatElmt_::PatElmt_
     val.SS = ss;
 }
 
-inline PatElmt_::PatElmt_
+inline PatMat::PatElmt_::PatElmt_
 (
     const PatternCode pc,
     const IndexT index,
@@ -156,7 +151,7 @@ inline PatElmt_::PatElmt_
     val.NV = nv;
 }
 
-inline PatElmt_::PatElmt_
+inline PatMat::PatElmt_::PatElmt_
 (
     const PatternCode pc,
     const IndexT index,
@@ -171,7 +166,7 @@ inline PatElmt_::PatElmt_
     val.NS = iPtr;
 }
 
-inline PatElmt_::PatElmt_
+inline PatMat::PatElmt_::PatElmt_
 (
     const PatternCode pc,
     const IndexT index,
@@ -186,7 +181,7 @@ inline PatElmt_::PatElmt_
     val.Char = c;
 }
 
-inline PatElmt_::PatElmt_
+inline PatMat::PatElmt_::PatElmt_
 (
     const PatternCode pc,
     const IndexT index,
@@ -203,7 +198,7 @@ inline PatElmt_::PatElmt_
     val.close = close;
 }
 
-inline PatElmt_::PatElmt_
+inline PatMat::PatElmt_::PatElmt_
 (
     const PatternCode pc,
     const IndexT index,
@@ -218,7 +213,7 @@ inline PatElmt_::PatElmt_
     val.set = new CharacterSet(set);
 }
 
-inline PatElmt_::PatElmt_
+inline PatMat::PatElmt_::PatElmt_
 (
     const PatternCode pc,
     const IndexT index,
@@ -233,7 +228,7 @@ inline PatElmt_::PatElmt_
     val.set = new CharacterSet(s);
 }
 
-inline PatElmt_::PatElmt_
+inline PatMat::PatElmt_::PatElmt_
 (
     const PatternCode pc,
     const IndexT index,
@@ -248,7 +243,7 @@ inline PatElmt_::PatElmt_
     val.Nat = Nat;
 }
 
-inline PatElmt_::PatElmt_
+inline PatMat::PatElmt_::PatElmt_
 (
     const PatternCode pc,
     const IndexT index,
@@ -263,7 +258,7 @@ inline PatElmt_::PatElmt_
     val.NG = iPtr;
 }
 
-inline PatElmt_::PatElmt_
+inline PatMat::PatElmt_::PatElmt_
 (
     const PatternCode pc,
     const IndexT index,
@@ -278,7 +273,7 @@ inline PatElmt_::PatElmt_
     val.NP = NP;
 }
 
-inline PatElmt_::PatElmt_
+inline PatMat::PatElmt_::PatElmt_
 (
     const PatternCode pc,
     const IndexT index,
@@ -293,6 +288,13 @@ inline PatElmt_::PatElmt_
     val.SG = iPtr;
 }
 
+
+// -----------------------------------------------------------------------------
+
+namespace PatMat
+{
+
+// -----------------------------------------------------------------------------
 
 inline bool PCHasAlt(PatternCode CODE)
 {

@@ -44,7 +44,6 @@
 
 #include <iostream>
 #include <iomanip>
-using std::endl;
 
 // -----------------------------------------------------------------------------
 
@@ -75,9 +74,9 @@ const char *patternCodeNames[] =
 static void writePatternSequence
 (
     std::ostream& os,
-    const PatElmt_ *e,
-    const PatElmt_ *succ,
-    PatElmt_ *refs[],
+    const PatElmt_* e,
+    const PatElmt_* succ,
+    PatElmt_* refs[],
     bool paren
 );
 
@@ -86,7 +85,7 @@ static void writePatternSequence
 /// writeNodeId
 // -----------------------------------------------------------------------------
 //  Writes out a string identifying the given pattern element
-static void writeNodeId(std::ostream& os, const PatElmt_ *e)
+static void writeNodeId(std::ostream& os, const PatElmt_* e)
 {
     if (!e)
     {
@@ -106,15 +105,15 @@ static void writeNodeId(std::ostream& os, const PatElmt_ *e)
 // -----------------------------------------------------------------------------
 /// Write a pattern to ostream
 // -----------------------------------------------------------------------------
-static const PatElmt_ *writePattern
+static const PatElmt_* writePattern
 (
     std::ostream& os,
     const PatElmt_& e,
-    PatElmt_ *refs[]
+    PatElmt_* refs[]
 )
 {
     // Successor set as result in e unless reset
-    const PatElmt_ *eNext = e.pNext_;
+    const PatElmt_* eNext = e.pNext_;
 
     switch (e.pCode_)
     {
@@ -140,7 +139,7 @@ static const PatElmt_ *writePattern
                 }
 
                 os  << '(';
-                const PatElmt_ *e1 = &e;
+                const PatElmt_* e1 = &e;
                 do
                 {
                     writePatternSequence(os, e1->pNext_, eNext, refs, false);
@@ -273,8 +272,8 @@ static const PatElmt_ *writePattern
             break;
 
         case PC_R_Enter:
-            // allows correct processing of PC_Fence_X & PC_Call_*
-            // sp.Kill_Concat = true;
+            // Allows correct processing of PC_Fence_X & PC_Call_*
+            // sp.killConcat = true;
             eNext = refs[e.index_ - 2];
             break;
 
@@ -372,9 +371,9 @@ static const PatElmt_ *writePattern
 static void writePatternSequence
 (
     std::ostream& os,
-    const PatElmt_ *e,
-    const PatElmt_ *succ,
-    PatElmt_ *refs[],
+    const PatElmt_* e,
+    const PatElmt_* succ,
+    PatElmt_* refs[],
     bool paren
 )
 {
@@ -385,7 +384,7 @@ static void writePatternSequence
     }
     else
     {
-        const PatElmt_ *e1 = e;
+        const PatElmt_* e1 = e;
         bool mult = false;
 
         // Generate appropriate concatenation sequence
@@ -405,9 +404,9 @@ static void writePatternSequence
             {
                 break;
             }
-            // if (sp.Kill_Concat)
+            // if (sp.killConcat)
             // {
-            //     sp.Kill_Concat = false;
+            //     sp.killConcat = false;
             // }
             else
             {
@@ -431,33 +430,40 @@ static void writePatternSequence
 // -----------------------------------------------------------------------------
 /// Dump
 // -----------------------------------------------------------------------------
+//
+// This procedure writes information about the pattern to the std::ostream
+// provided.  The format of this information is keyed to the internal data
+// structures used to implement patterns. The information provided by Dump is
+// thus more precise than that yielded by Image, but is also a bit more obscure
+// (i.e. it cannot be interpreted solely in terms of this spec, you have to know
+// something about the data structures).
 
 void PatMat::Pattern::dump(std::ostream& os) const
 {
     const Pattern_ *pat = pat_;
-    const PatElmt_ *p = pat->pe_;
+    const PatElmt_* p = pat->pe_;
 
-    os  << endl
+    os  << std::endl
         << "Pattern Dump Output (pattern at "
         << pat << " stack index = " << pat->stackIndex_ << ")\n";
 
     // If uninitialized pattern, dump line and we are done
     if (p == NULL)
     {
-        os  << "Uninitialized pattern value" << endl;
+        os  << "Uninitialized pattern value" << std::endl;
         return;
     }
 
     // If (null pattern, just dump it and we are all done
     if (p->pCode_ == PC_EOP)
     {
-        os  << "EOP (null pattern)" << endl;
+        os  << "EOP (null pattern)" << std::endl;
         return;
     }
 
     // We build a reference array whose N'th element points to the
     // pattern element whose index_ value is N.
-    PatElmt_ *refs[p->index_];
+    PatElmt_* refs[p->index_];
     buildRefArray(p, refs);
 
     // Now dump the nodes in reverse sequence. We output them in reverse
@@ -465,11 +471,11 @@ void PatMat::Pattern::dump(std::ostream& os) const
     // construct the patterns.
     for (int j = p->index_ - 1; j >= 0; j--)
     {
-        const PatElmt_ *ePtr = refs[j];
+        const PatElmt_* ePtr = refs[j];
         const PatElmt_& e = *ePtr;
         writeNodeId(os, ePtr);
         os  << ePtr << "\t"
-            << std::left << std::setw(10) << patternCodeSymbols[e.pCode_];
+            << std::left << std::setw(12) << patternCodeSymbols[e.pCode_];
         writeNodeId(os, e.pNext_);
 
         switch (e.pCode_)
@@ -612,21 +618,21 @@ void PatMat::Pattern::dump(std::ostream& os) const
             default:
                 break;
         }
-        os  << endl;
+        os  << std::endl;
     }
-    os  << endl;
+    os  << std::endl;
 }
 
 
 // ----------------------------------------------------------------------------
-/// std::ostream& operator<<(std::ostream& os, const PatElmt_& pe)
+/// Write pattern element to ostream
 // ----------------------------------------------------------------------------
 
 std::ostream& PatMat::operator<<(std::ostream& os, const PatElmt_& pe)
 {
     // Build a reference array whose n'th element points to the
     // pattern element whose index_ value is n.
-    PatElmt_ *refs[pe.index_];
+    PatElmt_* refs[pe.index_];
     buildRefArray(&pe, refs);
 
     writePatternSequence(os, &pe, &EOP_Element, refs, false);
@@ -636,7 +642,7 @@ std::ostream& PatMat::operator<<(std::ostream& os, const PatElmt_& pe)
 
 
 // ----------------------------------------------------------------------------
-/// std::ostream& operator<<(std::ostream& os, const Pattern& p)
+/// Write pattern to ostream
 // ----------------------------------------------------------------------------
 
 std::ostream& PatMat::operator<<(std::ostream& os, const Pattern& p)

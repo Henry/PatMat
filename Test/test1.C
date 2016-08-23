@@ -20,7 +20,7 @@ public:
     ~MyStringObj()
     {}
 
-    string get()
+    string get() const
     {
         // cout << "get: " << value << '\n';
         return value;
@@ -43,90 +43,104 @@ public:
 
 int main()
 {
-    // simple match, constant subject, on the fly pattern
-    if (Match("Hello", Any("aeiuo")))
+    // Simple match, constant subject, on the fly pattern
+    if (Any("aeiuo")("Hello"))
+    {
         cout << "matched!\n";
+    }
 
     string subject("Hello World!");
     string hello("Hello");
     Pattern hello_pattern(hello);
     Pattern world_pattern("World");
 
-    // pattern w/ concatenation
+    // Pattern w/ concatenation
     Pattern p1 = hello_pattern & ' ' & world_pattern;
-    if (Match(subject, p1))
+    if (p1(subject))
+    {
         cout << "matched!\n";
+    }
 
-    // pattern with alternation
+    // Pattern with alternation
     string goodbye("Goodbye");
     //Pattern p2 = (goodbye | hello) & ' ' & world_pattern;
     Pattern p2 = goodbye;
     p2 |= hello;
     p2 &= ' ' & world_pattern;
 
-    // dump pattern as table on stdout
+    // Dump pattern as table on stdout
     p2.dump(cout);
 
-    // print as an expression
+    // Print as an expression
     cout << "Pattern p2: " << p2 << '\n';
 
-    if (Match(subject, p2))
+    if (p2(subject))
+    {
         cout << "matched!\n";
+    }
 
-    // simple match and replace
-    if (Match(subject, hello_pattern, "Goodbye"))
+    // Simple match and replace
+    if ((hello_pattern(subject) = "Goodbye"))
+    {
         cout << "replaced: " << subject << '\n';
+    }
 
-    // assigment on match
+    // Assigment on match
     string vowel;
-    if (Match("Hello", Any("aeiuo") * vowel))
+    if ((Any("aeiuo") * vowel)("Hello"))
+    {
         cout << "First vowel: " << vowel << '\n';
+    }
 
-    // output on match
+    // Output on match
     cout << "First vowel: ";
-    Match("Hello", Any("aeiuo") * cout);
+    (Any("aeiuo") * output)("Hello");
 
-    // immediate assigment
+    // Immediate assigment
     string nonv;
     Natural pos;
     Pattern p3 = Setcur(pos) & 'l' % nonv & Abort();
 
-    // dump pattern as table on stdout
+    // Dump pattern as table on stdout
     p3.dump(cout);
 
-    // print as an expression
+    // Print as an expression
     cout << "Pattern p3: " << p3 << '\n';
 
-    if (!Match("Hello", Setcur(pos) & 'l' % nonv & Abort()))
-        cout << "l: " << nonv << " at pos " << pos << '\n';
-
-    // assign on match & replace w/ value from match
-    string sss;
-    MatchRes match(subject);
-    if (Match(match, goodbye * sss))
+    if (!(Setcur(pos) & 'l' % nonv & Abort())("Hello"))
     {
-        match = "<b>" + sss + "</b>";
-        cout << "replaced: " << match << '\n';
+        cout << "l: " << nonv << " at pos " << pos << '\n';
     }
 
-    // test "delayed evaluation" of string value
+    // Assign on match & replace w/ value from match
+    string sss;
+    if (((goodbye * sss)(subject) = "<b>" + sss + "</b>"))
+    {
+        cout << "replaced: " << subject << '\n';
+    }
+
+    // Test "delayed evaluation" of string value
     MyStringObj s;
     Pattern p4 = "H" & vowel & +s;
-    s.set("ll");  // AFTER p4 creation
+    s.set("ll");  // After p4 creation
     subject = "Hello";
-    if (Match(subject, p4, ""))
+    if ((p4(subject) = ""))
+    {
         cout << "remainder: " << subject << '\n';
+    }
 
     string s2;
     Pattern p5('c');
     Pattern p6 = "H" & +p5 & +s2;
     subject = "Hello";
-    p5 = vowel; // AFTER p6 creation
-    s2 = "ll";  // AFTER p6 creation
-    if (Match(subject, p6, ""))
+    p5 = vowel; // After p6 creation
+    s2 = "ll";  // After p6 creation
+    if ((p6(subject) = ""))
+    {
         cout << "remainder: " << subject << '\n';
+    }
 
-    // look at assignment...
+    // Look at assignment...
     cout << "here1\n";
     {
         Pattern p3 = p4;

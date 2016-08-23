@@ -16,14 +16,7 @@ public:
     (
         const Pattern& p,
         const std::string& s,
-        const int expected_result
-    );
-
-    bool validate
-    (
-        MatchRes& result,
-        const Pattern& p,
-        const int expected_result
+        const bool expected_result
     );
 
     bool validate
@@ -31,7 +24,7 @@ public:
         const Pattern& p,
         std::string& s,
         const std::string& replace,
-        const int expected_result
+        const bool expected_result
     );
 
     bool validate_assign
@@ -58,15 +51,15 @@ public:
     MyStringObj()
     {}
 
-    ~MyStringObj()
+    virtual ~MyStringObj()
     {}
 
-    std::string get() const
+    virtual std::string get() const
     {
         return value;
     }
 
-    const char* get(unsigned& l) const
+    virtual const char* get(unsigned& l) const
     {
         l = value.length();
         return &value[0];
