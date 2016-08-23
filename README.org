@@ -1,5 +1,4 @@
 #                            -*- mode: org; -*-
-#
 #+TITLE: *PatMat: SPITBOL-like pattern construction and matching in C++*
 #+AUTHOR: nil
 #+OPTIONS: author:nil email:nil ^:{}
